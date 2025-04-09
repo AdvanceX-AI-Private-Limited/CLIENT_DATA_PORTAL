@@ -64,7 +64,7 @@ router = APIRouter()
 
 #______________________________________ Client routes ______________________________________
 # Registration endpoint (public)
-@router.post("/clients/", resopnse_model=schemas.DisplayClient)
+@router.post("/clients/", response_model=schemas.DisplayClient)
 async def register_client(
     client: schemas.ClientCreate, 
     db: Session = Depends(get_db)
