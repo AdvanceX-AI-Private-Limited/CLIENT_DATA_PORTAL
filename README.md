@@ -1,4 +1,4 @@
-# <img src="https://advancex.ai/wp-content/uploads/2024/11/logo-advancex.png" width="110" height="25" alt="AdvanceX" /> Client Data Portal
+# <img src="https://advancex.ai/wp-content/uploads/2024/11/logo-advancex.png" width="120" height="25" alt="AdvanceX" /> Client Data Portal
 
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi) ![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
