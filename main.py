@@ -3,8 +3,8 @@ from logger import create_logger
 from fastapi import APIRouter, Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timezone, timedelta
-from api.v1 import models
-from api.v1.database import engine
+from api.v1.database import models
+from api.v1.database.database import engine
 from api.v1.routers.auth import get_current_active_user
 from api.v1.routers import auth, access, admin, automation, dashboard, help
 

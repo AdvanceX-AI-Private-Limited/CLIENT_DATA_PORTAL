@@ -6,9 +6,9 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta, timezone
-from ..import models
-from ..import schemas
-from ..database import get_db
+from ..database.database import get_db
+from ..schemas import schemas
+from ..database import models
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 IST = timezone(timedelta(hours=5, minutes=30))

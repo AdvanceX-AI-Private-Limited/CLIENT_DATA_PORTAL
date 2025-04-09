@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, DateTime
 from sqlalchemy.orm import relationship
-from .database import Base
+from ..database.database import Base
 from enum import Enum
 from datetime import datetime, timedelta, timezone
 from logger import create_logger
