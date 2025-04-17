@@ -7,151 +7,175 @@ from ..database import models
 
 router = APIRouter() 
 
-#______________________________________ Role <> Service routes ______________________________________
-@router.post("/role-service-mappings/", response_model=schemas.DisplayRoleServiceMapping)
-async def create_role_service_mapping(
-    mapping: schemas.RoleServiceMappingCreate, 
+#______________________________________ Outlet <> Service routes ______________________________________
+@router.post("/outlet-service-mappings/", response_model=schemas.DisplayOutletService)
+async def create_outlet_service_mapping(
+    mapping: schemas.OutletServiceCreate, 
     db: Session = Depends(get_db)
 ):
-    db_mapping = models.RoleServiceMapping(
-        role_id=mapping.roleid,
-        service_id=mapping.serviceid,
-        client_id=mapping.clientid
+    print(mapping)
+    # Check if user service exists
+    existing_mapping = db.query(models.OutletService).filter(
+        (models.OutletService.outlet_id == mapping.outlet_id) &
+        (models.OutletService.service_id == mapping.service_id)
+    ).first()
+    print(existing_mapping)
+    if existing_mapping:
+        print('exisiting mapping')
+        raise HTTPException(
+            status_code=400,
+            detail="This Outlet <> Service mapping is already registered"
+        )
+    
+    db_mapping = models.OutletService(
+        outlet_id=mapping.outlet_id,
+        service_id=mapping.service_id,
+        client_id=mapping.client_id
     )
     db.add(db_mapping)
     db.commit()
     db.refresh(db_mapping)
     return db_mapping
 
-@router.get("/role-service-mappings/", response_model=List[schemas.DisplayRoleServiceMapping])
-async def read_role_service_mappings(
+@router.get("/outlet-service-mappings/", response_model=List[schemas.DisplayOutletService])
+async def read_outlet_service_mappings(
     skip: int = 0, 
     limit: int = 100,
     db: Session = Depends(get_db)
 ):
-    role_service_mappings = db.query(models.RoleServiceMapping).offset(skip).limit(limit).all()
-    return role_service_mappings
+    outlet_service_mappings = db.query(models.OutletService).offset(skip).limit(limit).all()
+    return outlet_service_mappings
 
-@router.get("/role-service-mappings/client/{client_id}", response_model=List[schemas.DisplayRoleServiceMapping])
-async def read_role_service_mappings_of_clients(
+@router.get("/outlet-service-mappings/client/{client_id}", response_model=List[schemas.DisplayOutletService])
+async def read_outlet_service_mappings_of_clients(
     client_id: int, 
     db: Session = Depends(get_db)
 ):
-    db_role_service_mappings = db.query(models.RoleServiceMapping).filter(models.RoleServiceMapping.client_id == client_id).all()
-    if db_role_service_mappings is None:
-        raise HTTPException(status_code=404, detail="Role <> Service mappings not found for client_id")
-    return db_role_service_mappings
+    db_outlet_service_mappings = db.query(models.OutletService).filter(models.OutletService.client_id == client_id).all()
+    if db_outlet_service_mappings is None:
+        raise HTTPException(status_code=404, detail=f"Outlet <> Service mappings not found for client id : {client_id}")
+    return db_outlet_service_mappings
 
-@router.get("/role-service-mappings/{mapping_id}", response_model=schemas.DisplayRoleServiceMapping)
+@router.get("/outlet-service-mappings/{mapping_id}", response_model=schemas.DisplayOutletService)
 async def read_role_service_mapping(
     mapping_id: int, 
     db: Session = Depends(get_db)
 ):
-    db_role_service_mappings = db.query(models.RoleServiceMapping).filter(models.RoleServiceMapping.id == mapping_id).first()
-    if db_role_service_mappings is None:
-        raise HTTPException(status_code=404, detail="Role <> Service mappings not found")
-    return db_role_service_mappings
+    db_outlet_service_mappings = db.query(models.OutletService).filter(models.OutletService.id == mapping_id).first()
+    if db_outlet_service_mappings is None:
+        raise HTTPException(status_code=404, detail=f"Outlet <> Service mappings not found for map id : {mapping_id}")
+    return db_outlet_service_mappings
 
 
-#______________________________________ Role <> User routes ______________________________________
-@router.post("/role-user-mappings/", response_model=schemas.DisplayRoleUserMapping)
-async def create_role_user_mapping(
-    mapping: schemas.RoleUserMappingCreate, 
+#______________________________________ User <> Service routes ______________________________________
+@router.post("/user-service-mappings/", response_model=schemas.DisplayUserService)
+async def create_user_service_mapping(
+    mapping: schemas.UserServiceCreate, 
     db: Session = Depends(get_db)
 ):
-    db_mapping = models.RoleUserMapping(
-        role_id=mapping.roleid,
-        user_id=mapping.userid,
-        client_id=mapping.clientid
+    # Check if user service exists
+    existing_mapping = db.query(models.UserService).filter(
+        (models.UserService.user_id == mapping.user_id) &
+        (models.UserService.service_id == mapping.service_id)
+    ).first()
+    if existing_mapping:
+        raise HTTPException(
+            status_code=400,
+            detail="This User <> Service mapping is already registered"
+        )
+    
+    db_mapping = models.UserService(
+        user_id=mapping.user_id,
+        service_id=mapping.service_id,
+        client_id=mapping.client_id
     )
     db.add(db_mapping)
     db.commit()
     db.refresh(db_mapping)
     return db_mapping
 
-@router.get("/role-user-mappings/", response_model=List[schemas.DisplayRoleUserMapping])
-async def read_role_user_mappings(
+@router.get("/user-service-mappings/", response_model=List[schemas.DisplayUserService])
+async def read_user_service_mappings(
     skip: int = 0, 
     limit: int = 100,
     db: Session = Depends(get_db)
 ):
-    role_user_mappings = db.query(models.RoleUserMapping).offset(skip).limit(limit).all()
-    return role_user_mappings
+    user_service_mappings = db.query(models.UserService).offset(skip).limit(limit).all()
+    return user_service_mappings
 
-@router.get("/role-user-mappings/client/{client_id}", response_model=List[schemas.DisplayRoleUserMapping])
-async def read_role_user_mappings_of_clients(
+@router.get("/user-service-mappings/client/{client_id}", response_model=List[schemas.DisplayUserService])
+async def read_user_service_mappings_of_clients(
     client_id: int, 
     db: Session = Depends(get_db)
 ):
-    db_role_user_mappings = db.query(models.RoleUserMapping).filter(models.RoleUserMapping.client_id == client_id).all()
-    if db_role_user_mappings is None:
-        raise HTTPException(status_code=404, detail="Role <> User mappings not found for client_id")
-    return db_role_user_mappings
+    db_user_service_mappings = db.query(models.UserService).filter(models.UserService.client_id == client_id).all()
+    if db_user_service_mappings is None:
+        raise HTTPException(status_code=404, detail=f"User <> Service mappings not found for client id : {client_id}")
+    return db_user_service_mappings
 
-@router.get("/role-user-mappings/{mapping_id}", response_model=schemas.DisplayRoleUserMapping)
-async def read_role_user_mapping(
+@router.get("/user-service-mappings/{mapping_id}", response_model=schemas.DisplayUserService)
+async def read_user_service_mapping(
     mapping_id: int, 
     db: Session = Depends(get_db)
 ):
-    db_role_user_mapping = db.query(models.RoleUserMapping).filter(models.RoleUserMapping.id == mapping_id).first()
-    if db_role_user_mapping is None:
-        raise HTTPException(status_code=404, detail="Role <> User mappings not found")
-    return db_role_user_mapping
+    db_user_service_mapping = db.query(models.UserService).filter(models.UserService.id == mapping_id).first()
+    if db_user_service_mapping is None:
+        raise HTTPException(status_code=404, detail=f"User <> Service mappings not found for map id : {mapping_id}")
+    return db_user_service_mapping
 
-#______________________________________ Role <> Outlet routes ______________________________________
-@router.post("/role-outlet-mappings/", response_model=schemas.DisplayRoleOutletMapping)
+#______________________________________ User <> Outlet routes ______________________________________
+@router.post("/user-outlet-mappings/", response_model=schemas.DisplayUserOutlet)
 async def create_role_outlet_mapping(
-    mapping: schemas.RoleOutletMappingCreate, 
+    mapping: schemas.UserOutletCreate, 
     db: Session = Depends(get_db)
 ):
-    db_mapping = models.RoleOutletMapping(
-        role_id=mapping.roleid,
-        outlet_id=mapping.outletid,
-        client_id=mapping.clientid
+    # Check if user service exists
+    existing_mapping = db.query(models.UserOutlet).filter(
+        (models.UserOutlet.user_id == mapping.user_id) &
+        (models.UserOutlet.outlet_id == mapping.outlet_id)
+    ).first()
+    if existing_mapping:
+        raise HTTPException(
+            status_code=400,
+            detail="This User <> Outlet mapping is already registered"
+        )
+    
+    db_mapping = models.UserOutlet(
+        user_id=mapping.user_id,
+        outlet_id=mapping.outlet_id,
+        client_id=mapping.client_id
     )
     db.add(db_mapping)
     db.commit()
     db.refresh(db_mapping)
     return db_mapping
 
-@router.get("/role-outlet-mappings/", response_model=List[schemas.DisplayRoleOutletMapping])
-async def read_role_outlet_mappings(
-    status: models.StatusEnum = models.StatusEnum.all, # Only Accepts - Active, Inactive and All 
+@router.get("/user-outlet-mappings/", response_model=List[schemas.DisplayUserOutlet])
+async def read_user_outlet_mappings(
     skip: int = 0, 
     limit: int = 100,
     db: Session = Depends(get_db)
 ):
 
-    query = db.query(models.RoleOutletMapping) # Doesnt fetch data, only builds query (lazy evaluation)
+    db_user_outlet_mappings = db.query(models.UserOutlet).offset(skip).limit(limit).all()
+    return db_user_outlet_mappings
 
-    if status != models.StatusEnum.all:
-        query = query.join(models.RoleOutletMapping.outlet)
-
-        if status == models.StatusEnum.active:
-            query = query.filter(models.Outlet.is_active == True)
-        elif status == models.StatusEnum.inactive:
-            query = query.filter(models.Outlet.is_active == False)
-        # No filter applied if status is 'All'
-        
-    db_role_outlet_mappings = query.offset(skip).limit(limit).all() # Runs here when .all() action is ran
-    return db_role_outlet_mappings
-
-@router.get("/role-outlet-mappings/client/{client_id}", response_model=List[schemas.DisplayRoleOutletMapping])
-async def read_role_outlet_mappings_of_clients(
+@router.get("/user-outlet-mappings/client/{client_id}", response_model=List[schemas.DisplayUserOutlet])
+async def read_user_outlet_mappings_of_clients(
     client_id: int, 
     db: Session = Depends(get_db)
 ):
-    db_role_outlet_mappings = db.query(models.RoleOutletMapping).filter(models.RoleOutletMapping.client_id == client_id).all()
-    if db_role_outlet_mappings is None:
-        raise HTTPException(status_code=404, detail="Role <> Outlet mappings not found for client_id")
-    return db_role_outlet_mappings
+    db_user_outlet_mappings = db.query(models.UserOutlet).filter(models.UserOutlet.client_id == client_id).all()
+    if db_user_outlet_mappings is None:
+        raise HTTPException(status_code=404, detail=f"User <> Outlet mappings not found for client id : {client_id}")
+    return db_user_outlet_mappings
 
-@router.get("/role-outlet-mappings/{mapping_id}", response_model=schemas.DisplayRoleOutletMapping)
+@router.get("/user-outlet-mappings/{mapping_id}", response_model=schemas.DisplayUserOutlet)
 async def read_role_outlet_mapping(
     mapping_id: int, 
     db: Session = Depends(get_db)
 ):
-    db_role_outlet_mapping = db.query(models.RoleOutletMapping).filter(models.RoleOutletMapping.id == mapping_id).first()
+    db_role_outlet_mapping = db.query(models.UserOutlet).filter(models.UserOutlet.id == mapping_id).first()
     if db_role_outlet_mapping is None:
-        raise HTTPException(status_code=404, detail="Role <> Outlet mappings not found")
+        raise HTTPException(status_code=404, detail=f"User <> Outlet mappings not found for map id : {mapping_id}")
     return db_role_outlet_mapping

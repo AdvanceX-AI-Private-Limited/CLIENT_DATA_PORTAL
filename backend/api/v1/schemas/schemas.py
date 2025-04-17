@@ -15,7 +15,7 @@ class ClientBase(BaseModel):
         max_length=50,
         pattern=r"^[a-zA-Z0-9_]+$",
         examples=["user_123"],
-        description="Unique username (alphanumeric + underscore)",
+        description="alphanumeric + underscore",
         json_schema_extra={"pattern_error": "Only letters, numbers and underscores allowed"}
     )
     email: EmailStr = Field(
@@ -23,11 +23,23 @@ class ClientBase(BaseModel):
         examples=["user@example.com"],
         description="Verified email address"
     )
+    accesstype: str = Field(
+        default="client",
+        description="Access type of the client. Default is 'client'.",
+        example="client",
+        max_length=50
+    )
+    is_active: Optional[bool] = Field(
+        default=True,
+        description="Whether the client is currently active.",
+        example=True
+    )
 
 class ClientCreate(ClientBase):
     password: SecretStr = Field(
         ...,
-        min_length=8,
+        min_length=5,
+        max_length=30,
         examples=["Str0ngP@ss"],
         description="Must contain 8+ chars with mix of letters, numbers, and symbols",
         # pattern=r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
@@ -35,18 +47,47 @@ class ClientCreate(ClientBase):
 
 class DisplayClient(DisplayBase, ClientBase):
     id: int = Field(..., examples=[1])
-    username: str
-    email: EmailStr
-    is_active: bool = Field(default=None, description="Account active status")
     created_at: datetime
+    updated_at: Optional[datetime] = None
 
     def __str__(self):
         return f"Client {self.username} ({self.email})"
 
 class ClientInDB(DisplayClient):
     hashed_password: str
+
+# ______________ BRANDS ____________________
+class BrandBase(BaseModel):
+    brandname: str = Field(
+        ..., 
+        min_length=2,
+        max_length=255,
+        pattern=r"^[a-zA-Z0-9\s\-_]+$",
+        examples=["CoolBrand_2025"],
+        description="Name of the brand. Letters, numbers, spaces, dashes and underscores allowed.",
+        json_schema_extra={"pattern_error": "Only letters, numbers, spaces, dashes, and underscores allowed"}
+    )
+    client_id: int = Field(
+        ..., 
+        description="The ID of the client this brand belongs to.", 
+        examples=[1]
+    )
+
+class BrandCreate(BrandBase):
+    pass
+
+class DisplayBrand(DisplayBase):
+    id: int = Field(..., examples=[10])
+    brandname: str
+    created_at: datetime
     updated_at: Optional[datetime] = None
-    last_login: Optional[datetime] = None
+    client: DisplayClient
+
+    def __str__(self):
+        return f"Brand {self.brandname} (Client ID: {self.client_id})"
+
+class BrandInDB(DisplayBrand):
+    pass
 
 # ______________ OUTLETS ____________________
 class OutletBase(BaseModel):
@@ -101,18 +142,26 @@ class OutletCreate(OutletBase):
         examples=[1],
         description="Owning client ID"
     )
+    brandid: int = Field(
+        ...,
+        gt=0,
+        examples=[1],
+        description="Owning brand ID"
+    )
 
 class DisplayOutlet(DisplayBase):
     id: int
     aggregator: str
     resid: str
     subzone: str
+    resshortcode: str
     city: str
     outletnumber: str
     is_active: bool
     created_at: datetime
     updated_at: Optional[datetime] = None
     client: DisplayClient
+    brand: DisplayBrand
 
     def __str__(self):
         return f"Outlet {self.outletnumber} ({self.aggregator})"
@@ -128,7 +177,6 @@ class UserBase(BaseModel):
     )
     usernumber: int = Field(
         ...,
-        pattern=r'^\d+$',
         examples=["1234567891"],
         description="Phone number without country code"
     )
@@ -150,7 +198,7 @@ class UserCreate(UserBase):
 class DisplayUser(DisplayBase):
     id: int
     username: str
-    usernumber: str
+    usernumber: int
     useremail: EmailStr
     is_active: bool
     created_at: datetime
@@ -158,35 +206,6 @@ class DisplayUser(DisplayBase):
 
     def __str__(self):
         return f"User {self.username} ({self.useremail})"
-
-# ______________ ROLES ____________________
-class RoleBase(BaseModel):
-    rolename: str = Field(
-        ...,
-        min_length=3,
-        max_length=50,
-        pattern=r"^[a-z_]+$",
-        examples=["manager", "area_manager"],
-        description="Lowercase role identifier with underscores"
-    )
-
-class RoleCreate(RoleBase):
-    clientid: int = Field(
-        ...,
-        gt=0,
-        examples=[1],
-        alias="clientid",
-        description="Client who owns this role"
-    )
-
-class DisplayRole(DisplayBase):
-    id: int
-    rolename: str
-    created_at: datetime
-    client: DisplayClient
-
-    def __str__(self):
-        return f"Role {self.rolename.title().replace('_', ' ')}"
 
 # ______________ SERVICES ____________________
 class ServiceBase(BaseModel):
@@ -223,42 +242,84 @@ class DisplayService(DisplayBase):
         return f"{self.servicename.title()} ({self.servicevariant})"
 
 # ============== MAPPING TABLES ==============
+# ______________ OUTLET <> SERVICE MAPPINGS ____________________
+class OutletServiceBase(BaseModel):
+    outlet_id: int = Field(
+        ..., 
+        description="ID of the associated outlet.", 
+        examples=[101]
+    )
+    service_id: int = Field(
+        ..., 
+        description="ID of the linked service.", 
+        examples=[5]
+    )
 
-# ______________ ROLE-SERVICE MAPPING ____________________
-class RoleServiceMappingCreate(BaseModel):
-    roleid: int = Field(..., gt=0, examples=[1])
-    serviceid: int = Field(..., gt=0, examples=[1])
-    clientid: int = Field(..., gt=0, examples=[1])
+class OutletServiceCreate(OutletServiceBase):
+    client_id: int = Field(
+        ..., 
+        description="The ID of the client this mapping belongs to.", 
+        examples=[1]
+    )
 
-class DisplayRoleServiceMapping(DisplayBase):
+class DisplayOutletService(DisplayBase):
     id: int
-    role: DisplayRole
+    outlet: DisplayOutlet
     service: DisplayService
     client: DisplayClient
-    assigned_at: datetime
+    created_at: datetime
 
-# ______________ ROLE-USER MAPPING ____________________
-class RoleUserMappingCreate(BaseModel):
-    roleid: int = Field(..., gt=0, examples=[1])
-    userid: int = Field(..., gt=0, examples=[1])
-    clientid: int = Field(..., gt=0, examples=[1])
+# ______________ USER <> SERVICE MAPPINGS ____________________
+class UserServiceBase(BaseModel):
+    user_id: int = Field(
+        ..., 
+        description="ID of the user.",
+        examples=[10]
+    )
+    service_id: int = Field(
+        ..., 
+        description="ID of the service assigned to the user.", 
+        examples=[5]
+    )
 
-class DisplayRoleUserMapping(DisplayBase):
+class UserServiceCreate(UserServiceBase):
+    client_id: int = Field(
+        ..., 
+        description="The ID of the client this mapping belongs to.", 
+        examples=[1]
+    )
+
+class DisplayUserService(DisplayBase):
+
     id: int
-    role: DisplayRole
     user: DisplayUser
+    service: DisplayService
     client: DisplayClient
-    assigned_at: datetime
+    created_at: datetime
 
-# ______________ ROLE-OUTLET MAPPING ____________________
-class RoleOutletMappingCreate(BaseModel):
-    roleid: int = Field(..., gt=0, examples=[1])
-    outletid: int = Field(..., gt=0, examples=[1])
-    clientid: int = Field(..., gt=0, examples=[1])
+# ______________ USER <> OUTLET MAPPINGS ____________________
+class UserOutletBase(BaseModel):
+    user_id: int = Field(
+        ..., 
+        description="ID of the user.", 
+        examples=[10]
+    )
+    outlet_id: int = Field(
+        ..., 
+        description="ID of the outlet assigned to the user.", 
+        examples=[101]
+    )
 
-class DisplayRoleOutletMapping(DisplayBase):
+class UserOutletCreate(UserOutletBase):
+    client_id: int = Field(
+        ..., 
+        description="The ID of the client this mapping belongs to.", 
+        examples=[1]
+    )
+
+class DisplayUserOutlet(DisplayBase):
     id: int
-    role: DisplayRole
+    user: DisplayUser
     outlet: DisplayOutlet
     client: DisplayClient
-    assigned_at: datetime
+    created_at: datetime

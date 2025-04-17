@@ -85,7 +85,8 @@ async def register_client(
     db_client = models.Client(
         username=client.username,
         email=client.email,
-        hashed_password=hashed_password
+        hashed_password=hashed_password,
+        accesstype=client.accesstype
     )
     db.add(db_client)
     db.commit()

@@ -9,20 +9,110 @@ from ..database import models
 
 router = APIRouter() 
 
+#______________________________________ Brand routes ______________________________________
+@router.post("/brands/", response_model=schemas.DisplayBrand)
+async def create_brand(
+    brand: schemas.BrandCreate,
+    db: Session = Depends(get_db) 
+):
+    # Check if brand already exists
+    db_brand = db.query(models.Client).filter(
+        (models.Brand.brandname == brand.brandname)
+    ).first()
+    if db_brand:
+        raise HTTPException(
+            status_code=400,
+            detail="Brand already registered"
+        )
+    
+    db_brand = models.Brand(
+        brandname=brand.brandname,
+        client_id=brand.client_id 
+    )
+    db.add(db_brand)
+    db.commit()
+    db.refresh(db_brand)
+    return db_brand
+
+@router.get("/brands/", response_model=List[schemas.DisplayBrand])
+async def read_brands(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db)
+):
+    query = db.query(models.Brand)
+    
+    brands = query.offset(skip).limit(limit).all()
+    return brands
+
+@router.get("/brands/client/{client_id}", response_model=List[schemas.DisplayBrand])
+async def read_brand_of_clients(
+    client_id: int, 
+    db: Session = Depends(get_db)
+):
+    db_brand = db.query(models.Brand).filter(models.Brand.client_id == client_id).all()
+    if db_brand is None:
+        raise HTTPException(status_code=404, detail="Outlets not found for client_id")
+    return db_brand
+
+@router.get("/brands/{brand_id}", response_model=schemas.DisplayBrand)
+async def read_brand(
+    brand_id: int, 
+    db: Session = Depends(get_db)
+):
+    db_brand = db.query(models.Brand).filter(models.Brand.id == brand_id).first()
+    if db_brand is None:
+        raise HTTPException(status_code=404, detail="Outlets not found for brand_id")
+    return db_brand
+
+
 #______________________________________ Outlet routes ______________________________________
 @router.post("/outlets/", response_model=schemas.DisplayOutlet)
 async def create_outlet(
     outlet: schemas.OutletCreate, 
     db: Session = Depends(get_db)
 ):
+    # Check if brand already exists
+    existing_outlet = db.query(models.Outlet).filter(
+        (models.Outlet.aggregator == outlet.aggregator) &
+        (models.Outlet.resid == outlet.resid)
+    ).first()
+    if existing_outlet:
+        raise HTTPException(
+            status_code=400,
+            detail="Res ID already registered"
+        )
+    
+    # Get brand using brand_id
+    db_brand = db.query(models.Brand).filter(models.Brand.id == outlet.brandid).first()
+    if not db_brand:
+        raise HTTPException(
+            status_code=404,
+            detail="Brand not found"
+        )
+    
+    # Generate brand abbreviation
+    brand_name_words = (db_brand.brandname.strip()).split()
+    if len(brand_name_words) > 1:
+        # Take first letter of each word for abbreviation
+        abbreviation = ''.join([word[0].upper() for word in brand_name_words if word])
+    else:
+        # Use full brand name if single word
+        abbreviation = db_brand.brandname
+
+    # Create res_shortcode
+    res_shortcode = f"{abbreviation} - {outlet.subzone}"
+
     db_outlet = models.Outlet(
         aggregator=outlet.aggregator,
         resid=outlet.resid,
         subzone=outlet.subzone,
+        resshortcode=res_shortcode,
         city=outlet.city,
         outletnumber=outlet.outletnumber,
         is_active=outlet.is_active,
-        client_id=outlet.clientid
+        client_id=outlet.clientid,
+        brand_id=outlet.brandid
     )
     db.add(db_outlet)
     db.commit()
@@ -74,6 +164,17 @@ async def create_user(
     user: schemas.UserCreate, 
     db: Session = Depends(get_db)
 ):
+    # Check if user already exists
+    existing_user = db.query(models.User).filter(
+        (models.User.usernumber == user.usernumber) &
+        (models.User.useremail == user.useremail)
+    ).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=400,
+            detail="User is already registered"
+        )
+    
     db_user = models.User(
         username=user.username,
         usernumber=user.usernumber,
@@ -115,57 +216,22 @@ async def read_user(
     return db_user
 
 
-#______________________________________ Role routes ______________________________________
-@router.post("/roles/", response_model=schemas.DisplayRole)
-async def create_role(
-    role: schemas.RoleCreate, 
-    db: Session = Depends(get_db)
-):
-    db_role = models.Role(
-        rolename=role.rolename,
-        client_id=role.clientid
-    )
-    db.add(db_role)
-    db.commit()
-    db.refresh(db_role)
-    return db_role
-
-@router.get("/roles/", response_model=List[schemas.DisplayRole])
-async def read_roles(
-    skip: int = 0, 
-    limit: int = 100,
-    db: Session = Depends(get_db)
-):
-    roles = db.query(models.Role).offset(skip).limit(limit).all()
-    return roles
-
-@router.get("/roles/client/{client_id}", response_model=List[schemas.DisplayRole])
-async def read_users_of_clients(
-    client_id: int, 
-    db: Session = Depends(get_db)
-):
-    db_roles = db.query(models.Role).filter(models.Role.client_id == client_id).all()
-    if db_roles is None:
-        raise HTTPException(status_code=404, detail="Roles not found for client_id")
-    return db_roles
-
-@router.get("/roles/{role_id}", response_model=schemas.DisplayRole)
-async def read_role(
-    role_id: int, 
-    db: Session = Depends(get_db)
-):
-    db_role = db.query(models.Role).filter(models.Role.id == role_id).first()
-    if db_role is None:
-        raise HTTPException(status_code=404, detail="Role not found")
-    return db_role
-
-
 #______________________________________ Service routes ______________________________________
 @router.post("/services/", response_model=schemas.DisplayService)
 async def create_service(
     service: schemas.ServiceCreate, 
     db: Session = Depends(get_db)
 ):
+    # Check if user service exists
+    existing_service = db.query(models.Service).filter(
+        (models.Service.servicename == service.servicename) &
+        (models.Service.servicename == service.servicename)
+    ).first()
+    if existing_service:
+        raise HTTPException(
+            status_code=400,
+            detail="Service is already registered"
+        )
     db_service = models.Service(
         servicename=service.servicename,
         servicevariant=service.servicevariant
