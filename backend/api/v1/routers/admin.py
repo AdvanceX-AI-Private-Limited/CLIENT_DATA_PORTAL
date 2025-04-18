@@ -159,32 +159,53 @@ async def read_outlet(
 
 
 #______________________________________ User routes ______________________________________
-@router.post("/users/", response_model=schemas.DisplayUser)
-async def create_user(
-    user: schemas.UserCreate, 
+@router.post("/users/", response_model=List[schemas.DisplayUser])
+async def create_users(
+    users: List[schemas.UserCreate], 
     db: Session = Depends(get_db)
 ):
-    # Check if user already exists
-    existing_user = db.query(models.User).filter(
-        (models.User.usernumber == user.usernumber) &
-        (models.User.useremail == user.useremail)
-    ).first()
-    if existing_user:
-        raise HTTPException(
-            status_code=400,
-            detail="User is already registered"
-        )
     
-    db_user = models.User(
-        username=user.username,
-        usernumber=user.usernumber,
-        useremail=user.useremail,
-        client_id=user.clientid
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+    created_users = []
+
+    for user in users:
+        print(user.clientid)
+        # Check if client exists
+        existing_client = db.query(models.Client).filter(
+            (models.Client.id == user.clientid)
+        ).first()
+        if not existing_client:
+            raise HTTPException(
+                status_code=400,
+                detail="Unknown client ID passed"
+            )
+
+        # Check if user already exists
+        existing_user = db.query(models.User).filter(
+            (models.User.usernumber == user.usernumber) &
+            (models.User.useremail == user.useremail)
+        ).first()
+        if existing_user:
+            raise HTTPException(
+                status_code=400,
+                detail="User is already registered"
+            )
+        
+        db_user = models.User(
+            username=user.username,
+            usernumber=user.usernumber,
+            useremail=user.useremail,
+            client_id=user.clientid
+        )
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        created_users.append(db_user)
+
+    if not created_users:
+        raise HTTPException(status_code=400, detail="No users were created. All were duplicates.")
+
+    return created_users
+
 
 @router.get("/users/", response_model=List[schemas.DisplayUser])
 async def read_users(
