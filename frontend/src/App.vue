@@ -12,6 +12,11 @@ import {
 } from '@heroicons/vue/24/outline';
 import { storeToRefs } from "pinia";
 import { useSidebarStore } from "@/stores/useSidebar"; 
+import LoginView from "./views/auth/LoginView.vue";
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+
 
 const sidebarStore = useSidebarStore();
 const { isLocked } = storeToRefs(sidebarStore);
@@ -34,9 +39,9 @@ const navigation = [
 		path: '/brand-management', 
 		icon: CubeIcon,
 		subLinks: [
-			{ name: 'User Management', path: '/brand-management/user-management' }, 
-			{ name: 'Role Management', path: '/brand-management/role-management' }, 
-			{ name: 'Outlet Management', path: '/brand-management/outlet-management' } 
+			{ name: 'User', path: '/brand-management/user-management' }, 
+			{ name: 'Role', path: '/brand-management/role-management' }, 
+			{ name: 'Outlet', path: '/brand-management/outlet-management' } 
 		]
 	},
 	{ 
@@ -54,17 +59,27 @@ const navigation = [
 	{ name: 'Settings', path: '/settings', icon: Cog6ToothIcon }
 ];
 
+const hideSidebarRoutes = ['/login'];
+
+const shouldShowSidebar = computed(() => !hideSidebarRoutes.includes(route.path));
+console.log(shouldShowSidebar);
 </script>
 
 <template>
   <div :class="{ 'min-h-screen flex transition-all duration-300': isLocked, 'min-h-screen': !isLocked }">
-    <Sidebar :is-open="isSidebarOpen" :navigation="navigation" />
+    <Sidebar v-if="shouldShowSidebar" :navigation="navigation" />
+	<!-- :is-open="isSidebarOpen" -->
     <main :class="[
-        isSidebarOpen && !isLocked ? 'ml-64' : 'md:ml-16',
-        { 'transition-all duration-300 flex-1 lg:pl-48': isLocked,  'transition-all duration-300': !isLocked }
-      ]">
-      <router-view />
-    </main>
+		isSidebarOpen && !isLocked ? 'ml-64' : 'md:ml-16',
+		{
+			'transition-all duration-300 flex-1 lg:pl-48': isLocked,
+			'transition-all duration-300': !isLocked,
+			'ml-0': !shouldShowSidebar 
+		}
+		]">
+		<router-view />
+	</main>
+
   </div>
 </template>
 
