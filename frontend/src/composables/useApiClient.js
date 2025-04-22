@@ -73,6 +73,16 @@ const apiEndpoints = {
 		get: (params) => apiClient.get('/api/v1/dashboard/test2', { params }),
 		create: (payload) => createWithFallbacks('/api/v1/dashboard/test2', payload)
 	},
+	login: {
+		get: () => Promise.resolve({
+			data: {
+				message: "GET method not supported on this endpoint",
+				info: "Your backend only has a POST route for this endpoint",
+				request: "get (mock)"
+			}
+		}),
+		create: (payload) => createWithFallbacks('/api/v1/auth/test_login', payload)
+	},
 }
 
 export function useApiEndpoints() {

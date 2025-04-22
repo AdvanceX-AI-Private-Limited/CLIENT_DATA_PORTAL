@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, timezone
 from ..database.database import get_db
 from ..schemas import schemas
 from ..database import models
+from pydantic import BaseModel
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 IST = timezone(timedelta(hours=5, minutes=30))
@@ -162,4 +163,19 @@ async def read_client(
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
     return db_client
+
+class RequestData(BaseModel):
+    email: str
+
+@router.post("/test_login")
+async def test_login(request: RequestData):
+    emails = ['aslam.miya@advancex.ai', 'test@test.com']
+    email = request.email
+    print("email ", email)
+    if email in emails:
+        print("email found in list", email)
+        return {"message": "This is a test login", "status": "success"}
+    else:
+        print("email not found in list", email)
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
