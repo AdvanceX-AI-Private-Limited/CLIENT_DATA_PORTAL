@@ -15,6 +15,8 @@ import { useSidebarStore } from "@/stores/useSidebar";
 import LoginView from "./views/auth/LoginView.vue";
 import { useRoute } from 'vue-router';
 
+const isSidebarOpen = ref(false)
+
 const route = useRoute();
 
 

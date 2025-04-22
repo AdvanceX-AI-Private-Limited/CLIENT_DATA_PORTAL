@@ -89,4 +89,5 @@ if __name__ == "__main__":
     logger.info(f"API documentation available at: /docs and /redoc")
     uvicorn.run(app,
                 host="localhost",
-                port=8000)
+                port=8000,
+                reload=True)
