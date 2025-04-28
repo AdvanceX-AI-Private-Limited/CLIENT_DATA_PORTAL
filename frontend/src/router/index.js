@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { nextTick } from 'vue';
+
 import HomeView from '@/views/home/HomeView.vue';
 import LayoutWrapper from '@/components/LayoutWrapper.vue';
 import AllMappings from '@/views/access_management/AllMappings.vue';
@@ -16,11 +18,16 @@ import Settings from '@/views/settings/Settings.vue';
 import Subscription from '@/views/subscription/Subscription.vue';
 import error_404 from '@/views/erro_pages/error_404.vue';
 import LoginView from '@/views/auth/LoginView.vue';
+import SignUpView from '@/views/auth/SignUpView.vue';
+
+// Define public routes that don't require authentication
+const publicRoutes = ['/login', '/sign-up'];
 
 const routes = [
 	{
 		path: '/',
 		component: LayoutWrapper,
+		meta: { requiresAuth: true },
 		children: [
 					{
 						path: '',
@@ -119,6 +126,13 @@ const routes = [
 		path: '/login',
 		name: 'login',
 		component: LoginView,
+		meta: { requiresAuth: false },
+	},
+	{
+		path: '/sign-up',
+		name: 'signup',
+		component: SignUpView,
+		meta: { requiresAuth: false },
 	},
 	{
 	path: '/:pathMatch(.*)*', 
@@ -130,6 +144,35 @@ const routes = [
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes,
+});
+
+// Global variable to track authentication state
+let isUserAuthenticated = false;
+
+// Function to set authentication state
+export function setAuthState(authenticated) {
+  isUserAuthenticated = authenticated;
+}
+
+router.beforeEach((to, from, next) => {
+  // If auth state is not yet determined and we're accessing a protected route,
+  // let the App.vue component handle the redirection after Clerk is fully loaded
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const isPublicRoute = publicRoutes.includes(to.path);
+  
+  // If we're already navigating to a public route, just proceed
+  if (isPublicRoute) {
+    next();
+    return;
+  }
+  
+  // If route requires auth and user is not authenticated
+  if (requiresAuth && !isUserAuthenticated) {
+    next('/login');
+  }
+  else {
+    next();
+  }
 });
 
 export default router;

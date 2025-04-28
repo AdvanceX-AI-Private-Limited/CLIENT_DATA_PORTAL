@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { useAuth, UserButton } from '@clerk/vue';
 import {
 	LockClosedIcon,
 	LockOpenIcon,
@@ -138,14 +139,15 @@ const props = defineProps({
 			<div id="userActions" class="pb-4">
 				<div class="w-full py-2">
 					<div class="flex items-center space-x-3 p-2 rounded-xl bg-gray-900">
-						<UserCircleIcon class="w-8 h-8 text-gray-400" />
+						<!-- <UserCircleIcon class="w-8 h-8 text-gray-400" /> -->
+						 <UserButton after-sign-out-url="/login"/>
 						<div v-if="isOpen" class="overflow-hidden whitespace-nowrap">
 							<div class="text-sm font-med">aslam.miya@advancex.ai</div>
 						</div>
 					</div>
 				</div>
 
-				<div class="w-full py-2">
+				<!-- <div class="w-full py-2">
 					<button
 						@click="logout"
 						class="flex items-center space-x-3 w-full text-md font-medium text-white opacity-85 hover:bg-red-600/50 transition-all duration-300 cursor-pointer bg-red-700 p-2 rounded-xl"
@@ -153,7 +155,7 @@ const props = defineProps({
 						<ArrowRightOnRectangleIcon class="w-6 h-6 text-white" />
 						<span v-if="isOpen">Logout</span>
 					</button>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</aside>
