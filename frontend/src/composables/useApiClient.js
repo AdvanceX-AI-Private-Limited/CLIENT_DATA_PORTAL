@@ -55,8 +55,8 @@ const apiEndpoints = {
 		create: (payload) => apiClient.post('/api/v1/admin/users/', payload)
 	},
 	outlets: {
-		get: (params) => apiClient.get('/api/v1/admin/outlets/', { params }),
-		create: (payload) => apiClient.post('/api/v1/admin/outlets/', payload)
+		get: (params) => apiClient.get('/api/v1/admin/outlets/1', { params }),
+		create: (payload) => apiClient.post('/api/v1/admin/outlets/1', payload)
 	},
 	test: {
 		// Since the backend doesn't support GET, use a mock response

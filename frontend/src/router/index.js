@@ -120,7 +120,7 @@ const routes = [
 				name: 'subscription',
 				component: Subscription,
 			},
-		],
+	],
 	},
 	{
 		path: '/login',
@@ -155,22 +155,34 @@ export function setAuthState(authenticated) {
 }
 
 router.beforeEach((to, from, next) => {
-  // If auth state is not yet determined and we're accessing a protected route,
-  // let the App.vue component handle the redirection after Clerk is fully loaded
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const isPublicRoute = publicRoutes.includes(to.path);
   
-  // If we're already navigating to a public route, just proceed
+  // Allow all navigation to public routes
   if (isPublicRoute) {
     next();
     return;
   }
   
-  // If route requires auth and user is not authenticated
-  if (requiresAuth && !isUserAuthenticated) {
-    next('/login');
-  }
-  else {
+  // For authenticated routes
+  if (requiresAuth) {
+    // If coming from a page refresh (from is an empty route), we want to
+    // let the app.vue component handle this after Clerk is fully loaded
+    const isPageRefresh = from.name === undefined;
+    
+    if (isPageRefresh) {
+      // Let the App.vue handle authentication check after Clerk loads
+      // This prevents premature redirects during page refresh
+      next();
+    } else if (!isUserAuthenticated) {
+      // Only redirect to login if not authenticated and not a page refresh
+      next('/login');
+    } else {
+      // Allow navigation
+      next();
+    }
+  } else {
+    // For any other route that doesn't require auth
     next();
   }
 });

@@ -22,23 +22,48 @@ const route = useRoute();
 const router = useRouter();
 const { isSignedIn, isLoaded } = useAuth();
 
+// For debugging
+watchEffect(() => {
+  if (isLoaded.value) {
+    console.log('Clerk authentication loaded, isSignedIn:', isSignedIn.value);
+    console.log('Current route:', route.path);
+  }
+});
+
 // Track previous auth state to avoid unnecessary redirects
 let previousAuthState = null;
+
+// Initialize the auth state once when component is mounted
+onMounted(() => {
+  // Use watchEffect within onMounted to handle async loading of Clerk
+  const stopWatcher = watchEffect(() => {
+    if (isLoaded.value) {
+      console.log('Component mounted and Clerk loaded, setting initial auth state:', isSignedIn.value);
+      previousAuthState = isSignedIn.value;
+      setAuthState(isSignedIn.value);
+      // Stop this watcher once it's executed
+      stopWatcher();
+    }
+  });
+});
 
 // Watch for changes in authentication state and update the router's global state
 watchEffect(() => {
   if (isLoaded.value) {
-    // Only update and trigger navigation when the auth state actually changes
-    if (previousAuthState !== isSignedIn.value) {
+    // Always update the global auth state
+    setAuthState(isSignedIn.value);
+    
+    // Only redirect if auth state actually changes from a previous known state 
+    // AND this isn't the initial load (previousAuthState will be non-null after onMounted)
+    if (previousAuthState !== null && previousAuthState !== isSignedIn.value) {
       previousAuthState = isSignedIn.value;
-      setAuthState(isSignedIn.value);
       
       // Handle current route based on new auth state
       const currentPath = route.path;
       const publicRoutes = ['/login', '/sign-up'];
       const isPublicRoute = publicRoutes.includes(currentPath);
       
-      // Redirect if needed based on new auth state
+      // Redirect if needed based on auth state change
       if (isSignedIn.value && isPublicRoute) {
         router.push('/');
       } else if (!isSignedIn.value && !isPublicRoute) {

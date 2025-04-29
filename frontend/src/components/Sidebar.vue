@@ -138,7 +138,7 @@ const props = defineProps({
 			<!-- User Actions & Logout -->
 			<div id="userActions" class="pb-4">
 				<div class="w-full py-2">
-					<div class="flex items-center space-x-3 p-2 rounded-xl bg-gray-900">
+					<div class="flex items-center space-x-3 p-1.5 rounded-xl bg-gray-900">
 						<!-- <UserCircleIcon class="w-8 h-8 text-gray-400" /> -->
 						 <UserButton after-sign-out-url="/login"/>
 						<div v-if="isOpen" class="overflow-hidden whitespace-nowrap">
