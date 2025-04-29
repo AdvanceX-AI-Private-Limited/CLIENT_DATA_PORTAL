@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { useAuth, UserButton } from '@clerk/vue';
+import { useUser , UserButton } from '@clerk/vue';
 import {
 	LockClosedIcon,
 	LockOpenIcon,
@@ -42,6 +42,8 @@ const isSubmenuOpen = (name) => openSubmenus.value[name] || false;
 // Active route highlighting
 const isActiveRoute = (path) => route.path === path;
 const isSubItemActive = (subLinks) => subLinks.some((subItem) => isActiveRoute(subItem.path));
+
+const { user } = useUser();
 
 const logout = () => {
 	console.log('User logged out');
@@ -142,7 +144,7 @@ const props = defineProps({
 						<!-- <UserCircleIcon class="w-8 h-8 text-gray-400" /> -->
 						 <UserButton after-sign-out-url="/login"/>
 						<div v-if="isOpen" class="overflow-hidden whitespace-nowrap">
-							<div class="text-sm font-med">aslam.miya@advancex.ai</div>
+							<div class="text-sm font-med">{{ user?.primaryEmailAddress?.emailAddress }}</div>
 						</div>
 					</div>
 				</div>

@@ -53,6 +53,13 @@ watchEffect(() => {
     // Always update the global auth state
     setAuthState(isSignedIn.value);
     
+    // Set or remove authentication token in storage
+    if (isSignedIn.value) {
+      localStorage.setItem('auth-token', 'true');
+    } else {
+      localStorage.removeItem('auth-token');
+    }
+    
     // Only redirect if auth state actually changes from a previous known state 
     // AND this isn't the initial load (previousAuthState will be non-null after onMounted)
     if (previousAuthState !== null && previousAuthState !== isSignedIn.value) {

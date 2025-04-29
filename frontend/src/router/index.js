@@ -146,43 +146,52 @@ const router = createRouter({
 	routes,
 });
 
-// Global variable to track authentication state
 let isUserAuthenticated = false;
 
-// Function to set authentication state
+try {
+  isUserAuthenticated = localStorage.getItem('auth-token') === 'true';
+} catch (e) {
+  console.error('Error accessing localStorage:', e);
+}
+
 export function setAuthState(authenticated) {
   isUserAuthenticated = authenticated;
+  
+  if (authenticated) {
+    localStorage.setItem('auth-token', 'true');
+  } else {
+    localStorage.removeItem('auth-token');
+  }
 }
 
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const isPublicRoute = publicRoutes.includes(to.path);
   
-  // Allow all navigation to public routes
   if (isPublicRoute) {
     next();
     return;
   }
   
-  // For authenticated routes
   if (requiresAuth) {
-    // If coming from a page refresh (from is an empty route), we want to
-    // let the app.vue component handle this after Clerk is fully loaded
     const isPageRefresh = from.name === undefined;
     
     if (isPageRefresh) {
-      // Let the App.vue handle authentication check after Clerk loads
-      // This prevents premature redirects during page refresh
-      next();
+      const hasStoredAuth = localStorage.getItem('auth-token') || 
+                           sessionStorage.getItem('auth-token') ||
+                           isUserAuthenticated;
+      
+      if (hasStoredAuth) {
+        next();
+      } else {
+        next('/login');
+      }
     } else if (!isUserAuthenticated) {
-      // Only redirect to login if not authenticated and not a page refresh
       next('/login');
     } else {
-      // Allow navigation
       next();
     }
   } else {
-    // For any other route that doesn't require auth
     next();
   }
 });
