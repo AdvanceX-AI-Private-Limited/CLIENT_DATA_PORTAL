@@ -10,7 +10,7 @@ const userData = ref({})
 
 const login = () => {
   if (username.value && password.value) {
-    console.log('Valid credentials:', username.value, password.value)
+    // console.log('Valid credentials:', username.value, password.value)
     showOtp.value = true
   } else {
     console.log('Please enter both fields')
@@ -18,7 +18,7 @@ const login = () => {
 }
 
 const handleVerified = (payload) => {
-  console.log('Received verified data:', payload)
+  // console.log('Received verified data:', payload)
   userData.value = payload
   showOtp.value = true
 }

@@ -1,0 +1,547 @@
+aggregator,brand,res_ids,subzone,users,the_status
+PetPooja,Jango's,58155,Malad,"['7977772651', '7977773461', '7977776101', '9594018800']",false
+Swiggy,Good Flippin' Burgers,0,DLF Promenade,"['Staff', 'Lalit']",active
+Swiggy,Good Flippin' Burgers,0,Eros Gurgaon,"['Staff', 'Lalit']",changed
+Swiggy,Good Flippin' Burgers,0,Mumbai-Pune Expressway,"['Priyatam', 'Mayur', 'Staff']",false
+Swiggy,Good Flippin' Burgers,0,Noida 73,"['Staff', 'Lalit']",active
+Swiggy,Good Flippin' Burgers,0,Pacific Rajouri,"['Staff', 'Lalit']",changed
+Swiggy,Good Flippin' Burgers,0,Phoenix Mall of Asia,"['Staff', 'Somesh', 'Rakesh']",false
+Swiggy,Good Flippin' Burgers,0,Pune Mumbai Expressway,"['Priyatam', 'Mayur', 'Staff']",active
+Swiggy,Good Flippin' Burgers,0,Rajouri,"['Staff', 'Lalit']",changed
+Swiggy,Good Flippin' Burgers,0,Sky City Borivali,"['Mayur', 'Staff', 'Jitesh']",false
+Swiggy,Good Flippin' Burgers,1002277,Electronic City,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Good Flippin' Burgers,1003870,Kondapur,"['Staff', 'Venkatesh', 'Somesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Good Flippin' Burgers,1003880,Banjara Hills,"['Staff', 'Venkatesh', 'Somesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Prasuma Momo Kitchen,1008881,Vasanth Nagar,['7977776101'],active
+Swiggy,Nothing But Chicken,1022825,Virar,"['7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Swiggy,The Churro Co.,102638,Lokhandwala,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7738574300', '9820111880', '9920734744']",false
+Swiggy,Good Flippin' Burgers,1030394,Nizampet,"['Venkatesh', 'Staff', 'Somesh']",active
+Swiggy,Prasuma Momo Kitchen,1033134,Mira Road,['7977776101'],changed
+Swiggy,Good Flippin' Burgers,1035394,Whitefield,"['Staff', 'Somesh', 'Rakesh']",false
+Swiggy,FLYP Coffee,1049078,Baner,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,FLYP Coffee,1049115,Pali Hill,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Swiggy,FLYP Coffee,1049116,Juhu,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,FLYP Coffee,1049117,Lower Parel,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,FLYP Coffee,1049118,Malad,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Swiggy,FLYP Coffee,1049119,Andheri East,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,FLYP Coffee,1049120,Thane,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,FLYP Coffee,1049121,Borivali,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Swiggy,FLYP Coffee,1049122,Marine Lines,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,FLYP Coffee,1049123,Vashi,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,FLYP Coffee,1049124,Chembur,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Swiggy,FLYP Coffee,1049125,Sushant Lok,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,FLYP Coffee,1049126,DLF Promenade,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,FLYP Coffee,1049127,Oshiwara,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Swiggy,FLYP Coffee,1049128,Vasai,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,FLYP Coffee,1049129,Parel,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,FLYP Coffee,1049130,Kopa Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Swiggy,FLYP Coffee,1049131,Oberoi Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,FLYP Coffee,1049132,Pavilion Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,FLYP Coffee,1049133,Dombivli,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Swiggy,FLYP Coffee,1049138,Kalyan,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,FLYP Coffee,1049139,Tribeca,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,FLYP Coffee,1049141,Phoenix Kurla,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Swiggy,FLYP Coffee,1049142,Viviana Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,FLYP Coffee,1049143,Church Street,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,FLYP Coffee,1049144,Nexus Koramangala,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Swiggy,FLYP Coffee,1049145,RMZ Ecoworld,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,Grandmama's Cafe,131042,Koregaon Park,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,Nothing But Chicken,138648,Nerul,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Nerul NBC staff', 'Nerul NBC staff 2 ', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Swiggy,The Churro Co.,146039,Kandivali East,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7738574300', '9820111880', '9920734744']",false
+Swiggy,Sadguru Pure Veg,149861,Goregaon,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977772651', '7977773461', '7977776101']",active
+Swiggy,Good Flippin' Burgers,170435,Bandra,"['Mayur', 'Jitesh', 'Staff']",changed
+Swiggy,Good Flippin' Burgers,170435,Pali Hill,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Grandmama's Cafe,177739,Dadar East,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773461', '8828470900', '9821422333']",active
+Swiggy,Pritam Da Dhaba,181884,Dadar East,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977772651', '7977773461', '7977776101', '9372546456', '9987626654']",changed
+Swiggy,Nothing But Chicken,200279,"Hiranandani Estate, Thane West","['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Ganesh', 'Dinesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Swiggy,Nothing But Chicken,225134,Colaba,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Colaba Staff', 'Colaba Staff 2', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Swiggy,Nothing But Chicken,23293,Kandivali East,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Kandivali E NBC staff 2', 'Kandivali E NBC staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Swiggy,Nothing But Chicken,282420,Irla ,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Akshay', 'Hitesh', 'Harish', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Swiggy,Nothing But Chicken,282429,Mazgaon,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Shamsher', 'Dishank', 'Harshal', 'Mustafa', 'MC NBC Staff', 'MC NBC Staff 2 ', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Swiggy,Nothing But Chicken,282466,Kharghar,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Kharghar NBC staff 2 ', 'Kharghar NBC staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Swiggy,Nothing But Chicken,282471,Mulund East,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Mulund East Staff 2 ', 'Mulund East Staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Swiggy,Nothing But Chicken,29558,Mahakali,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Omkar', 'Akshay', 'Nahnath', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Swiggy,Good Flippin' Burgers,308198,Juhu,"['Mayur', 'Staff', 'Lenson', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Nothing But Chicken,308511,Viman Nagar,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Ritesh', 'Aditya', 'Dishank', 'Harshal', 'Mustafa', 'Viman N Staff 2', 'Viman N Staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Swiggy,Hurrems,320635,Fort,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Nothing But Chicken,326588,Dombivali,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Bhushan', 'Sushil Sharma', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Swiggy,Nothing But Chicken,336753,Mulund West ,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Mulund West NBC staff', 'Mulund West NBC staff 2 ', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Swiggy,Nothing But Chicken,340800,orlem,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Shamsher', 'Dishank', 'Harshal', 'Mustafa', 'Orlem NBC staff', 'Orlem NBC staff 2', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Swiggy,Grandmama's Cafe,359539,Mulund,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Swiggy,Jango's,36634,Malad,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977772651', '7977773461', '7977776101', '9594018800']",false
+Swiggy,Torii,370163,Khar,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '9987626654']",active
+Swiggy,Nothing But Chicken,375979,Ghatkopar,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Amit Singh', 'Rakesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Swiggy,Good Flippin' Burgers,376244,BKC,"['Mayur', 'Staff', 'Lenson', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Good Flippin' Burgers,382234,Powai,"['Mayur', 'Lenson', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Ginkgo Pan Asian Kitchen,382468,Dadar East,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977772651', '7977773461', '7977776101', '9372546456', '9987626654']",changed
+Swiggy,The Churro Co.,405298,Powai,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,Good Flippin' Burgers,412214,Lower Parel,"['Mayur', 'Jitesh', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Nothing But Chicken,414948,Salunkhe,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Ritesh', 'Aditya', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Swiggy,Grandmama's Cafe,415127,Lokhandwala,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,Nothing But Chicken,418110,Kolshet,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Mazgaon NBC staff 2 ', 'Mazgaon NBC staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Swiggy,Tru Falafel,421377,Marol,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101', '8291327532', '8291343308', '9405500808']",changed
+Swiggy,Nothing But Chicken,422752,Kemps Corner,"['Krish Ramsinghani', 'Sagar Gaikwad', 'Jay Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,Nothing But Chicken,425897,Marol,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Akshay', 'Moin', 'Ashish', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Swiggy,Tru Falafel,428635,Khar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101', '8291327532', '8291343308', '9405500808']",changed
+Swiggy,Tru Falafel,428659,Worli,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101', '8291327532', '8291343308', '9405500808']",false
+Swiggy,Nothing But Chicken,437596,Aundh,"['Krish Ramsinghani', 'Sagar Gaikwad', 'Jay Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,Nothing But Chicken,443428,Meadows,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Meadows NBC staff 2 ', 'Meadows NBC staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Swiggy,Nothing But Chicken,451104,Koregoan Park,"['Krish Ramsinghani', 'Sagar Gaikwad', 'Jay Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,Hurrems,455436,Powai,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,Hurrems,455458,BKC,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Swiggy,Grandmama's Cafe,45928,Kemps corner,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773461', '8828470900', '9821422333']",false
+Swiggy,Prasuma Momo Kitchen,473121,ILD,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Nothing But Chicken,474740,Borivali West,"['Krish Ramsinghani', 'Sagar Gaikwad', 'Jay Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Chandraprakash', 'Nitesh', 'Akshay', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Swiggy,Nothing But Chicken,475611,Kalyan,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Kalyan NBC staff 2 ', 'Kalyan NBC staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Swiggy,Good Flippin' Burgers,481591,Malad,"['Mayur', 'Staff', 'Jitesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Nothing But Chicken,48290,"Panch Pakhadi, Thane West","['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Nilesh', 'Omkar kamble', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Swiggy,Good Flippin' Burgers,490631,Andheri East,"['Mayur', 'Staff', 'Lenson', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Nothing But Chicken,51544,Mira Road,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Raj shetty', 'Shamsher', 'Rajesh Yadav', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Swiggy,Tru Falafel,520647,Chembur,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Swiggy,Prasuma Momo Kitchen,526775,Sushant Shopping Arcade,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Swiggy,Good Flippin' Burgers,534270,Thane,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Good Flippin' Burgers,534270,Thane Meadows,"['Staff', 'Mayur', 'Abdul']",changed
+Swiggy,Nothing But Chicken,54424,Chembur,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Chembur NBC Staff', 'Chembur NBC Staff 2 ', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Swiggy,Tru Falafel,553476,BKC,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101', '8291327532', '8291343308', '9405500808']",active
+Swiggy,Good Flippin' Burgers,555018,Borivali,"['Mayur', 'Jitesh', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Prasuma Momo Kitchen,557980,Juhu,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Swiggy,Prasuma Momo Kitchen,558005,Chembur,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Prasuma Momo Kitchen,558008,Powai,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Swiggy,Prasuma Momo Kitchen,558348,BKC,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Swiggy,Good Flippin' Burgers,559930,GK 1,"['Staff', 'Lalit', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Good Flippin' Burgers,562457,Noida,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Tru Falafel,563055,Oshiwara,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '0', '7977776101', '8291327532', '8291343308', '9405500808']",false
+Swiggy,Good Flippin' Burgers,569607,Marine Lines,"['Mayur', 'Staff', 'Jitesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Grandmama's Cafe,57224,Chembur,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773461', '8828470900', '9821422333']",changed
+Swiggy,Grandmama's Cafe,57227,Juhu,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773461', '8828470900', '9821422333']",false
+Swiggy,Bonomi Coffee,576299,Manayata,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7738574300', '7977772651', '7977776101', '9606366831', '9821722888', '8884617882']",active
+Swiggy,Good Flippin' Burgers,580637,Vashi,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Prasuma Momo Kitchen,583801,HSR,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Swiggy,Prasuma Momo Kitchen,583818,Whitefield,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Prasuma Momo Kitchen,583820,Sarjapur,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Swiggy,Prasuma Momo Kitchen,584112,BEL Road,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Swiggy,Tru Falafel,590924,Bhandup,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,Good Flippin' Burgers,592795,Chembur,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Grandmama's Cafe,593935,Lower Parel,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,Grandmama's Cafe,59767,Ghatkopar,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773461', '8828470900', '9821422333']",active
+Swiggy,Good Flippin' Burgers,601805,UV Gurgaon,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Good Flippin' Burgers,601805,Udyog Vihar,"['Staff', 'Lalit']",false
+Swiggy,Good Flippin' Burgers,601848,Sushant Lok,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Good Flippin' Burgers,601848,Sushant lok,"['Staff', 'Lalit']",changed
+Swiggy,Good Flippin' Burgers,604498,Vasant Kunj,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Good Flippin' Burgers,610476,DLF ,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Good Flippin' Burgers,616083,Tagore Garden,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Nothing But Chicken,616629,Charkop,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Shamsher', 'Dishank', 'Harshal', 'Mustafa', 'Charkop NBC staff', 'Charkop NBC staff 2 ', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Sunil', 'Nikhil', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Swiggy,Prasuma Momo Kitchen,621917,Noida - Sec 4,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Prasuma Momo Kitchen,622919,Zamrudpur,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Swiggy,Prasuma Momo Kitchen,624100,JP Nagar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Swiggy,Prasuma Momo Kitchen,624124,Mahadevpura,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Good Flippin' Burgers,624316,Mulund,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Nothing But Chicken,628434,Sion,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Shamsher', 'Dishank', 'Harshal', 'Mustafa', 'Sion NBC staff 2 ', 'Sion NBC staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Swiggy,Ginkgo Pan Asian Kitchen,632133,Juhu,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,Pritam Da Dhaba,633112,Juhu,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977772651', '7977773461', '7977776101', '9372546456', '9987626654']",changed
+Swiggy,Good Flippin' Burgers,644515,Oshiwara,"['Mayur', 'Staff', 'Lenson', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Prasuma Momo Kitchen,644539,Worli,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Prasuma Momo Kitchen,655584,Koramangala,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Swiggy,Prasuma Momo Kitchen,655587,Thane,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,Hurrems,658015,Chembur,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,Prasuma Momo Kitchen,659251,Indirapuram,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Swiggy,Chats R Us,664754,Kanakapura,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101', '9987626654']",false
+Swiggy,Nothing But Chicken,66905,Powai,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Powai Staff 2', 'Powai Staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Swiggy,Nothing But Chicken,66916,Borivali IC,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Dattaram', 'Shamsher', 'Sandesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Swiggy,Prasuma Momo Kitchen,674821,Electronic City,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Swiggy,Prasuma Momo Kitchen,674827,Model Town,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,Prasuma Momo Kitchen,675330,"Sector 73, Noida","['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Swiggy,Nothing But Chicken,68079,Vashi,"['Sagar Gaikwad', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Minino', 'Dishank', 'Harshal', 'Mustafa', 'Vashi NBC staff', 'Vashi NBC staff 2', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Swiggy,Prasuma Momo Kitchen,681157,Malad,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Prasuma Momo Kitchen,681158,Yelahanka,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Swiggy,Prasuma Momo Kitchen,681167,Banashankari,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,Prasuma Momo Kitchen,682601,Kalyan Nagar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Prasuma Momo Kitchen,688262,Vasant Kunj,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Swiggy,Good Flippin' Burgers,692307,Wagle Thane,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Prasuma Momo Kitchen,694084,Rajaji Nagar,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,Good Flippin' Burgers,694368,Mira Road,"['Mayur', 'Staff', 'Jitesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Nourish Noms,701698,Malviya Nagar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977772651', '7977773461', '7977776101']",false
+Swiggy,Nothing But Chicken,7022,Mumbai Central,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Shamsher', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Swiggy,Nothing But Chicken,7023,Malad West,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Kaustubh', 'Suresh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Swiggy,Nothing But Chicken,7024,Andheri Lokhandwala,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Arjun', 'Prashant', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Swiggy,Nothing But Chicken,7026,"7 Bungalows, Andheri West","['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Akshay', 'Sunil', 'Razzak', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Swiggy,Nothing But Chicken,7027,Pali Hill,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Rajesh', 'Franky', 'Akshay', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Swiggy,Prasuma Momo Kitchen,707619,Dwarka Mor,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,Prasuma Momo Kitchen,707627,Karol Baug,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Prasuma Momo Kitchen,707638,Dwarka Sec 08,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Swiggy,Prasuma Momo Kitchen,707639,Rohini,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Swiggy,Prasuma Momo Kitchen,707655,Preet Vihar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Prasuma Momo Kitchen,709307,"Sector 83, Noida","['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Swiggy,Prasuma Momo Kitchen,722280,Sector - 90,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Swiggy,Tru Falafel,723129,Kurla,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,Bonomi Coffee,724139,Koramangala,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7738574300', '7977772651', '7977776101', '9606366831', '9821722888', '8884617882']",changed
+Swiggy,Prasuma Momo Kitchen,724793,Faridabad - Sec - 15,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,Prasuma Momo Kitchen,730532,Oshiwara,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Prasuma Momo Kitchen,736843,BEML,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Swiggy,Prasuma Momo Kitchen,736845,Chandra Layout,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Swiggy,Prasuma Momo Kitchen,736898,Tumkur Road,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,Prasuma Momo Kitchen,737480,Vasant Vihar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Swiggy,Prasuma Momo Kitchen,739734,Marine Lines,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Swiggy,Prasuma Momo Kitchen,743723,Vasant Kunj (New),"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Good Flippin' Burgers,746257,"Sector 49, Gurgaon","['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Nothing But Chicken,748267,Dadar ,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Deepak', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Swiggy,Prasuma Momo Kitchen,752294,Salt Lake,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,Mithaicana,754153,Marathahalli,['9987626654'],changed
+Swiggy,Good Flippin' Burgers,763905,Kharghar,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Prasuma Momo Kitchen,764407,Bally Gunge,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Swiggy,Kulcha Patola,765420,Model Town,"['7977773857', '7977776101']",changed
+Swiggy,Foodle Express,765495,Belapur,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Swiggy,Grandmama's Cafe,766545,BKC Jio,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773461', '8828470900', '9821422333']",active
+Swiggy,Nothing But Chicken,772042,Vakola,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Akshay', 'Dishank', 'Harshal', 'Mustafa', 'Vakola NBC staff', 'Vakola NBC staff 2 ', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Swiggy,Nacho Mama,778537,Santacruz,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773857', '7977776101']",false
+Swiggy,Good Flippin' Burgers,779060,Kandivali,"['Mayur', 'Staff', 'Lenson', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Burgery,783569,4 Bungalows,"['Rahul Dabholkar', 'Mangesh Singh', '7977772641', '7977776101', '8108171717', '9920983833']",changed
+Swiggy,Good Flippin' Burgers,784035,Dwarka,"['Staff', 'Lalit', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Artwich,785548,4 Bungalows,"['Rahul Dabholkar', 'Mangesh Singh', '7977772641', '7977776101', '8108171717', '9920983833']",active
+Swiggy,Good Flippin' Burgers,786863,Vasai,"['Mayur', 'Staff', 'Jitesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Good Flippin' Burgers,791286,Parel,"['Mayur', 'Staff', 'Jitesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Good Flippin' Burgers,804128,Baner,"['Priyatam', 'Mayur', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Good Flippin' Burgers,805842,Faridabad,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Prasuma Momo Kitchen,806257,Marol,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Swiggy,Pizzette,809937,4 Bungalows,"['Rahul Dabholkar', 'Mangesh Singh', '7977772641', '7977776101', '8108171717', '9920983833']",active
+Swiggy,Good Flippin' Burgers,817850,Oberoi Goregaon,"['Mayur', 'Staff', 'Lenson']",changed
+Swiggy,Good Flippin' Burgers,817850,Oberoi Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Good Flippin' Burgers,817856,KOPA,"['Priyatam', 'Mayur', 'Staff']",active
+Swiggy,Good Flippin' Burgers,817856,Kopa Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Good Flippin' Burgers,834978,Pavilion,"['Priyatam', 'Mayur', 'Staff']",false
+Swiggy,Good Flippin' Burgers,834978,Pavilion Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Good Flippin' Burgers,843218,Dombivli,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Nothing But Chicken,846534,Airoli,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Akshay', 'Dishank', 'Harshal', 'Mustafa', 'Airoli NBC staff', 'Airoli NBC staff 2 ', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773857', '9137117901', '9867311412']",false
+Swiggy,Prasuma Momo Kitchen,853092,Greater Noida,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Mithaicana,862705,Jayanagar,['9987626654'],changed
+Swiggy,Good Flippin' Burgers,866642,Kharadi,"['Priyatam', 'Mayur', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Good Flippin' Burgers,872653,Hinjewadi,"['Priyatam', 'Mayur', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Nothing But Chicken,874540,Baner,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Ritesh', 'Aditya', 'Dishank', 'Harshal', 'Mustafa', 'Baner NBC staff', 'Baner NBC staff 2 ', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773857', '9137117901', '9867311412']",changed
+Swiggy,Antep Grill,876599,Fort,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773857', '7977776101', '9665000863', '9819590546', '9987626654']",false
+Swiggy,Good Flippin' Burgers,884157,Chinchwad,"['Priyatam', 'Mayur', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Good Flippin' Burgers,893663,Kalyan,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Prasuma Momo Kitchen,904134,Vashi,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Swiggy,Good Flippin' Burgers,924515,Mahadevapura,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Tru Falafel,926507,Malad,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101', '8291327532', '8291343308', '9405500808']",changed
+Swiggy,Good Flippin' Burgers,926903,Tribeca,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Good Flippin' Burgers,926903,Tribeca Highstreet,"['Priyatam', 'Mayur', 'Staff']",active
+Swiggy,Prasuma Momo Kitchen,932502,Dahisar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Swiggy,Nothing But Chicken,934635,Vasai,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Shamsher', 'Dishank', 'Harshal', 'Mustafa', 'Vasai NBC staff 2 ', 'Vasai NBC staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Sunil', 'Nikhil', '7977773297', '7977773857', '9137117901', '9867311412']",false
+Swiggy,Prasuma Momo Kitchen,935848,Udyog Vihar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Good Flippin' Burgers,935859,HSR,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Good Flippin' Burgers,935859,HSR Layout,"['Staff', 'Somesh', 'Rakesh']",false
+Swiggy,Nothing But Chicken,940419,Borivali East,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Chandraprakash', 'Nitesh', 'Akshay', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773857', '9137117901', '9867311412']",active
+Swiggy,Good Flippin' Burgers,940867,Phoenix Kurla,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Good Flippin' Burgers,941182,Indiranagar,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Good Flippin' Burgers,954532,Mall of Asia,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Good Flippin' Burgers,958799,Viviana Mall,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Good Flippin' Burgers,963795,Manesar,"['Staff', 'Lalit', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Prasuma Momo Kitchen,963870,Rajouri Garden,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Swiggy,Good Flippin' Burgers,967970,Church Street,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Good Flippin' Burgers,967972,Kammanahalli,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Good Flippin' Burgers,969997,DLF Pacific Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Swiggy,Good Flippin' Burgers,972261,DLF Promenade,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Good Flippin' Burgers,973614,Nexus Koramangala,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Good Flippin' Burgers,994180,New BEL Road,"['Staff', 'Somesh', 'Rakesh']",active
+Swiggy,Good Flippin' Burgers,994180,New Bel Road,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Swiggy,Good Flippin' Burgers,994181,JP Nagar,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Swiggy,Good Flippin' Burgers,994183,RMZ Ecoworld,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Uengage,Good Flippin' Burgers,0,Banjara Hills,"['Staff', 'Venkatesh', 'Somesh']",changed
+Uengage,Good Flippin' Burgers,0,DLF Promenade,"['Staff', 'Lalit']",false
+Uengage,Good Flippin' Burgers,0,Electronic City,"['Staff', 'Somesh', 'Rakesh']",active
+Uengage,Good Flippin' Burgers,0,Eros Gurgaon,"['Staff', 'Lalit']",changed
+Uengage,Good Flippin' Burgers,0,JP Nagar,"['Staff', 'Somesh', 'Rakesh']",false
+Uengage,Good Flippin' Burgers,0,Kondapur,"['Staff', 'Venkatesh', 'Somesh']",active
+Uengage,Good Flippin' Burgers,0,Mumbai-Pune Expressway,"['Priyatam', 'Mayur', 'Staff']",changed
+Uengage,Good Flippin' Burgers,0,New BEL Road,"['Staff', 'Somesh', 'Rakesh']",false
+Uengage,Good Flippin' Burgers,0,Nizampet,"['Venkatesh', 'Staff', 'Somesh']",active
+Uengage,Good Flippin' Burgers,0,Noida 73,"['Staff', 'Lalit']",changed
+Uengage,Good Flippin' Burgers,0,Phoenix Mall of Asia,"['Staff', 'Somesh', 'Rakesh']",false
+Uengage,Good Flippin' Burgers,0,Pune Mumbai Expressway,"['Priyatam', 'Mayur', 'Staff']",active
+Uengage,Good Flippin' Burgers,0,RMZ Ecoworld,"['Staff', 'Somesh', 'Rakesh']",changed
+Uengage,Good Flippin' Burgers,0,Rajouri,"['Staff', 'Lalit']",false
+Uengage,Good Flippin' Burgers,0,Sky City Borivali,"['Mayur', 'Staff', 'Jitesh']",active
+Uengage,Good Flippin' Burgers,0,Whitefield,"['Staff', 'Somesh', 'Rakesh']",changed
+Uengage,Good Flippin' Burgers,49315,Dombivli,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,49316,Vasai,"['Mayur', 'Staff', 'Jitesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,51292,Kalyan,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",changed
+Uengage,Good Flippin' Burgers,51293,Mahadevapura,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,51294,Tagore Garden,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,51295,Dwarka,"['Staff', 'Lalit', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",changed
+Uengage,Good Flippin' Burgers,54259,Tribeca,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,54259,Tribeca Highstreet,"['Priyatam', 'Mayur', 'Staff']",active
+Uengage,Good Flippin' Burgers,54490,HSR,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",changed
+Uengage,Good Flippin' Burgers,54490,HSR Layout,"['Staff', 'Somesh', 'Rakesh']",false
+Uengage,Good Flippin' Burgers,54491,Indiranagar,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,55580,Bandra,"['Mayur', 'Jitesh', 'Staff']",changed
+Uengage,Good Flippin' Burgers,55580,Pali Hill,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,55581,Juhu,"['Mayur', 'Staff', 'Lenson', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,55582,BKC,"['Mayur', 'Staff', 'Lenson', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",changed
+Uengage,Good Flippin' Burgers,55583,Powai,"['Mayur', 'Lenson', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,55584,Lower Parel,"['Mayur', 'Jitesh', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,55585,Andheri East,"['Mayur', 'Staff', 'Lenson', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",changed
+Uengage,Good Flippin' Burgers,55586,Malad,"['Mayur', 'Staff', 'Jitesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,55587,Thane,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,55587,Thane Meadows,"['Staff', 'Mayur', 'Abdul']",changed
+Uengage,Good Flippin' Burgers,55588,GK 1,"['Staff', 'Lalit', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,55589,Borivali,"['Mayur', 'Jitesh', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,55590,Marine Lines,"['Mayur', 'Staff', 'Jitesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",changed
+Uengage,Good Flippin' Burgers,55591,Vashi,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,55592,Sushant Lok,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,55592,Sushant lok,"['Staff', 'Lalit']",changed
+Uengage,Good Flippin' Burgers,55593,UV Gurgaon,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,55593,Udyog Vihar,"['Staff', 'Lalit']",active
+Uengage,Good Flippin' Burgers,55594,Chembur,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",changed
+Uengage,Good Flippin' Burgers,55595,Vasant Kunj,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,55596,Mulund,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,55597,Oshiwara,"['Mayur', 'Staff', 'Lenson', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",changed
+Uengage,Good Flippin' Burgers,55598,Wagle Thane,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,55599,Mira Road,"['Mayur', 'Staff', 'Jitesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,55600,Sector 49; Gurgaon,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",changed
+Uengage,Good Flippin' Burgers,55602,Kharghar,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,55603,Kandivali,"['Mayur', 'Staff', 'Lenson', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,55605,Parel,"['Mayur', 'Staff', 'Jitesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",changed
+Uengage,Good Flippin' Burgers,55606,Baner,"['Priyatam', 'Mayur', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,55607,Pavilion,"['Priyatam', 'Mayur', 'Staff']",active
+Uengage,Good Flippin' Burgers,55607,Pavilion Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",changed
+Uengage,Good Flippin' Burgers,55608,KOPA,"['Priyatam', 'Mayur', 'Staff']",false
+Uengage,Good Flippin' Burgers,55608,Kopa Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,55609,Oberoi Goregaon,"['Mayur', 'Staff', 'Lenson']",changed
+Uengage,Good Flippin' Burgers,55609,Oberoi Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,55610,Kharadi,"['Priyatam', 'Mayur', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,55611,Hinjewadi,"['Priyatam', 'Mayur', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",changed
+Uengage,Good Flippin' Burgers,55612,Chinchwad,"['Priyatam', 'Mayur', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,55613,Phoenix Kurla,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,55614,Mall of Asia,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",changed
+Uengage,Good Flippin' Burgers,55615,Viviana Mall,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,55616,Manesar,"['Staff', 'Lalit', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,55617,Kammanahalli,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",changed
+Uengage,Good Flippin' Burgers,55618,Church Street,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,55619,Pacific Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Uengage,Good Flippin' Burgers,55619,Pacific Rajouri,"['Staff', 'Lalit']",changed
+Uengage,Good Flippin' Burgers,55620,Promenade,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",false
+Uengage,Good Flippin' Burgers,55621,Nexus Koramangala,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal', 'Aslam']",active
+Zomato,Good Flippin' Burgers,0,DLF Promenade,"['Staff', 'Lalit']",changed
+Zomato,Good Flippin' Burgers,0,Eros Gurgaon,"['Staff', 'Lalit']",false
+Zomato,Good Flippin' Burgers,0,Mumbai-Pune Expressway,"['Priyatam', 'Mayur', 'Staff']",active
+Zomato,Good Flippin' Burgers,0,Noida 73,"['Staff', 'Lalit']",changed
+Zomato,Good Flippin' Burgers,0,Pacific Rajouri,"['Staff', 'Lalit']",false
+Zomato,Good Flippin' Burgers,0,Phoenix Mall of Asia,"['Staff', 'Somesh', 'Rakesh']",active
+Zomato,Good Flippin' Burgers,0,Pune Mumbai Expressway,"['Priyatam', 'Mayur', 'Staff']",changed
+Zomato,Good Flippin' Burgers,0,Rajouri,"['Staff', 'Lalit']",false
+Zomato,Good Flippin' Burgers,0,Sky City Borivali,"['Mayur', 'Staff', 'Jitesh']",active
+Zomato,Grandmama's Cafe,18175468,Dadar East,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773461', '7977773857', '7977776101', '8828470900', '9594572742', '9821422333']",changed
+Zomato,Nothing But Chicken,18255601,Pali Hill,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Rajesh', 'Franky', 'Akshay', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Zomato,Grandmama's Cafe,18388642,Juhu,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773461', '7977773857', '7977776101', '8828470900', '9766706814', '9821422333']",active
+Zomato,Nothing But Chicken,18458560,Kandivali East,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Kandivali E NBC staff 2', 'Kandivali E NBC staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Zomato,Grandmama's Cafe,18471988,Kemps corner,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773461', '7977773857', '7977776101', '8828470900', '9821422333']",false
+Zomato,Nothing But Chicken,18556684,Mahakali,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Omkar', 'Akshay', 'Nahnath', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Zomato,Nothing But Chicken,18614475,Borivali IC,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Dattaram', 'Shamsher', 'Sandesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Zomato,Grandmama's Cafe,18621752,Chembur,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773461', '7977773857', '7977776101', '8828470900', '9821422333', '9892151860']",false
+Zomato,Nothing But Chicken,18635785,"7 Bungalows, Andheri West","['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Akshay', 'Sunil', 'Razzak', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Zomato,Nothing But Chicken,18645390,"Panch Pakhadi, Thane West","['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Nilesh', 'Omkar kamble', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Zomato,Nothing But Chicken,18664284,Mira Road,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Raj shetty', 'Shamsher', 'Rajesh Yadav', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Zomato,Nothing But Chicken,18670995,Chembur,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Chembur NBC Staff', 'Chembur NBC Staff 2 ', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Zomato,Grandmama's Cafe,18691230,Ghatkopar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7507827472', '7977773461', '7977773857', '7977776101', '8828470900', '9821422333']",changed
+Zomato,Grandmama's Cafe,18740139,Koregaon Park,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Zomato,Nothing But Chicken,18740909,Powai,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Powai Staff 2', 'Powai Staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Zomato,Nothing But Chicken,18766109,Vashi,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Vashi NBC staff', 'Vashi NBC staff 2', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Zomato,The Churro Co.,18767466,Lokhandwala,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7738574300', '7977772651', '7977773857', '9820111880', '9920734744']",false
+Zomato,Nothing But Chicken,19065129,Nerul,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Nerul NBC staff', 'Nerul NBC staff 2 ', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Zomato,The Churro Co.,19083747,Kandivali East,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7738574300', '7977772651', '7977773857', '9820111880', '9920734744']",changed
+Zomato,Good Flippin' Burgers,19135228,Bandra,"['Mayur', 'Jitesh', 'Staff']",false
+Zomato,Good Flippin' Burgers,19135228,Pali Hill,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Nothing But Chicken,19170032,"Hiranandani Estate, Thane West","['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Ganesh', 'Dinesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Zomato,Nothing But Chicken,19230131,Mumbai Central,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Shamsher', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Zomato,Nothing But Chicken,19243922,Colaba,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Colaba Staff', 'Colaba Staff 2', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Zomato,Nothing But Chicken,19263918,Kharghar,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Kharghar NBC staff 2 ', 'Kharghar NBC staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Zomato,Hurrems,19278256,Fort,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Zomato,Nothing But Chicken,19291917,Mazgaon,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Shamsher', 'Dishank', 'Harshal', 'Mustafa', 'MC NBC Staff', 'MC NBC Staff 2 ', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Zomato,Nothing But Chicken,19371528,Mulund East,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Mulund East Staff 2 ', 'Mulund East Staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Zomato,Nothing But Chicken,19412029,Irla ,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Akshay', 'Hitesh', 'Harish', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Zomato,Nothing But Chicken,19449787,Viman Nagar,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Ritesh', 'Aditya', 'Dishank', 'Harshal', 'Mustafa', 'Viman N Staff 2', 'Viman N Staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Zomato,Good Flippin' Burgers,19460831,Juhu,"['Mayur', 'Staff', 'Lenson', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Nothing But Chicken,19513014,Dombivali,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Bhushan', 'Sushil Sharma', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Zomato,Nothing But Chicken,19548217,Mulund West ,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Mulund West NBC staff', 'Mulund West NBC staff 2 ', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Zomato,Nothing But Chicken,19573447,Orlem,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Shamsher', 'Dishank', 'Harshal', 'Mustafa', 'Orlem NBC staff', 'Orlem NBC staff 2', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Zomato,Grandmama's Cafe,19585112,Mulund,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Zomato,Torii,19585194,Khar,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773857', '9987626654']",active
+Zomato,Good Flippin' Burgers,19697007,BKC,"['Mayur', 'Staff', 'Lenson', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Nothing But Chicken,19711630,Ghatkopar,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Amit Singh', 'Rakesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Zomato,Ginkgo Pan Asian Kitchen,19726202,Dadar East,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977772651', '7977773461', '7977776101', '9372546456', '9987626654']",active
+Zomato,Good Flippin' Burgers,19736796,Powai,"['Mayur', 'Lenson', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,The Churro Co.,19796959,Powai,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Zomato,Nothing But Chicken,19833519,Kolshet,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Mazgaon NBC staff 2 ', 'Mazgaon NBC staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Zomato,Good Flippin' Burgers,19864522,Lower Parel,"['Mayur', 'Jitesh', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Nothing But Chicken,19869597,Salunkhe,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Ritesh', 'Aditya', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Zomato,Grandmama's Cafe,19881937,Lokhandwala,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Zomato,Nothing But Chicken,19919727,Kemps Corner,"['Krish Ramsinghani', 'Sagar Gaikwad', 'Jay Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Zomato,Tru Falafel,19922670,Marol,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '0', '7977776101', '8291327532', '8291343308', '9405500808']",false
+Zomato,Nothing But Chicken,19935918,Marol,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Akshay', 'Moin', 'Ashish', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Zomato,Tru Falafel,19963341,Juhu,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Zomato,Nothing But Chicken,19996689,Meadows,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Meadows NBC staff 2 ', 'Meadows NBC staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Zomato,Nothing But Chicken,19996763,Aundh,"['Krish Ramsinghani', 'Sagar Gaikwad', 'Jay Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Zomato,Hurrems,20011269,BKC,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Hurrems,20035966,Powai,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Zomato,Nothing But Chicken,20062532,Koregoan Park,"['Krish Ramsinghani', 'Sagar Gaikwad', 'Jay Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Zomato,Nothing But Chicken,20067078,Kalyan,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Dishank', 'Harshal', 'Mustafa', 'Kalyan NBC staff 2 ', 'Kalyan NBC staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed
+Zomato,Nothing But Chicken,20099926,Borivali West,"['Krish Ramsinghani', 'Sagar Gaikwad', 'Jay Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Chandraprakash', 'Nitesh', 'Akshay', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Zomato,Good Flippin' Burgers,20111272,Malad,"['Mayur', 'Staff', 'Jitesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Good Flippin' Burgers,20113843,Andheri East,"['Mayur', 'Staff', 'Lenson', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Grandmama's Cafe,20114711,BKC Jio,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773461', '7977773857', '7977776101', '7977827584', '8828470900', '9821422333']",false
+Zomato,Prasuma Momo Kitchen,20120327,ILD,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Zomato,Tru Falafel,20219607,Chembur,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Zomato,Good Flippin' Burgers,20260891,Thane,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Zomato,Good Flippin' Burgers,20260891,Thane Meadows,"['Staff', 'Mayur', 'Abdul']",active
+Zomato,Prasuma Momo Kitchen,20274544,Sushant Shopping Arcade,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Good Flippin' Burgers,20285100,GK 1,"['Staff', 'Lalit', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Zomato,Tru Falafel,20300692,BKC,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '0', '7977776101', '8291327532', '8291343308', '9405500808']",active
+Zomato,Good Flippin' Burgers,20302693,Borivali,"['Mayur', 'Jitesh', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Prasuma Momo Kitchen,20307960,Chembur,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Zomato,Prasuma Momo Kitchen,20307968,Powai,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Zomato,Prasuma Momo Kitchen,20307979,Juhu,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Tru Falafel,20311978,Oshiwara,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101', '8291327532', '8291343308', '8879553284', '9405500808']",false
+Zomato,Good Flippin' Burgers,20313421,Noida,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Good Flippin' Burgers,20325964,Marine Lines,"['Mayur', 'Staff', 'Jitesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Grandmama's Cafe,20350131,Lower Parel,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Zomato,Good Flippin' Burgers,20355811,Vashi,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Prasuma Momo Kitchen,20363102,BEL Road,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Prasuma Momo Kitchen,20363109,HSR,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Zomato,Tru Falafel,20363808,Bhandup,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Zomato,Prasuma Momo Kitchen,20364841,Sarjapur,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Prasuma Momo Kitchen,20364847,Mahadevpura,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Zomato,Good Flippin' Burgers,20380911,Chembur,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Good Flippin' Burgers,20382650,UV Gurgaon,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Good Flippin' Burgers,20382650,Udyog Vihar,"['Staff', 'Lalit']",false
+Zomato,Good Flippin' Burgers,20382666,Sushant Lok,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Good Flippin' Burgers,20382666,Sushant lok,"['Staff', 'Lalit']",changed
+Zomato,Ginkgo Pan Asian Kitchen,20388008,Juhu,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Zomato,Pritam Da Dhaba,20396531,Juhu,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977772651', '7977773461', '7977776101', '9372546456', '9987626654']",active
+Zomato,Good Flippin' Burgers,20400722,Vasant Kunj,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Good Flippin' Burgers,20415222,DLF ,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Zomato,Prasuma Momo Kitchen,20416410,BKC,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Zomato,Good Flippin' Burgers,20429901,Tagore Garden,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Nothing But Chicken,20435608,Charkop,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Shamsher', 'Dishank', 'Harshal', 'Mustafa', 'Charkop NBC staff', 'Charkop NBC staff 2 ', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Sunil', 'Nikhil', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Zomato,Good Flippin' Burgers,20448497,Mulund,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Prasuma Momo Kitchen,20450326,Zamrudpur,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Prasuma Momo Kitchen,20450428,JP Nagar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Zomato,Prasuma Momo Kitchen,20450768,Koramangala,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Zomato,Prasuma Momo Kitchen,20450780,Whitefield,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Prasuma Momo Kitchen,20450831,Noida Sec 4,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Zomato,Nothing But Chicken,20464089,Sion,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Shamsher', 'Dishank', 'Harshal', 'Mustafa', 'Sion NBC staff 2 ', 'Sion NBC staff', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Zomato,Good Flippin' Burgers,20494932,Oshiwara,"['Mayur', 'Staff', 'Lenson', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Prasuma Momo Kitchen,20499104,Worli,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Zomato,Prasuma Momo Kitchen,20526956,Thane,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Zomato,Prasuma Momo Kitchen,20528947,Indirapuram,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Hurrems,20535993,Chembur,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Zomato,Prasuma Momo Kitchen,20561779,Electronic City,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Zomato,Prasuma Momo Kitchen,20572783,"Sector 73, Noida","['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Prasuma Momo Kitchen,20575469,Model Town,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Zomato,Prasuma Momo Kitchen,20578625,Banashankari,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Zomato,Prasuma Momo Kitchen,20578629,Yelahanka,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Zomato,Prasuma Momo Kitchen,20578644,Kalyan Nagar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Zomato,Prasuma Momo Kitchen,20578647,Malad,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Zomato,Prasuma Momo Kitchen,20580304,Vasant Kunj,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Zomato,Good Flippin' Burgers,20595905,Wagle Thane,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Zomato,Good Flippin' Burgers,20612090,Mira Road,"['Mayur', 'Staff', 'Jitesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Prasuma Momo Kitchen,20619057,Rajaji Nagar,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Zomato,Nourish Noms,20626194,Malviya Nagar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977772651', '7977773461', '7977776101']",false
+Zomato,Prasuma Momo Kitchen,20638158,Karol Baug,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Zomato,Prasuma Momo Kitchen,20658323,Rohini,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Prasuma Momo Kitchen,20658329,"Sector 83, Noida","['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Zomato,Prasuma Momo Kitchen,20658333,Dwarka Mor,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Zomato,Prasuma Momo Kitchen,20658356,Dwarka Sec 08,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Prasuma Momo Kitchen,20660294,Preet Vihar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Zomato,Prasuma Momo Kitchen,20661267,Faridabad Sec 15,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Zomato,Prasuma Momo Kitchen,20661352,Sector 90,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Tru Falafel,20678473,Worli,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '0', '7977776101', '8291327532', '8291343308', '9405500808']",false
+Zomato,Prasuma Momo Kitchen,20700554,Oshiwara,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Zomato,Foodle Express,20713855,Belapur,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",changed
+Zomato,Tru Falafel,20714852,Kurla,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Zomato,Chats R Us,20736062,Kanakapura,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101', '9987626654']",active
+Zomato,Prasuma Momo Kitchen,20740944,Marine Lines,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Prasuma Momo Kitchen,20741065,BEML,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Zomato,Prasuma Momo Kitchen,20741084,Tumkur Road,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Zomato,Prasuma Momo Kitchen,20741087,Chandra Layout,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Nothing But Chicken,20747293,Dadar ,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Deepak', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Zomato,Prasuma Momo Kitchen,20756081,Vasant Vihar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Zomato,Prasuma Momo Kitchen,20756157,Vasant Kunj (New),"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Prasuma Momo Kitchen,20756158,Bally Gunge,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",false
+Zomato,Prasuma Momo Kitchen,20756160,Salt Lake,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh']",active
+Zomato,Good Flippin' Burgers,20765933,"Sector 49, Gurgaon","['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Kulcha Patola,20766088,Model Town,"['7977773857', '7977776101']",false
+Zomato,Mithaicana,20792734,Marathahalli,"['7977773857', '9987626654']",active
+Zomato,Good Flippin' Burgers,20837813,Kharghar,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Nothing But Chicken,20850985,Vakola,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Akshay', 'Dishank', 'Harshal', 'Mustafa', 'Vakola NBC staff', 'Vakola NBC staff 2 ', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9819529477', '9867311412']",false
+Zomato,Good Flippin' Burgers,20873154,Kandivali,"['Mayur', 'Staff', 'Lenson', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Nacho Mama,20874692,Santacruz,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773857', '7977776101']",changed
+Zomato,Pizzette,20875050,4 Bungalows,"['Rahul Dabholkar', 'Mangesh Singh', '7977772641', '7977776101', '8108171717', '9920983833']",false
+Zomato,Artwich,20875061,4 Bungalows,"['Rahul Dabholkar', 'Mangesh Singh', '7977772641', '7977776101', '8108171717', '9920983833']",active
+Zomato,Burgery,20875064,4 Bungalows,"['Rahul Dabholkar', 'Mangesh Singh', '7977772641', '7977776101', '8108171717', '9920983833']",changed
+Zomato,Good Flippin' Burgers,20894390,Baner,"['Priyatam', 'Mayur', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Zomato,Good Flippin' Burgers,20898060,Dwarka,"['Staff', 'Lalit', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Good Flippin' Burgers,20902831,Vasai,"['Mayur', 'Staff', 'Jitesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Good Flippin' Burgers,20919917,Parel,"['Mayur', 'Staff', 'Jitesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Zomato,Prasuma Momo Kitchen,20964986,Marol,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Zomato,Good Flippin' Burgers,20965438,Faridabad,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Good Flippin' Burgers,21001163,KOPA,"['Priyatam', 'Mayur', 'Staff']",false
+Zomato,Good Flippin' Burgers,21001163,Kopa Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Good Flippin' Burgers,21029258,Oberoi Goregaon,"['Mayur', 'Staff', 'Lenson']",changed
+Zomato,Good Flippin' Burgers,21029258,Oberoi Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Zomato,Nothing But Chicken,21031191,Airoli,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Akshay', 'Dishank', 'Harshal', 'Mustafa', 'Airoli NBC staff', 'Airoli NBC staff 2 ', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773857', '9137117901', '9867311412']",active
+Zomato,Good Flippin' Burgers,21053323,Pavilion,"['Priyatam', 'Mayur', 'Staff']",changed
+Zomato,Good Flippin' Burgers,21053323,Pavilion Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Zomato,Good Flippin' Burgers,21077884,Dombivli,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Prasuma Momo Kitchen,21099169,Greater Noida,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Good Flippin' Burgers,21116548,Terminal 2 Mumbai,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Zomato,Mithaicana,21116657,Jayanagar,"['7977773857', '9987626654']",active
+Zomato,Good Flippin' Burgers,21145290,Hinjewadi,"['Priyatam', 'Mayur', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Good Flippin' Burgers,21145310,Kharadi,"['Priyatam', 'Mayur', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Zomato,Nothing But Chicken,21164855,Baner,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Ritesh', 'Aditya', 'Dishank', 'Harshal', 'Mustafa', 'Baner NBC staff', 'Baner NBC staff 2 ', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773857', '9137117901', '9867311412']",active
+Zomato,Good Flippin' Burgers,21173762,Mumbai - Pune Expressway ,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Antep Grill,21176511,Fort,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773857', '7977776101', '9665000863', '9819590546', '9987626654']",false
+Zomato,Prasuma Momo Kitchen,21191455,Vashi,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Zomato,Good Flippin' Burgers,21203084,Chinchwad,"['Priyatam', 'Mayur', 'Staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Tru Falafel,21222357,Khar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '0', '7977776101', '8291327532', '8291343308', '9405500808']",false
+Zomato,Good Flippin' Burgers,21223840,Kalyan,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Bonomi Coffee,21256595,Manayata,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7738574300', '7977772651', '7977776101', '9606366831', '9821722888', '8884617882']",changed
+Zomato,Bonomi Coffee,21274827,Koramangala,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7738574300', '7977772651', '7977776101', '9606366831', '9821722888', '8884617882']",false
+Zomato,Good Flippin' Burgers,21280126,Mahadevapura,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Good Flippin' Burgers,21296500,Tribeca,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Good Flippin' Burgers,21296500,Tribeca Highstreet,"['Priyatam', 'Mayur', 'Staff']",false
+Zomato,Tru Falafel,21307114,Malad,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '0', '7977776101', '8291327532', '8291343308', '9405500808']",active
+Zomato,Prasuma Momo Kitchen,21322190,Dahisar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",changed
+Zomato,Nothing But Chicken,21332220,Vasai,"['Sagar Gaikwad', 'Minino', 'Akshay', 'Aditya', 'Ritesh', 'Shamsher', 'Dishank', 'Harshal', 'Mustafa', 'Vasai NBC staff 2 ', 'Vasai NBC staff', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Sunil', 'Nikhil', '7977773297', '7977773857', '9137117901', '9867311412']",false
+Zomato,Prasuma Momo Kitchen,21335691,Udyog Vihar,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",active
+Zomato,Good Flippin' Burgers,21343663,HSR,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Good Flippin' Burgers,21343663,HSR Layout,"['Staff', 'Somesh', 'Rakesh']",false
+Zomato,Good Flippin' Burgers,21363127,Indiranagar,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Good Flippin' Burgers,21363135,Phoenix Kurla,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Nothing But Chicken,21363202,Borivali East,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Aditya', 'Ritesh', 'Chandraprakash', 'Nitesh', 'Akshay', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773857', '9137117901', '9867311412']",false
+Zomato,Good Flippin' Burgers,21401538,Mall of Asia,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Good Flippin' Burgers,21414533,Viviana Mall,"['Mayur', 'Staff', 'Abdul', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Prasuma Momo Kitchen,21439687,Rajouri Garden,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977776101']",false
+Zomato,Good Flippin' Burgers,21446440,Manesar,"['Staff', 'Lalit', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Good Flippin' Burgers,21465696,DLF Promenade,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Good Flippin' Burgers,21465886,Kammanahalli,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Zomato,Good Flippin' Burgers,21465924,DLF Pacific Mall,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Good Flippin' Burgers,21465940,Church Street,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Good Flippin' Burgers,21465962,Nexus Koramangala,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Zomato,Good Flippin' Burgers,21539110,RMZ Ecoworld,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Good Flippin' Burgers,21539260,JP Nagar,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Good Flippin' Burgers,21539338,New BEL Road,"['Staff', 'Somesh', 'Rakesh']",false
+Zomato,Good Flippin' Burgers,21539338,New Bel Road,"['Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Good Flippin' Burgers,21556570,Kondapur,"['Staff', 'Venkatesh', 'Somesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",changed
+Zomato,Good Flippin' Burgers,21565511,Electronic City,"['Staff', 'Somesh', 'Rakesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",false
+Zomato,Good Flippin' Burgers,21584154,Banjara Hills,"['Staff', 'Venkatesh', 'Somesh', 'Aakarshan Harlalka', 'Shubh Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', 'Varun', 'Kamal']",active
+Zomato,Prasuma Momo Kitchen,21589663,Vasanth Nagar,['7977776101'],changed
+Zomato,Nothing But Chicken,21644218,Virar,"['7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",false
+Zomato,Prasuma Momo Kitchen,21664947,Mira Road,['7977776101'],active
+Zomato,Good Flippin' Burgers,21678012,Nizampet,"['Venkatesh', 'Staff', 'Somesh']",changed
+Zomato,Good Flippin' Burgers,21693075,Whitefield,"['Staff', 'Somesh', 'Rakesh']",false
+Zomato,Pritam Da Dhaba,32264,Dadar East,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977772651', '7977773461', '7977776101', '9372546456', '9987626654']",active
+Zomato,Sadguru Pure Veg,34104,Goregaon,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977772651', '7977773461', '7977776101']",changed
+Zomato,Jango's,34859,Malad,"['Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977772651', '7977773461', '7977776101', '9594018800']",false
+Zomato,Nothing But Chicken,48188,Malad West,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Kaustubh', 'Suresh', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",active
+Zomato,Nothing But Chicken,48893,Andheri Lokhandwala,"['Sagar Gaikwad', 'Minino', 'Shamsher', 'Akshay', 'Aditya', 'Ritesh', 'Arjun', 'Prashant', 'Dishank', 'Harshal', 'Mustafa', 'Aakarshan Harlalka', 'Rahul Dabholkar', 'Mangesh Singh', '7977773297', '7977773461', '7977773857', '7977776101', '9137117901', '9867311412']",changed

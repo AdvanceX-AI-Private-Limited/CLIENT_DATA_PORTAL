@@ -23,7 +23,7 @@ const handleLogin = async() => {
   try{
     const response = await apiEndpoints.login.create({email: email.value})
     userData.value = response.data
-    console.log('User data:', response.data)
+    // console.log('User data:', response.data)
     emit('verified', { email: email.value})
   }catch (error){
     console.error('API Error:', error)

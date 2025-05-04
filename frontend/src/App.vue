@@ -9,6 +9,7 @@ import {
 	LockClosedIcon,
 	Cog6ToothIcon,
 	HomeIcon,
+	LinkIcon,
 } from '@heroicons/vue/24/outline';
 import { storeToRefs } from "pinia";
 import { useSidebarStore } from "@/stores/useSidebar"; 
@@ -25,8 +26,8 @@ const { isSignedIn, isLoaded } = useAuth();
 // For debugging
 watchEffect(() => {
   if (isLoaded.value) {
-    console.log('Clerk authentication loaded, isSignedIn:', isSignedIn.value);
-    console.log('Current route:', route.path);
+    // console.log('Clerk authentication loaded, isSignedIn:', isSignedIn.value);
+    // console.log('Current route:', route.path);
   }
 });
 
@@ -38,7 +39,7 @@ onMounted(() => {
   // Use watchEffect within onMounted to handle async loading of Clerk
   const stopWatcher = watchEffect(() => {
     if (isLoaded.value) {
-      console.log('Component mounted and Clerk loaded, setting initial auth state:', isSignedIn.value);
+    //   console.log('Component mounted and Clerk loaded, setting initial auth state:', isSignedIn.value);
       previousAuthState = isSignedIn.value;
       setAuthState(isSignedIn.value);
       // Stop this watcher once it's executed
@@ -106,6 +107,16 @@ const navigation = [
 			{ name: 'Outlet', path: '/brand-management/outlet-management' } 
 		]
 	},
+	{
+		name: 'Mappings',
+		path: '/mappings',
+		icon: LinkIcon,
+		subLinks: [
+			{ name: 'User to Outlet', path: '/mappings/user-to-outlet-mappings' },
+			{ name: 'Outlet Service', path: '/mappings/outlet-service-mappings' },
+			{ name: 'Uset to Service', path: '/mappings/user-to-service-mappings' }
+		]
+	},
 	{ 
 		name: 'Access Management', 
 		path: '/access-management', 
@@ -144,3 +155,36 @@ const shouldShowSidebar = computed(() => !hideSidebarRoutes.includes(route.path)
 	</ClerkLoaded>
 </template>
 
+<style>
+/* Hide scrollbars globally on page */
+html, body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow: auto;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide horizontal scrollbar on table's scroll container */
+.overflow-x-auto {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide vertical scrollbar on filter dropdown options container */
+.max-h-36.overflow-y-auto {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.max-h-36.overflow-y-auto::-webkit-scrollbar {
+  display: none;
+}
+</style>

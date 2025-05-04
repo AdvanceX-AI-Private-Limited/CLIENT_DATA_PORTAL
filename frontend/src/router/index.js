@@ -20,7 +20,11 @@ import error_404 from '@/views/erro_pages/error_404.vue';
 import LoginView from '@/views/auth/LoginView.vue';
 import SignUpView from '@/views/auth/SignUpView.vue';
 
-// Define public routes that don't require authentication
+// Mappings Import
+import UserOutletView from '@/views/mappings/UserOutletView.vue';
+import UserServiceView from '@/views/mappings/UserServiceView.vue';
+import OutletServiceView from '@/views/mappings/OutletServiceView.vue';
+
 const publicRoutes = ['/login', '/sign-up'];
 
 const routes = [
@@ -110,6 +114,28 @@ const routes = [
 							},
 						],
 					},
+					{
+						path: 'mappings',
+						name: 'mappings',
+						component: LayoutWrapper,
+						children: [
+							{
+								path: 'user-to-outlet-mappings',
+								name: 'user-to-outlet-mappings',
+								component: UserOutletView,
+							},
+							{
+								path: 'user-to-service-mappings',
+								name: 'user-to-service-mappings',
+								component: UserServiceView,
+							},
+							{
+								path: 'outlet-service-mappings',
+								name: 'outlet-service-mappings',
+								component: OutletServiceView,
+							}
+						]
+					},
 			{
 				path: 'settings',
 				name: 'settings',
@@ -135,9 +161,9 @@ const routes = [
 		meta: { requiresAuth: false },
 	},
 	{
-	path: '/:pathMatch(.*)*', 
-	name: 'not-found',
-	component: error_404,
+		path: '/:pathMatch(.*)*', 
+		name: 'not-found',
+		component: error_404,
 	},
 ];
 

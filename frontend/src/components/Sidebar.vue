@@ -64,7 +64,7 @@ const props = defineProps({
 	<aside
 		:class="[
 			isOpen ? 'w-64 left-0' : 'w-16 -left-64',
-			'fixed left-0 top-0 h-full bg-black/80 backdrop-blur-xs shadow-md shadow-white/5 text-white transition-all duration-300  overflow-hidden px-3 flex flex-col'
+			'fixed left-0 top-0 h-full bg-black/80 backdrop-blur-xs shadow-md shadow-white/5 text-white transition-all duration-300  overflow-hidden px-3 flex flex-col z-[1000]'
 		]"
 		@mouseenter="handleMouseEnter"
 		@mouseleave="handleMouseLeave"
@@ -190,7 +190,7 @@ const props = defineProps({
 	@media (max-width: 768px) {
 		aside {
 			position: fixed;
-			z-index: 50;
+			z-index: 1000;
 			left: -100%;
 			width: 60%;
 			transition: left 0.3s ease-in-out;
@@ -201,7 +201,7 @@ const props = defineProps({
 		}
 
 		button.fixed {
-			z-index: 100;
+			z-index: 1001;
 		}
 	}
 

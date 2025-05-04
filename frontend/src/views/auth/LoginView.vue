@@ -1,8 +1,8 @@
 // src/views/auth/LoginView.vue
 <script setup>
-import MainLogin from '@/components/Login/MainLogin.vue';
+// import MainLogin from '@/components/Login/MainLogin.vue';
 import RightImg from '@/components/Login/RightImg.vue';
-import { SignIn, useAuth  } from '@clerk/vue';
+import { SignIn, useAuth } from '@clerk/vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -11,6 +11,15 @@ const { isSignedIn } = useAuth();
 // Handle successful sign in
 const handleSignIn = () => {
   // Use router to navigate programmatically
+  // API CALL 1
+  //     /auth/login 
+  //      (NEEDS: token_id + user_id + type) 
+  //      (RETURNS: A URL : challange_id + token_id + user_id + type)
+  //     /auth/callback
+  // API CALL 2 (NEEDS: challange_id + token_id + user_id + type)
+  //     /auth/callback
+  // RETURN CALLBACK URL + TOKEN
+  // USE TOKEN TO SEND API REQUESTS
   router.push('/');
 };
 </script>
