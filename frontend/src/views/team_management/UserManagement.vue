@@ -272,60 +272,65 @@ const deleteUser = (index) => {
         <!-- Toggle Button -->
         <button 
           @click="toggleDropdown" 
-          class="w-full flex justify-between items-center text-sm font-bold px-3 rounded-lg text-white shadow-sm p-1 transition-all"
-          :class="isExpanded ? 'rounded-t-lg bg-red-400 hover:bg-red-500' : 'rounded-lg bg-green-500 hover:bg-green-600'" 
+          class="ml-auto flex justify-between items-center text-sm font-bold px-3 rounded-lg text-white shadow-sm p-1.5 transition-all"
+          :class="isExpanded ? 'rounded-t-lg bg-red-400 hover:bg-red-500 hidden' : 'rounded-lg bg-green-600 hover:bg-green-700'" 
         >
-          <span>{{ isExpanded ? 'Hide User Form' : 'Add New User' }}</span>
-          <!-- Plus icon that turns into an 'X' (close) when expanded -->
           <svg 
-            :class="['w-4 h-4 transform transition-transform duration-200', isExpanded ? 'rotate-45' : '']" 
+            :class="['w-4 h-4 me-1.5 transform transition-transform duration-200', isExpanded ? 'rotate-45' : '']" 
             fill="none"
             stroke="currentColor"
             stroke-width="2"
             viewBox="0 0 24 24"
           >
+          <!-- Plus icon that turns into an 'X' (close) when expanded -->
             <line x1="12" y1="5" x2="12" y2="19" stroke-linecap="round" />
             <line x1="5" y1="12" x2="19" y2="12" stroke-linecap="round" />
           </svg>
+          <span>{{ isExpanded ? 'Hide Form' : 'Add' }}</span>
         </button>
         <!-- Dropdown Form -->
-        <transition name="fade">
+        <transition name="slide-expand-tr">
           <div
             v-if="isExpanded"
-            class="bg-white shadow-sm rounded-b-lg py-3 px-0.5 space-y-2.5"
+            class="bg-white shadow-sm rounded-lg p-3 border border-gray-200 space-y-2.5"
           >
+            <button @click="toggleDropdown" class="w-full ml-auto rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 font-bold py-0.5 hover:text-gray-800 transition-colors">
+              <!-- <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg> -->
+              Close
+            </button>
             <!-- Row 1: Username and Number -->
-            <div class="flex flex-col sm:flex-row gap-4">
-              <label for="">Username: </label>
-              <div class="w-full">
-                <input
-                  type="text"
-                  id="username"
-                  v-model="form.username"
-                  placeholder="Enter username"
-                  class="w-full border border-gray-300 rounded-md p-1.5 px-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                />
-            </div>
-            </div>
-
             <div class="w-full">
               <input
-                type="number"
-                id="user_number"
-                v-model="form.number"
-                placeholder="Enter number"
+                type="text"
+                id="username"
+                v-model="form.username"
+                placeholder="Enter username"
                 class="w-full border border-gray-300 rounded-md p-1.5 px-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
             </div>
 
-            <div>
-              <input
-                type="email"
-                id="user_email"
-                v-model="form.email"
-                placeholder="Enter email"
-                class="w-full border border-gray-300 rounded-md p-1.5 px-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
+            <div class="flex flex-col sm:flex-row gap-4">
+              <div class="w-full">
+                <input
+                  type="number"
+                  id="user_number"
+                  v-model="form.number"
+                  placeholder="Enter number"
+                  class="w-full border border-gray-300 rounded-md p-1.5 px-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div class="w-full">
+                <input
+                  type="email"
+                  id="user_email"
+                  v-model="form.email"
+                  placeholder="Enter email"
+                  class="w-full border border-gray-300 rounded-md p-1.5 px-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
             </div>
 
             <div class="px-2">
@@ -404,13 +409,32 @@ const deleteUser = (index) => {
 </template>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
+.slide-expand-tr-enter-active,
+.slide-expand-tr-leave-active {
+  transition:
+    opacity 0.36s cubic-bezier(0.5, 1.12, 0.72, 1),
+    transform 0.37s cubic-bezier(0.5, 1.23, 0.72, 1.05),
+    clip-path 0.38s cubic-bezier(0.47, 1.64, 0.41, 0.87)
+  ;
+  will-change: opacity, transform, clip-path;
+  /* Ensures overflowing content is hidden during animation */
+  overflow: hidden;
 }
-.fade-enter-from,
-.fade-leave-to {
+
+.slide-expand-tr-enter-from,
+.slide-expand-tr-leave-to {
   opacity: 0;
+  /* Start slightly offset and shrunken in top-right */
+  transform: translateY(-22px) translateX(42px) scale(0.88);
+  clip-path: inset(0 90% 90% 0 round 20px);
+  pointer-events: none;
+}
+
+.slide-expand-tr-enter-to,
+.slide-expand-tr-leave-from {
+  opacity: 1;
+  transform: translateY(0) translateX(0) scale(1);
+  clip-path: inset(0 0 0 0 round 12px);
 }
 
 .no-scrollbar::-webkit-scrollbar {
