@@ -102,29 +102,19 @@ const navigation = [
 		path: '/brand-management', 
 		icon: CubeIcon,
 		subLinks: [
-			{ name: 'User', path: '/brand-management/user-management' }, 
-			{ name: 'Role', path: '/brand-management/role-management' }, 
+			{ name: 'Services', path: '/brand-management/services-management' }, 
 			{ name: 'Outlet', path: '/brand-management/outlet-management' } 
 		]
 	},
 	{
-		name: 'Mappings',
-		path: '/mappings',
-		icon: LinkIcon,
-		subLinks: [
-			{ name: 'User to Outlet', path: '/mappings/user-to-outlet-mappings' },
-			{ name: 'Outlet Service', path: '/mappings/outlet-service-mappings' },
-			{ name: 'Uset to Service', path: '/mappings/user-to-service-mappings' }
-		]
-	},
-	{ 
-		name: 'Access Management', 
-		path: '/access-management', 
+		name: 'Tema Management', 
+		path: '/team-management', 
 		icon: LockClosedIcon,
 		subLinks: [
-			{ name: 'User to Role Mappings', path: '/access-management/user-to-role-mappings' }, 
-			{ name: 'Role to Service Mappings', path: '/access-management/role-to-service-mappings' }, 
-			{ name: 'All Mappings', path: '/access-management/all-mappings' } 
+			{ name: 'Users', path: '/team-management/users-management' },
+			{ name: 'User to Outlet', path: '/team-management/user-to-outlet-mappings' },
+			{ name: 'Outlet Service', path: '/team-management/outlet-service-mappings' },
+			{ name: 'Uset to Service', path: '/team-management/user-to-service-mappings' }
 		]
 	},
 	{ name: 'Automation', path: '/automation', icon: AdjustmentsHorizontalIcon },

@@ -1,26 +1,26 @@
-// src/views/mappings/UserOutletView.vue
 <script setup>
 import { ref, onMounted, reactive } from "vue";
-import { getOutlets, getUsers, mappedUsersOutlets, mapUserToOutlet } from "@/composables/api/testApi";
+import { getOutlets, getServices, mappedServicesOutlets, mapServiceToOutlet } from "@/composables/api/testApi";
 import DataTable from "@/components/DataTables/DataTable.vue";
 import MappingPopup from "@/components/Mapping/MappingPopup.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import MessageDialog from "@/components/MessageDialog.vue";
-import { PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
+import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/vue/24/outline";
+import Breadcrumb from "@/components/Breadcrumb.vue";
 
 const showPopup = ref(false);
 
 const outlets = ref([]);
-const users = ref([]);
-const mappedUsers = ref([]);
+const services = ref([]);
+const mappedServices = ref([]);
 
 const loadingOutlets = ref(false);
-const loadingUsers = ref(false);
-const loadingMappedUsers = ref(false);
+const loadingServices = ref(false);
+const loadingMappedServices = ref(false);
 
 const errorOutlets = ref(null);
-const errorUsers = ref(null);
-const errorMappedUsers = ref(null);
+const errorServices = ref(null);
+const errorMappedServices = ref(null);
 
 const mappingLoading = ref(false);
 
@@ -31,18 +31,18 @@ const messageDialogContent = ref({
   icon: "",
 });
 
-const fetchUsers = async () => {
-  console.log("Fetching users...");
-  loadingUsers.value = true;
-  errorUsers.value = null;
+const fetchServices = async () => {
+  console.log("Fetching services...");
+  loadingServices.value = true;
+  errorServices.value = null;
   try {
-    const response = await getUsers();
-    users.value = response.data;
-    console.log("Users:", users.value);
+    const response = await getServices();
+    services.value = response.data;
+    console.log("Services:", services.value);
   } catch (err) {
-    errorUsers.value = err.message || "Failed to fetch";
+    errorServices.value = err.message || "Failed to fetch";
   } finally {
-    loadingUsers.value = false;
+    loadingServices.value = false;
   }
 };
 
@@ -67,18 +67,8 @@ function handleToolbarAction(action) {
 
 const mappingTabs = [
   {
-    label: "Select Users",
-    description: "Select users to map to the outlets",
-    key: "users",
-    fetchData: async () => {
-      if (!users.value.length) await fetchUsers();
-      return users.value;
-    },
-    displayMapping: { heading: "user_name", sub: "user_number" },
-  },
-  {
     label: "Select Outlets",
-    description: "Select outlets to map to the users",
+    description: "Select outlets to map to the services",
     key: "outlets",
     fetchData: async () => {
       if (!outlets.value.length) await fetchMappedOutlets();
@@ -86,31 +76,41 @@ const mappingTabs = [
     },
     displayMapping: { heading: "res_shortcode", sub: "res_id" },
   },
+  {
+    label: "Select Services",
+    description: "Select services to map to the outlets",
+    key: "services",
+    fetchData: async () => {
+      if (!services.value.length) await fetchServices();
+      return services.value;
+    },
+    displayMapping: { heading: "service_name", sub: "service_variant" },
+  },
 ];
 
 function transformDataForBackend(data) {
   console.log("data", data);
   const redIdSet = new Set();
-  const userMap = new Map();
+  const serviceMap = new Map();
 
-  data.forEach(([user, outlet]) => {
-    const userNumber = user.user_number;
-    const userName = user.user_name;
+  data.forEach(([service, outlet]) => {
+    const serviceNumber = service.service_number;
+    const serviceName = service.service_name;
     const resId = parseInt(outlet.res_id);
 
-    if (!userNumber || !userName || isNaN(resId)) return;
+    if (!serviceNumber || !serviceName || isNaN(resId)) return;
 
     redIdSet.add(resId);
 
-    // Use Map to avoid duplicate users
-    if (!userMap.has(userNumber)) {
-      userMap.set(userNumber, { name: userName, number: userNumber });
+    // Use Map to avoid duplicate services
+    if (!serviceMap.has(serviceNumber)) {
+      serviceMap.set(serviceNumber, { name: serviceName, number: serviceNumber });
     }
   });
 
   return {
     red_id: Array.from(redIdSet),
-    users: Array.from(userMap.values()),
+    services: Array.from(serviceMap.values()),
     action: "map",
   };
 }
@@ -130,18 +130,17 @@ function closeMessageDialog() {
   messageDialogVisible.value = false;
 }
 
-async function fetchMappedUsers() {
-  console.log("Fetching mapped users...");
-  loadingMappedUsers.value = true;
-  errorMappedUsers.value = null;
+async function fetchMappedServices() {
+  console.log("Fetching mapped services...");
+  loadingMappedServices.value = true;
+  errorMappedServices.value = null;
   try {
-    const response = await mappedUsersOutlets();
-    mappedUsers.value = response.data;
-    // console.log("Mapped users:", mappedUsers.value);
+    const response = await mappedServicesOutlets();
+    mappedServices.value = response.data;
   } catch (err) {
-    errorMappedUsers.value = err.message || "Failed to fetch";
+    errorMappedServices.value = err.message || "Failed to fetch";
   } finally {
-    loadingMappedUsers.value = false;
+    loadingMappedServices.value = false;
   }
 }
 
@@ -155,15 +154,15 @@ async function onMappingGenerated(mappings) {
       data: payload,
     };
     console.log("Payload being sent:", JSON.stringify(payload));
-    const response = await mapUserToOutlet(payload);
+    const response = await mapServiceToOutlet(payload);
     showMessage(
       response.data?.message || "Mapping completed successfully",
       "Success",
       "success"
     );
-    await fetchMappedUsers();
+    await fetchMappedServices();
   } catch (error) {
-    console.error("Error mapping users to outlets:", error);
+    console.error("Error mapping services to outlets:", error);
     showMessage(
       error.response?.data?.message || error.message || "Failed to process mapping.",
       "Error",
@@ -186,24 +185,26 @@ function closePopup() {
 }
 
 const selections = reactive({
-  users: [],
+  services: [],
   outlets: [],
 });
 
 onMounted(() => {
-  fetchUsers();
+  fetchServices();
   fetchMappedOutlets();
-  fetchMappedUsers();
+  fetchMappedServices();
 });
+// title="Outlet To Service"
 </script>
 
 <template>
+  <Breadcrumb/>
   <DataTable
-    title="Users To Outlet"
-    :table_data="mappedUsers"
-    :loading="loadingMappedUsers"
-    :error="errorMappedUsers"
-    :action_buttons="[{ name: 'Map Users', onClick: showMappingPopup, action: 'user_map' }]"
+    title="Outlet To Service"
+    :table_data="mappedServices"
+    :loading="loadingMappedServices"
+    :error="errorMappedServices"
+    :action_buttons="[{ name: 'Map&nbsp;Services', onClick: showMappingPopup, action: 'service_map', icon: PlusIcon}]"
     @action-click="handleToolbarAction"
     :csv_download="true"
   />

@@ -1,23 +1,26 @@
+// src/views/mappings/UserOutletView.vue
 <script setup>
 import { ref, onMounted, reactive } from "vue";
-import { getServices, getUsers, mappedUsersServices, mapUserToService } from "@/composables/api/testApi";
+import { getOutlets, getUsers, mappedUsersOutlets, mapUserToOutlet } from "@/composables/api/testApi";
 import DataTable from "@/components/DataTables/DataTable.vue";
 import MappingPopup from "@/components/Mapping/MappingPopup.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import MessageDialog from "@/components/MessageDialog.vue";
-import { PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
+import Breadcrumb from "@/components/Breadcrumb.vue";
+import Test from "@/components/Test.vue";
+import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/vue/24/outline";
 
 const showPopup = ref(false);
 
-const services = ref([]);
+const outlets = ref([]);
 const users = ref([]);
 const mappedUsers = ref([]);
 
-const loadingServices = ref(false);
+const loadingOutlets = ref(false);
 const loadingUsers = ref(false);
 const loadingMappedUsers = ref(false);
 
-const errorServices = ref(null);
+const errorOutlets = ref(null);
 const errorUsers = ref(null);
 const errorMappedUsers = ref(null);
 
@@ -45,18 +48,18 @@ const fetchUsers = async () => {
   }
 };
 
-async function fetchMappedServices() {
-  console.log("Fetching mapped services...");
-  loadingServices.value = true;
-  errorServices.value = null;
+async function fetchMappedOutlets() {
+  console.log("Fetching mapped outlets...");
+  loadingOutlets.value = true;
+  errorOutlets.value = null;
   try {
-    const response = await getServices();
-    services.value = response.data;
-    console.log("Mapped services:", services.value);
+    const response = await getOutlets();
+    outlets.value = response.data;
+    console.log("Mapped outlets:", outlets.value);
   } catch (err) {
-    errorServices.value = err.message || "Failed to fetch";
+    errorOutlets.value = err.message || "Failed to fetch";
   } finally {
-    loadingServices.value = false;
+    loadingOutlets.value = false;
   }
 }
 
@@ -67,7 +70,7 @@ function handleToolbarAction(action) {
 const mappingTabs = [
   {
     label: "Select Users",
-    description: "Select users to map to the services",
+    description: "Select users to map to the outlets",
     key: "users",
     fetchData: async () => {
       if (!users.value.length) await fetchUsers();
@@ -76,30 +79,30 @@ const mappingTabs = [
     displayMapping: { heading: "user_name", sub: "user_number" },
   },
   {
-    label: "Select Services",
-    description: "Select services to map to the users",
-    key: "services",
+    label: "Select Outlets",
+    description: "Select outlets to map to the users",
+    key: "outlets",
     fetchData: async () => {
-      if (!services.value.length) await fetchMappedServices();
-      return services.value;
+      if (!outlets.value.length) await fetchMappedOutlets();
+      return outlets.value;
     },
-    displayMapping: { heading: "service_name", sub: "service_variant" },
+    displayMapping: { heading: "res_shortcode", sub: "res_id" },
   },
 ];
 
 function transformDataForBackend(data) {
   console.log("data", data);
-  const serviceIdSet = new Set();
+  const redIdSet = new Set();
   const userMap = new Map();
 
-  data.forEach(([user, service]) => {
+  data.forEach(([user, outlet]) => {
     const userNumber = user.user_number;
     const userName = user.user_name;
-    const serviceId = parseInt(service.service_id);
+    const resId = parseInt(outlet.res_id);
 
-    if (!userNumber || !userName || isNaN(serviceId)) return;
+    if (!userNumber || !userName || isNaN(resId)) return;
 
-    serviceIdSet.add(serviceId);
+    redIdSet.add(resId);
 
     // Use Map to avoid duplicate users
     if (!userMap.has(userNumber)) {
@@ -108,14 +111,14 @@ function transformDataForBackend(data) {
   });
 
   return {
-    service_id: Array.from(serviceIdSet),
+    red_id: Array.from(redIdSet),
     users: Array.from(userMap.values()),
     action: "map",
   };
 }
 
 // Function to show message dialog
-function showMessage(message, title = "Message", icon = "") {
+function showMessage(message, title = "Message") {
   messageDialogContent.value = {
     title,
     message,
@@ -134,8 +137,9 @@ async function fetchMappedUsers() {
   loadingMappedUsers.value = true;
   errorMappedUsers.value = null;
   try {
-    const response = await mappedUsersServices();
+    const response = await mappedUsersOutlets();
     mappedUsers.value = response.data;
+    // console.log("Mapped users:", mappedUsers.value);
   } catch (err) {
     errorMappedUsers.value = err.message || "Failed to fetch";
   } finally {
@@ -153,7 +157,7 @@ async function onMappingGenerated(mappings) {
       data: payload,
     };
     console.log("Payload being sent:", JSON.stringify(payload));
-    const response = await mapUserToService(payload);
+    const response = await mapUserToOutlet(payload);
     showMessage(
       response.data?.message || "Mapping completed successfully",
       "Success",
@@ -161,7 +165,7 @@ async function onMappingGenerated(mappings) {
     );
     await fetchMappedUsers();
   } catch (error) {
-    console.error("Error mapping users to services:", error);
+    console.error("Error mapping users to outlets:", error);
     showMessage(
       error.response?.data?.message || error.message || "Failed to process mapping.",
       "Error",
@@ -185,23 +189,25 @@ function closePopup() {
 
 const selections = reactive({
   users: [],
-  services: [],
+  outlets: [],
 });
 
 onMounted(() => {
   fetchUsers();
-  fetchMappedServices();
+  fetchMappedOutlets();
   fetchMappedUsers();
 });
 </script>
 
 <template>
+  <Breadcrumb />
+  
   <DataTable
-    title="Users To Service"
+    title="Outlet Mapper"
     :table_data="mappedUsers"
     :loading="loadingMappedUsers"
     :error="errorMappedUsers"
-    :action_buttons="[{ name: 'Map Users', onClick: showMappingPopup, action: 'user_map' }]"
+    :action_buttons="[{ name: 'Map&nbsp;Users', onClick: showMappingPopup, action: 'user_map', icon: PlusIcon}]"
     @action-click="handleToolbarAction"
     :csv_download="true"
   />

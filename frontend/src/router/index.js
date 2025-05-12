@@ -3,13 +3,9 @@ import { nextTick } from 'vue';
 
 import HomeView from '@/views/home/HomeView.vue';
 import LayoutWrapper from '@/components/LayoutWrapper.vue';
-import AllMappings from '@/views/access_management/AllMappings.vue';
-import RoleToServiceMappings from '@/views/access_management/RoleToServiceMappings.vue';
-import UserToRoleMappings from '@/views/access_management/UserToRoleMappings.vue';
 import AutomationView from '@/views/automation/AutomationView.vue';
 import OutletManagement from '@/views/brand_management/OutletManagement.vue';
-import RoleManagement from '@/views/brand_management/RoleManagement.vue';
-import UserManagement from '@/views/brand_management/UserManagement.vue';
+import ServicesManagement from '@/views/brand_management/ServicesManagement.vue';
 import IoWsDashboard from '@/views/dashboard/IoWsDashboard.vue';
 import ItemOfflineTracker from '@/views/dashboard/ItemOfflineTracker.vue';
 import O2Dashboard from '@/views/dashboard/O2Dashboard.vue';
@@ -19,11 +15,10 @@ import Subscription from '@/views/subscription/Subscription.vue';
 import error_404 from '@/views/erro_pages/error_404.vue';
 import LoginView from '@/views/auth/LoginView.vue';
 import SignUpView from '@/views/auth/SignUpView.vue';
-
-// Mappings Import
-import UserOutletView from '@/views/mappings/UserOutletView.vue';
-import UserServiceView from '@/views/mappings/UserServiceView.vue';
-import OutletServiceView from '@/views/mappings/OutletServiceView.vue';
+import UserManagement from '@/views/team_management/UserManagement.vue';
+import UserOutletView from '@/views/team_management/UserOutletView.vue';
+import UserServiceView from '@/views/team_management/UserServiceView.vue';
+import OutletServiceView from '@/views/team_management/OutletServiceView.vue';
 
 const publicRoutes = ['/login', '/sign-up'];
 
@@ -33,136 +28,117 @@ const routes = [
 		component: LayoutWrapper,
 		meta: { requiresAuth: true },
 		children: [
-					{
-						path: '',
-						name: 'home',
-						component: HomeView,
-					},
-					{
-						path: 'automation',
-						name: 'automation',
-						component: AutomationView,
-					},
-					{
-						path: 'dashboard',
-						name: 'dashboard',
-						component: LayoutWrapper,
-						children: [
-							{
-								path: 'item-offline-tracker',
-								name: 'item-offline-tracker',
-								component: ItemOfflineTracker,
-							},
-							{
-								path: 'item-offline-weekly-sales',
-								name: 'item-offline-weekly-sales',
-								component: IoWsDashboard,
-							},
-							{
-								path: 'o2-dashboard',
-								name: 'o2-dashboard',
-								component: O2Dashboard,
-							},
-							{
-								path: 'o2ws-dashboard',
-								name: 'o2ws-dashboard',
-								component: O2WSDashboard,
-							},
-						],
-					},
-					{
-						path: 'access-management',
-						name: 'access-management',
-						component: LayoutWrapper,
-						children: [
-							{
-								path: 'all-mappings',
-								name: 'all-mappings',
-								component: AllMappings,
-							},
-							{
-								path: 'role-to-service-mappings',
-								name: 'role-to-service-mappings',
-								component: RoleToServiceMappings,
-							},
-							{
-								path: 'user-to-role-mappings',
-								name: 'user-to-role-mappings',
-								component: UserToRoleMappings,
-							},
-						],
-					},
-					{
-						path: 'brand-management',
-						name: 'brand-management',
-						component: LayoutWrapper,
-						children: [
-							{
-								path: 'outlet-management',
-								name: 'outlet-management',
-								component: OutletManagement,
-							},
-							{
-								path: 'role-management',
-								name: 'role-management',
-								component: RoleManagement,
-							},
-							{
-								path: 'user-management',
-								name: 'user-management',
-								component: UserManagement,
-							},
-						],
-					},
-					{
-						path: 'mappings',
-						name: 'mappings',
-						component: LayoutWrapper,
-						children: [
-							{
-								path: 'user-to-outlet-mappings',
-								name: 'user-to-outlet-mappings',
-								component: UserOutletView,
-							},
-							{
-								path: 'user-to-service-mappings',
-								name: 'user-to-service-mappings',
-								component: UserServiceView,
-							},
-							{
-								path: 'outlet-service-mappings',
-								name: 'outlet-service-mappings',
-								component: OutletServiceView,
-							}
-						]
-					},
+		{
+			path: '',
+			name: 'Home',
+			component: HomeView,
+		},
+		{
+			path: 'automation',
+			name: 'Automation',
+			component: AutomationView,
+		},
+		{
+			path: 'dashboard',
+			name: 'Dashboard',
+			children: [
 			{
-				path: 'settings',
-				name: 'settings',
-				component: Settings,
+				path: 'item-offline-tracker',
+				name: 'Item Offline Tracker',
+				component: ItemOfflineTracker,
 			},
 			{
-				path: 'subscription',
-				name: 'subscription',
-				component: Subscription,
+				path: 'item-offline-weekly-sales',
+				name: 'Item Offline Weekly Sales',
+				component: IoWsDashboard,
 			},
-	],
+			{
+				path: 'o2-dashboard',
+				name: 'O2 Dashboard',
+				component: O2Dashboard,
+			},
+			{
+				path: 'o2ws-dashboard',
+				name: 'O2WS Dashboard',
+				component: O2WSDashboard,
+			},
+				],
+		},
+		{
+			path: 'team-management',
+			name: 'Tema Management',
+			children: [
+			{
+				path: 'users-management',
+				name: 'Users Management',
+				component: UserManagement,
+			},
+			{
+				path: 'user-to-outlet-mappings',
+				name: 'User to Outlet Mappings',
+				component: UserOutletView,
+			},
+			{
+				path: 'user-to-service-mappings',
+				name: 'User to Service Mappings',
+				component: UserServiceView,
+			},
+			{
+				path: 'outlet-service-mappings',
+				name: 'Outlet Service Mappings',
+				component: OutletServiceView,
+			},
+				],
+		},
+		{
+			path: 'brand-management',
+			name: 'Brand Management',
+			children: [
+			{
+				path: 'outlet-management',
+				name: 'Outlet Management',
+				component: OutletManagement,
+			},
+			{
+				path: 'services-management',
+				name: 'Services Management',
+				component: ServicesManagement,
+			},
+				],
+		},
+		{
+			path: 'settings',
+			name: 'Settings',
+			component: Settings,
+		},
+		{
+			path: 'subscription',
+			name: 'Subscription',
+			component: Subscription,
+		},
+			],
 	},
 	{
 		path: '/login',
-		name: 'login',
+		name: 'Login',
 		component: LoginView,
 		meta: { requiresAuth: false },
 	},
 	{
 		path: '/sign-up',
-		name: 'signup',
+		name: 'Sign Up',
 		component: SignUpView,
 		meta: { requiresAuth: false },
 	},
 	{
-		path: '/:pathMatch(.*)*', 
-		name: 'not-found',
+		path: '/test',
+		name: 'Test',
+		component: () => import('@/views/test/TestView.vue'),
+		meta: { requiresAuth: true }
+	},
+	{
+		path: '/:pathMatch(.*)*',
+		name: 'Not Found',
 		component: error_404,
 	},
 ];
@@ -175,51 +151,51 @@ const router = createRouter({
 let isUserAuthenticated = false;
 
 try {
-  isUserAuthenticated = localStorage.getItem('auth-token') === 'true';
+	isUserAuthenticated = localStorage.getItem('auth-token') === 'true';
 } catch (e) {
-  console.error('Error accessing localStorage:', e);
+	console.error('Error accessing localStorage:', e);
 }
 
 export function setAuthState(authenticated) {
-  isUserAuthenticated = authenticated;
-  
-  if (authenticated) {
-    localStorage.setItem('auth-token', 'true');
-  } else {
-    localStorage.removeItem('auth-token');
-  }
+	isUserAuthenticated = authenticated;
+
+	if (authenticated) {
+		localStorage.setItem('auth-token', 'true');
+	} else {
+		localStorage.removeItem('auth-token');
+	}
 }
 
 router.beforeEach((to, from, next) => {
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const isPublicRoute = publicRoutes.includes(to.path);
-  
-  if (isPublicRoute) {
-    next();
-    return;
-  }
-  
-  if (requiresAuth) {
-    const isPageRefresh = from.name === undefined;
-    
-    if (isPageRefresh) {
-      const hasStoredAuth = localStorage.getItem('auth-token') || 
-                           sessionStorage.getItem('auth-token') ||
-                           isUserAuthenticated;
-      
-      if (hasStoredAuth) {
-        next();
-      } else {
-        next('/login');
-      }
-    } else if (!isUserAuthenticated) {
-      next('/login');
-    } else {
-      next();
-    }
-  } else {
-    next();
-  }
+	const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+	const isPublicRoute = publicRoutes.includes(to.path);
+
+	if (isPublicRoute) {
+		next();
+		return;
+	}
+
+	if (requiresAuth) {
+		const isPageRefresh = from.name === undefined;
+
+		if (isPageRefresh) {
+			const hasStoredAuth = localStorage.getItem('auth-token') || 
+				sessionStorage.getItem('auth-token') ||
+				isUserAuthenticated;
+
+			if (hasStoredAuth) {
+				next();
+			} else {
+				next('/login');
+			}
+		} else if (!isUserAuthenticated) {
+			next('/login');
+		} else {
+			next();
+		}
+	} else {
+		next();
+	}
 });
 
 export default router;

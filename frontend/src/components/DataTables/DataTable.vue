@@ -5,7 +5,6 @@ import { useWindowSize } from '@vueuse/core'; // Add this package if not already
 const props = defineProps({
   title: {
     type: String,
-    default: "Data Table",
   },
   loading: {
     type: Boolean,
@@ -555,49 +554,33 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="w-full flex-col min-h-screen">
+  <div class="w-full flex-col" :class="{ 'border bg-white border-gray-300 rounded-xl p-4': !error && !loading }">
     <!-- Header and controls section -->
-    <div class="mb-4">
-      <h2 class="text-lg md:text-xl font-bold text-gray-800 pb-2.5">{{ title }}</h2>
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3">
-        <!-- Title and action buttons -->
-        <div class="flex flex-col sm:flex-row sm:items-center gap-2 w-full">
-          
-          <!-- Action buttons -->
-          <div class="flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
-            <button
-              v-if="!loading"
-              v-for="(action, index) in action_buttons"
-              :key="index"
-              @click="handleActionClick(action)"
-              :class="[
-                'px-3 py-1.5 text-sm font-medium text-white rounded-md shadow-sm transition-all duration-150 focus:outline-none',
-                action.color ? `bg-${action.color}-500 hover:bg-${action.color}-600 focus:ring-${action.color}-500` : 'bg-blue-600 hover:bg-blue-700',
-                action.class || '',
-              ]"
-            >
-              <span class="flex items-center gap-1.5">
-                <component :is="action.icon" v-if="action.icon" class="w-4 h-4" />
-                {{ action.name }}
-              </span>
-            </button>
-
-            <!-- CSV Download button -->
-            <button
-              v-if="csv_download && !loading && !error && searchFilteredData.length > 0"
-              class="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm hover:shadow-md transition-all duration-150 focus:ring-offset-2 focus:outline-none"
-              @click="downloadCSV"
-            >
-              <span class="flex items-center gap-1.5">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-                Download CSV
-              </span>
-            </button>
-          </div>
+    <div class="mb-4 flex flex-col">
+      <div v-if="!loading && !error" class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
+        <h2 v-if="title" class="text-2xl font-bold text-gray-800 pb-2.5">{{ title }}</h2>
+        <!-- Action buttons -->
+        <div v-if="action_buttons" class="flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
+          <button
+            v-if="!loading"
+            v-for="(action, index) in action_buttons"
+            :key="index"
+            @click="handleActionClick(action)"
+            :class="[
+              'px-3 py-1.5 text-sm font-medium text-white rounded-md shadow-sm transition-all duration-150 focus:outline-none',
+              action.color ? `bg-${action.color}-500 hover:bg-${action.color}-600 focus:ring-${action.color}-500` : 'bg-gray-600 hover:bg-gray-700',
+              action.class || '',
+            ]"
+          >
+            <span class="flex items-center gap-1.5">
+              <component :is="action.icon" v-if="action.icon" class="w-4 h-4" />
+              {{ action.name }}
+            </span>
+          </button>          
         </div>
+      </div>
 
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3">
         <!-- Global Search -->
         <div v-if="!loading && !error" class="relative w-full sm:w-64 md:w-72">
           <input
@@ -621,6 +604,24 @@ onBeforeUnmount(() => {
             </svg>
           </div>
         </div>
+
+        <!-- Title and action buttons -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2">    
+        </div>
+        <!-- CSV Download button -->
+        <button
+          v-if="csv_download && !loading && !error && searchFilteredData.length > 0"
+          class="px-3 py-1.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md shadow-sm hover:shadow-md transition-all duration-150 focus:ring-offset-2 focus:outline-none"
+          @click="downloadCSV"
+        >
+          <span class="flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+            Export&nbsp;CSV
+          </span>
+        </button>
+
       </div>
 
       <!-- Applied filters summary -->
@@ -702,9 +703,12 @@ onBeforeUnmount(() => {
 
     <!-- Main content area -->
     <div 
-      class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden p-1"
-      :class="{'min-h-300px] flex items-center justify-center': loading || error || table_data.length === 0}"
-      >
+      class="overflow-hidden p-1"
+      :class="[
+        { 'min-h-300px flex items-center justify-center': loading || error || table_data.length === 0 },
+        { 'bg-white border border-gray-200 rounded-lg shadow-sm': !error && !loading },
+      ]"
+    >
     
       <!-- Loading state -->
       <div v-if="loading" class="flex flex-col items-center justify-center py-8 text-gray-500">

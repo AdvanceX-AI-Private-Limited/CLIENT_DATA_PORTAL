@@ -307,7 +307,7 @@ function loadMoreItems() {
                 v-model="searchQuery"
               >
             </div>
-            
+
             <button 
               @click="toggleSort" 
               class="px-2 py-1.5 bg-white border border-gray-200 shadow-sm text-gray-700 hover:bg-gray-50 rounded-lg text-xs flex items-center transition-colors ml-2"
@@ -427,7 +427,7 @@ function loadMoreItems() {
                   
                   <!-- Content with improved typography -->
                   <div class="flex-1 ml-4 truncate">
-                    <div class="font-medium text-xs text-gray-800">
+                    <div class="font-medium text-[0.82em] text-gray-800">
                       {{ item[currentTab.displayMapping.heading] || '' }}
                     </div>
                     <div class="text-xs text-gray-500 truncate">
