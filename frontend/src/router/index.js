@@ -19,6 +19,7 @@ import UserManagement from '@/views/team_management/UserManagement.vue';
 import UserOutletView from '@/views/team_management/UserOutletView.vue';
 import UserServiceView from '@/views/team_management/UserServiceView.vue';
 import OutletServiceView from '@/views/team_management/OutletServiceView.vue';
+import ClientRegistration from '@/views/registration/ClientRegistration.vue';
 
 const publicRoutes = ['/login', '/sign-up'];
 
@@ -131,10 +132,16 @@ const routes = [
 		meta: { requiresAuth: false },
 	},
 	{
+		path: '/client-registration',
+		name: 'Client Registration',
+		component: ClientRegistration,
+		meta: { requiresAuth: false }
+	},
+	{
 		path: '/test',
 		name: 'Test',
 		component: () => import('@/views/test/TestView.vue'),
-		meta: { requiresAuth: true }
+		meta: { requiresAuth: false }
 	},
 	{
 		path: '/:pathMatch(.*)*',

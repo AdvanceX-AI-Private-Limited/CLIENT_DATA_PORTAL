@@ -1,6 +1,6 @@
-import apiClient, { post } from '@/composables/useApiClient'
+import get, { post } from '@/composables/useApiClient'
 
-const get = apiClient.get
+// const get = apiClient.get
 
 export async function fetchTestData() {
   return get('/dashboard/test2')
@@ -46,4 +46,8 @@ export async function mapUserToService(payload) {
 
 export async function mapServiceToOutlet(payload) {
   return post('/dashboard/map-users-to-outlets', payload)
+}
+
+export async function login_test(payload) {
+  return post('/dashboard/login', payload)
 }

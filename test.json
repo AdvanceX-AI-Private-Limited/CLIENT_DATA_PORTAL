@@ -1,0 +1,256 @@
+{
+    "status": true,
+    "message": "",
+    "current_weather_facts": [
+        {
+            "label_key": "HIGHEST_RAIN_ACCUMULATION",
+            "value": 7,
+            "city_id": "ZWC000102",
+            "city_name": "Mumbai",
+            "locality_id": "ZWL001274",
+            "locality_name": "Badlapur"
+        },
+        {
+            "label_key": "HIGHEST_TEMPERATURE",
+            "value": 39.03,
+            "city_id": "ZWC000102",
+            "city_name": "Mumbai",
+            "locality_id": "ZWL008636",
+            "locality_name": "Nalasopara"
+        },
+        {
+            "label_key": "LOWEST_TEMPERATURE",
+            "value": 25.05,
+            "city_id": "ZWC000102",
+            "city_name": "Mumbai",
+            "locality_id": "ZWL001274",
+            "locality_name": "Badlapur"
+        },
+        {
+            "label_key": "MAX_WIND_SPEED",
+            "value": 12.52,
+            "city_id": "ZWC000102",
+            "city_name": "Mumbai",
+            "locality_id": "ZWL009338",
+            "locality_name": "Vile Parle West"
+        }
+    ],
+    "current_city_weather_facts": [
+        {
+            "label_key": "HIGHEST_RAIN_ACCUMULATION",
+            "value": 4.800000000000001,
+            "city_id": "ZWC000110",
+            "city_name": "Delhi NCR",
+            "locality_id": "ZWL008191",
+            "locality_name": "Rangpuri"
+        },
+        {
+            "label_key": "HIGHEST_TEMPERATURE",
+            "value": 42.6,
+            "city_id": "ZWC000110",
+            "city_name": "Delhi NCR",
+            "locality_id": "ZWL008554",
+            "locality_name": "Greater Noida"
+        },
+        {
+            "label_key": "LOWEST_TEMPERATURE",
+            "value": 27.42,
+            "city_id": "ZWC000110",
+            "city_name": "Delhi NCR",
+            "locality_id": "ZWL007486",
+            "locality_name": "Dwarka"
+        },
+        {
+            "label_key": "MAX_WIND_SPEED",
+            "value": 5.01,
+            "city_id": "ZWC000110",
+            "city_name": "Delhi NCR",
+            "locality_id": "ZWL002146",
+            "locality_name": "Mayur Vihar Phase III"
+        },
+        {
+            "label_key": "HIGHEST_RAIN_ACCUMULATION",
+            "value": 14.4,
+            "city_id": "ZWC000121",
+            "city_name": "Kolkata",
+            "locality_id": "ZWL009022",
+            "locality_name": "Behala"
+        },
+        {
+            "label_key": "HIGHEST_TEMPERATURE",
+            "value": 37.1,
+            "city_id": "ZWC000121",
+            "city_name": "Kolkata",
+            "locality_id": "ZWL002931",
+            "locality_name": "Kestopur"
+        },
+        {
+            "label_key": "LOWEST_TEMPERATURE",
+            "value": 34.19,
+            "city_id": "ZWC000121",
+            "city_name": "Kolkata",
+            "locality_id": "ZWL006750",
+            "locality_name": "Bhowanipore"
+        },
+        {
+            "label_key": "MAX_WIND_SPEED",
+            "value": 5.27,
+            "city_id": "ZWC000121",
+            "city_name": "Kolkata",
+            "locality_id": "ZWL005244",
+            "locality_name": "Park Street Area"
+        },
+        {
+            "label_key": "HIGHEST_RAIN_ACCUMULATION",
+            "value": 7,
+            "city_id": "ZWC000102",
+            "city_name": "Mumbai",
+            "locality_id": "ZWL001274",
+            "locality_name": "Badlapur"
+        },
+        {
+            "label_key": "HIGHEST_TEMPERATURE",
+            "value": 39.03,
+            "city_id": "ZWC000102",
+            "city_name": "Mumbai",
+            "locality_id": "ZWL008636",
+            "locality_name": "Nalasopara"
+        },
+        {
+            "label_key": "LOWEST_TEMPERATURE",
+            "value": 25.05,
+            "city_id": "ZWC000102",
+            "city_name": "Mumbai",
+            "locality_id": "ZWL001274",
+            "locality_name": "Badlapur"
+        },
+        {
+            "label_key": "MAX_WIND_SPEED",
+            "value": 12.52,
+            "city_id": "ZWC000102",
+            "city_name": "Mumbai",
+            "locality_id": "ZWL009338",
+            "locality_name": "Vile Parle West"
+        },
+        {
+            "label_key": "HIGHEST_RAIN_ACCUMULATION",
+            "value": 23.4,
+            "city_id": "ZWC000122",
+            "city_name": "Bengaluru",
+            "locality_id": "ZWL008600",
+            "locality_name": "Marathahalli"
+        },
+        {
+            "label_key": "HIGHEST_TEMPERATURE",
+            "value": 30.64,
+            "city_id": "ZWC000122",
+            "city_name": "Bengaluru",
+            "locality_id": "ZWL008797",
+            "locality_name": "Devanahalli"
+        },
+        {
+            "label_key": "LOWEST_TEMPERATURE",
+            "value": 19.49,
+            "city_id": "ZWC000122",
+            "city_name": "Bengaluru",
+            "locality_id": "ZWL002736",
+            "locality_name": "RT Nagar"
+        },
+        {
+            "label_key": "MAX_WIND_SPEED",
+            "value": 10.04,
+            "city_id": "ZWC000122",
+            "city_name": "Bengaluru",
+            "locality_id": "ZWL006600",
+            "locality_name": "BTM Layout"
+        },
+        {
+            "label_key": "HIGHEST_TEMPERATURE",
+            "value": 30.4,
+            "city_id": "ZWC000103",
+            "city_name": "Pune",
+            "locality_id": "ZWL002422",
+            "locality_name": "Shivaji Nagar"
+        },
+        {
+            "label_key": "LOWEST_TEMPERATURE",
+            "value": 24.6,
+            "city_id": "ZWC000103",
+            "city_name": "Pune",
+            "locality_id": "ZWL009577",
+            "locality_name": "Nanded-Nahre"
+        },
+        {
+            "label_key": "MAX_WIND_SPEED",
+            "value": 2.43,
+            "city_id": "ZWC000103",
+            "city_name": "Pune",
+            "locality_id": "ZWL007801",
+            "locality_name": "Pimpri"
+        },
+        {
+            "label_key": "HIGHEST_RAIN_ACCUMULATION",
+            "value": 0.2,
+            "city_id": "ZWC000103",
+            "city_name": "Pune",
+            "locality_id": "ZWL003099",
+            "locality_name": "Nimgaon"
+        },
+        {
+            "label_key": "HIGHEST_RAIN_ACCUMULATION",
+            "value": 0.2,
+            "city_id": "ZWC000136",
+            "city_name": "Hyderabad",
+            "locality_id": "ZWL008890",
+            "locality_name": "Serilingampally"
+        },
+        {
+            "label_key": "HIGHEST_TEMPERATURE",
+            "value": 41.83,
+            "city_id": "ZWC000136",
+            "city_name": "Hyderabad",
+            "locality_id": "ZWL009712",
+            "locality_name": "Dilsukhnagar"
+        },
+        {
+            "label_key": "LOWEST_TEMPERATURE",
+            "value": 32.74,
+            "city_id": "ZWC000136",
+            "city_name": "Hyderabad",
+            "locality_id": "ZWL006699",
+            "locality_name": "Hafiz Baba Nagar"
+        },
+        {
+            "label_key": "MAX_WIND_SPEED",
+            "value": 2.5,
+            "city_id": "ZWC000136",
+            "city_name": "Hyderabad",
+            "locality_id": "ZWL008585",
+            "locality_name": "Shamshabad"
+        },
+        {
+            "label_key": "HIGHEST_TEMPERATURE",
+            "value": 40.75,
+            "city_id": "ZWC000135",
+            "city_name": "Chennai",
+            "locality_id": "ZWL003452",
+            "locality_name": "Medavakkam"
+        },
+        {
+            "label_key": "LOWEST_TEMPERATURE",
+            "value": 33.9,
+            "city_id": "ZWC000135",
+            "city_name": "Chennai",
+            "locality_id": "ZWL006156",
+            "locality_name": "Velachery"
+        },
+        {
+            "label_key": "MAX_WIND_SPEED",
+            "value": 4.43,
+            "city_id": "ZWC000135",
+            "city_name": "Chennai",
+            "locality_id": "ZWL001701",
+            "locality_name": "Tambaram"
+        }
+    ]
+}

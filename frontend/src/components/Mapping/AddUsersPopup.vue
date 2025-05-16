@@ -34,13 +34,13 @@ function close() {
       </div>
 
       <!-- Body -->
-      <div class="flex-1 overflow-auto p-4">
+      <div class="flex-1 min-h-0">
         <!-- Add slot content here -->
         <slot />
       </div>
 
       <!-- Footer -->
-      <div class="p-3 border-t flex items-center gap-2 bg-gray-50" :class="[action_buttons && action_buttons.length ? 'justify-between' : 'justify-end']" v-if="closeBtnBar || (action_buttons && action_buttons.length)">
+      <div class="rounded-b-lg p-3.5 border-t flex items-center gap-2 bg-gray-50" :class="[action_buttons && action_buttons.length ? 'justify-between' : 'justify-end']" v-if="closeBtnBar || (action_buttons && action_buttons.length)">
         <button v-if="closeBtnBar" @click="close" class="text-xs text-gray-700 py-2 px-4 border rounded-lg hover:bg-gray-100 cursor-pointer">Cancel</button>
 
         <div class="flex gap-2 ml-auto" v-if="action_buttons && action_buttons.length">

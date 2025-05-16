@@ -1,9 +1,9 @@
-// src/composables/useApiClient.js
+// src/composables/useget.js
 import axios from 'axios'
 import config from '@/config'
 
 // Create the axios instance
-const apiClient = axios.create({
+const get = axios.create({
   baseURL: config.api.baseUrl,
   headers: {
     'Content-Type': 'application/json',
@@ -22,7 +22,7 @@ async function post(endpoint, payload) {
 
   try {
     // Try the original endpoint first
-    const response = await apiClient.post(endpoint, payload)
+    const response = await get.post(endpoint, payload)
     return response
   } catch (error) {
     console.warn(`Failed with ${endpoint}, trying fallbacks...`)
@@ -33,7 +33,7 @@ async function post(endpoint, payload) {
         try {
           const fullPath = `${prefix}${endpoint}`
           console.log(`Trying fallback: ${fullPath}`)
-          const response = await apiClient.post(fullPath, payload)
+          const response = await get.post(fullPath, payload)
           console.log(`Success with ${fullPath}`)
           return response
         } catch (prefixError) {
@@ -72,5 +72,5 @@ export function useApiEndpoints() {
 	}
 }
 
-export default apiClient
+export default get
 export { post }

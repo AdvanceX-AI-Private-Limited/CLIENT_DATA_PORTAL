@@ -10,6 +10,11 @@ const verifyOtp = () => {
 </script>
 
 <template>
+<div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md">
+<p class="text-sm">
+  If you already have an account, an OTP will be sent to your email. If not, please visit the <a href="#" class="underline hover:text-green-900">registration page</a>.
+</p>
+</div>
   <div class="space-y-4">
     <input
     v-model="otp"

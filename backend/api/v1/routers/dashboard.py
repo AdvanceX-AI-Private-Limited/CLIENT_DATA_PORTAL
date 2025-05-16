@@ -33,7 +33,7 @@ async def dashboard():
 cookies = {
     '_ga': 'GA1.1.312283043.1742895003',
     '_ga_2WR26M0758': 'GS1.1.1745841255.5.1.1745842214.0.0.0',
-    'session': '.eJxdkGuvmkAQhv8K2c-KCHj9VC89Uq3xICpoc0LGdYVF2AWWBS_xvxdTmzT9NJlk5nlnngfyzzGIkAg0_PVASlEXVEHOKAtQA-25VBIpCiXmgUKZUnAFMCZCKEVIhZJCQFT09fxqID8leQKMsJpQ5JI0EM7JqW4pxDX7gXBM686nJzREbWMwMLudttFrskjS8gKhKTVNZu0ji1I9M3syPtEklsdEhTQVasB5EBMpSI45K2qOinlS3_eGClKH1cFotpo4n16zm93J2ipCuzRgNrOsrpzvPmZ0LHp9v97KyTknIvQLfiEMDZmM4wYSmKcvCygsilQMW62qqt65kFLxCmyBLMLW6wrKzlwlCdC4xr0x6Ab6QAVt5JpecY1oc_SDO4fTGvDV0BYGt92V4zQj27t93kdmNO3czt_D9DDWJes745vt6tv-RADRx0awvQYOa_NNpNke_Zl5m4N3X97d8XpmLdn2GB0yFl66NszXRnbdruZm2CdL192J7uCA55nBd6vYKTmedpoj11otQm3slkeYltjgZnCzYLFcwyTYL0YH2xmt986Hbc08fUkrubCrzbx07-list0lJ_CX2Nbavc7fR32Z038s8ZcT_X9Rf5Q8G-glq54GEUOiJvQG3-BUAsPkqgJFz9939dtR.aB2utA.vYfFTIXz52xt8ERHnyOPNl0POa0',
+    'session': '.eJxdkFuPokAQRv8K6WdFUZHBpwUdcZhxvBBHYTMhLbTQ0nQj3Q1e4n8fzLrJZp8qlVSdr-rcQHggkKeIg9HvG1BEU0ANS4ppAlrAZ1LJJRcKYYmCqSKYAqMIca6IFHOlgAlSwff9uwXCApU5pIg2BFFK1AJRieKmxZA07BuICG66EMdgBLS-aQ6GutY32vQocZXBdCC7XXnS9vRY9E4DQ5IY50TucxUWBVcTxhKCJEdlxKhoOGrE8ua-J5SjJqwJBs5i7C137eHpitYzka6qPnSc2Wwo3a-pg21uvITNVokOJeJpKFiGKBhRSUgL8IgVDwsgFaLgo06nrutnLiwwfwR2oBRp53EFpgemohxi0uCeGHCBPVOFXWs72InzcZZaXmAfJsurZsIi6Xs-Wi_1wD2aTmDnmitYcUJflO5ft_bnh5WRnRtLf82F5Xp0odnestu_Hge5r5mTTE7LSP_4LPeoeNlZdoYWL_GCh_o8dl_PnjbX3-aau1qySh-eK5IFwbs1rZ12afmOjvjwLR6PLyXEeuwkW5tsrpvJ-AzHif9ubeaetfa96Wrm7HpzjKMw1Yfp3K-Miuj1Noi2xmzV1Qz976OhLPE_ltjDSe9_UX-U3FvgIauZhpzAXM3xBf6CcQVphM4qxOD-A__e2mU.aCLpHA.4F_gNzPETDmY94WwUz--ECa4Io4',
 }
 
 @router.get("/test2")
@@ -193,3 +193,13 @@ async def map_users_to_outlets(request: MappingData):
     print(request.data.dict())
     await sleep(3)
     return {"message": "Mapped Users to Outlets", "request": "post"}
+
+class loginModel(BaseModel):
+    email: str
+    
+@router.post("/login")
+async def login_api(request: loginModel):
+    print("Login api called email", request)
+    await sleep(2)
+    return { "status": True, "message": "Login successfull" }
+    
