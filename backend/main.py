@@ -1,13 +1,14 @@
+from dotenv import load_dotenv
 import uvicorn
 from contextlib import asynccontextmanager
+from api.v1.routers import auth
 from logger import create_logger
 from fastapi import APIRouter, Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timezone, timedelta
+from api.v1.routers import auth, access, admin, automation, dashboard, clients, help
 from api.v1.database import models
 from api.v1.database.database import engine, test_connection, get_database_info, create_tables
-from api.v1.routers.auth import get_current_active_user
-from api.v1.routers import auth, access, admin, automation, dashboard, help
 
 logger = create_logger()
 
@@ -17,33 +18,27 @@ async def lifespan(app: FastAPI):
     try:
         logger.info("Starting FastAPI application startup...")
         
-        # Test database connection
+        # 1. Test database connection
         logger.info("Testing database connection...")
-        if test_connection():
-            logger.info("Database connection verified successfully")
-            
-            # Get and log database info
-            db_info = get_database_info()
-            logger.info(f"Database info: {db_info}")
-            
-            # Create tables if they don't exist
-            logger.info("Creating database tables if they don't exist...")
-            if create_tables():
-                logger.info("Database tables created/verified successfully")
-                
-                # Also create tables using the models Base (backup method)
-                try:
-                    models.Base.metadata.create_all(bind=engine)
-                    logger.info("Models-based table creation completed")
-                except Exception as e:
-                    logger.warning(f"Models-based table creation warning: {e}")
-            else:
-                logger.warning("Some issues occurred while creating tables")
-                
-        else:
+        if not test_connection():
             logger.error("Database connection failed during startup")
-            raise Exception("Database connection failed - cannot start application")
+            raise RuntimeError("Database connection failed - cannot start application")
+        logger.info("Database connection verified successfully")
             
+        # 2. Log database info
+        db_info = get_database_info()
+        logger.info(f"Database info: {db_info}")
+
+            
+        # 3. Create tables from models
+        logger.info("Creating database tables from models if they don't exist...")
+        try:
+            models.Base.metadata.create_all(bind=engine)
+            logger.info("Database tables created/verified successfully")
+        except Exception as e:
+            logger.error(f"Failed to create database tables: {e}")
+            raise
+
         logger.info("Application startup completed successfully")
             
     except Exception as e:
@@ -52,13 +47,14 @@ async def lifespan(app: FastAPI):
 
     yield  # Application runs here
     
-    # Cleanup after app shutdown
+    # Shutdown and cleanup
     logger.info("Application shutting down...")
     try:
         engine.dispose()
         logger.info("Database connections closed successfully")
     except Exception as e:
         logger.error(f"Error during shutdown: {e}")
+    logger.info("Application shutdown completed")
     
     logger.info("Application shutdown completed")
 
@@ -84,7 +80,6 @@ app = FastAPI(
 )
 
 # Set up timezone
-protected_router = APIRouter(dependencies=[Depends(get_current_active_user)])
 IST = timezone(timedelta(hours=5, minutes=30))
 logger.debug(f"Timezone set to IST: {IST}")
 
@@ -162,7 +157,10 @@ logger.info("Including dashboard router...")
 api_v1_router.include_router(dashboard.router, prefix="/dashboard", tags=["Dashboard"])
 
 logger.info("Including support router...")
-api_v1_router.include_router(help.router, prefix="/help", tags=["Support"])
+api_v1_router.include_router(clients.router, prefix="/clients", tags=["Clients CRUD"])
+
+logger.info("Including support router...")
+api_v1_router.include_router(help.router, prefix="/help", tags=["Clients CRUD"])
 
 # Include all the above routers in main app
 logger.info("Mounting version 1 router to main application...")

@@ -1,5 +1,8 @@
+from typing import Optional
 from sqlalchemy import (
+    JSON,
     Column,
+    Date,
     Integer,
     String,
     ForeignKey,
@@ -10,6 +13,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from ..database.database import Base
 from enum import Enum
+from pydantic import BaseModel
 from datetime import datetime, timedelta, timezone
 from logger import create_logger
 
@@ -25,6 +29,41 @@ class StatusEnum(str, Enum):
     inactive = "Inactive"
     all = "All"
 
+class MailOptions(BaseModel):
+    otp: bool = False
+    waitlist: bool = False
+    confirmation: bool = False
+    tnc: bool = False
+    invoice: bool = False
+
+class MailContext(BaseModel):
+    otp: int
+    invoice_location: Optional[str] = None
+    tnc_location: Optional[str] = None
+
+class MailRequest(BaseModel):
+    recipient_email: str
+    mail_options: MailOptions
+    mail_context: MailContext
+
+class UserSession(Base):
+    __tablename__ = "user_sessions"
+    logger.debug(f"Initializing {__tablename__} table")
+    
+    id = Column(Integer, primary_key=True, index=True)
+    client_id = Column(Integer, ForeignKey("clients.id"), nullable=False)
+    session_token = Column(String(255), unique=True, index=True, nullable=False)
+    email = Column(String(255), nullable=False)
+    created_at = Column(DateTime, nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    
+    # Relationship with Client model
+    client = relationship("Client", back_populates="sessions")
+
+    def __repr__(self):
+        return f"<UserSession(id={self.id}, email={self.email})>"
+
 
 class Client(Base):
     __tablename__ = "clients"
@@ -36,8 +75,9 @@ class Client(Base):
     hashed_password = Column(String(255), nullable=False)
     is_active = Column(Boolean, default=True)
     accesstype = Column(String(50), nullable=False)
-    created_at = Column(DateTime, default=datetime.now(IST))
-    updated_at = Column(DateTime, onupdate=datetime.now(IST))
+    google_linked = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(IST))
+    updated_at = Column(DateTime, onupdate=lambda: datetime.now(IST))
     
     # Relationships
     outlets = relationship("Outlet", back_populates="client", cascade="all, delete-orphan")
@@ -46,6 +86,7 @@ class Client(Base):
     outlet_services = relationship("OutletService", back_populates="client", cascade="all, delete-orphan")
     user_services = relationship("UserService", back_populates="client", cascade="all, delete-orphan")
     user_outlets = relationship("UserOutlet", back_populates="client", cascade="all, delete-orphan")
+    sessions = relationship("UserSession", back_populates="client", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Client(id={self.id}, username={self.username})>"
@@ -57,6 +98,10 @@ class Brand(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     brandname = Column(String(255), unique=True, index=True, nullable=False)
+    gstin = Column(String(15), unique=True, nullable=False)
+    legal_name_of_business = Column(String(255), nullable=False)
+    date_of_registration = Column(Date, nullable=False)
+    gstdoc = Column(JSON, nullable=False)  # Stores the GST data as a JSON/dict
     created_at = Column(DateTime, default=datetime.now(IST))
     updated_at = Column(DateTime, onupdate=datetime.now(IST))
     client_id = Column(Integer, ForeignKey("clients.id"), nullable=False)

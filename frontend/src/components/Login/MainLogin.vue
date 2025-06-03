@@ -54,7 +54,7 @@ const handleVerified = (payload) => {
 
       <p class="text-center text-sm text-gray-500">
         Don’t have an account?
-        <a href="#" class="text-blue-600 hover:underline">Sign Up</a>
+        <a href="/sign-up" class="text-blue-600 hover:underline">Sign Up</a>
       </p>
     </div>
   </div>

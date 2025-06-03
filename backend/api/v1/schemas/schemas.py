@@ -1,6 +1,6 @@
-from pydantic import BaseModel, ConfigDict, EmailStr, SecretStr, Field, constr, field_validator
-from typing import Optional, List
-from datetime import datetime
+from pydantic import BaseModel, ConfigDict, EmailStr, HttpUrl, SecretStr, Field, constr, field_validator
+from typing import Any, Dict, Optional, List
+from datetime import date, datetime
 
 class DisplayBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -25,14 +25,19 @@ class ClientBase(BaseModel):
     )
     accesstype: str = Field(
         default="client",
-        description="Access type of the client. Default is 'client'.",
+        description="Access type of the client. Default is 'client'",
         example="client",
         max_length=50
     )
     is_active: Optional[bool] = Field(
         default=True,
-        description="Whether the client is currently active.",
+        description="Whether the client is currently active",
         example=True
+    )
+    google_linked: Optional[bool] = Field(
+        default=False,
+        description="Whether the client has connected their google account",
+        example=False
     )
 
 class ClientCreate(ClientBase):
@@ -72,6 +77,42 @@ class BrandBase(BaseModel):
         description="The ID of the client this brand belongs to.", 
         examples=[1]
     )
+    gstin: str = Field(
+        ..., 
+        min_length=15,
+        max_length=15,
+        pattern=r"^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$",
+        description="GST number of the business",
+        examples=["22ABCDE1234F1Z5"]
+    )
+    legal_name_of_business: str = Field(
+        ..., 
+        min_length=2,
+        max_length=255,
+        description="Registered legal name of the business",
+        examples=["CoolBrand Private Limited"]
+    )
+    date_of_registration: date = Field(
+        ..., 
+        description="Date when the business was registered for GST",
+        examples=["2022-07-15"]
+    )
+    gstdoc: Dict[str, Any] = Field(
+        ..., 
+        description="Parsed GST data from verification API",
+        examples=[
+            {
+                "gstin": "22ABCDE1234F1Z5",
+                "legalName": "CoolBrand Private Limited",
+                "tradeName": "CoolBrand",
+                "stateCode": "22",
+                "address": "123 Market Street, Bangalore, KA",
+                "registrationDate": "2022-07-15",
+                "status": "Active"
+            }
+        ]
+    )
+
 
 class BrandCreate(BrandBase):
     pass

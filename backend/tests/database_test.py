@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-"""
-Debug script to test database connection independently
-Run this to diagnose connection issues before starting FastAPI
-"""
-
 import os
 import sys
 from pathlib import Path
