@@ -47,6 +47,8 @@ async function post(endpoint, payload) {
   }
 }
 
+import * as authApi from '@/composables/api/authApi'
+
 import * as adminApi from '@/composables/api/adminApi'
 import * as dashboardApi from '@/composables/api/dashboardApi'
 import * as testApi from '@/composables/api/testApi'
@@ -54,6 +56,8 @@ import * as testApi from '@/composables/api/testApi'
 export function useApiEndpoints() {
 	return {
 		apiEndpoints: {
+      authFunction: authApi,
+
 			// Admin APIs
 			fetchAdminUsers: adminApi.fetchAdminUsers,
 			createAdminUser: adminApi.createAdminUser,

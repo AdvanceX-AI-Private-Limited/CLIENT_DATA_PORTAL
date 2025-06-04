@@ -12,7 +12,7 @@
     </div>
     <div class="flex justify-between items-center mb-6">
       <div class="flex items-center">
-        <img class="w-40 md:w-39" src="C:\DATA_PORTAL\DATA_PORTAL\frontend\public\logo-advancex.png" alt="">
+        <img class="w-40 md:w-39" src="/logo-advancex.png" alt="">
       </div>
       <div>
         <span class="text-md">Already a member? </span>

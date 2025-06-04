@@ -2,11 +2,15 @@
 import { ref } from 'vue'
 import OtpInput from '@/components/Login/OtpInput.vue'
 import AuthForm from '@/components/Login/AuthForm.vue'
+import { googleLogin } from "@/composables/api/authApi";
+import { useRouter } from "vue-router";
 
 const username = ref('')
 const password = ref('')
 const showOtp = ref(false)
 const userData = ref({})
+const router = useRouter();
+const unauthorizedMessage = ref("");
 
 const login = () => {
   if (username.value && password.value) {
@@ -22,6 +26,11 @@ const handleVerified = (payload) => {
   userData.value = payload
   showOtp.value = true
 }
+
+const handleGoogleLogin = () => {
+  const backendBaseUrl = `${window.location.origin}/api/v1/auth/google/login`;
+  window.location.href = backendBaseUrl;
+};
 </script>
 <template>
   <div class="h-full flex items-center justify-center px-4">
@@ -45,15 +54,15 @@ const handleVerified = (payload) => {
         <div class="flex-grow border-t border-gray-300"></div>
       </div>
 
-      <div class="flex justify-between gap-4">
-        <button class="w-full flex items-center justify-center gap-2 py-2.5 font-medium rounded-3xl hover:bg-purple-200 bg-purple-100">
+      <div class="flex justify-between gap-4" id="google-login-btn">
+        <button @click="handleGoogleLogin" class="w-full flex items-center justify-center gap-2 py-2.5 font-medium rounded-3xl hover:bg-purple-200 bg-purple-100">
           <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" />
           Google
         </button>
       </div>
 
       <p class="text-center text-sm text-gray-500">
-        Don’t have an account?
+        Don't have an account?
         <a href="/sign-up" class="text-blue-600 hover:underline">Sign Up</a>
       </p>
     </div>

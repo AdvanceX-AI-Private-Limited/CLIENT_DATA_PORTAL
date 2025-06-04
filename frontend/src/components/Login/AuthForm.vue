@@ -1,10 +1,12 @@
 <script setup>
 import { ref } from "vue";
-import { login_test } from "@/composables/api/testApi";
+import { login } from "@/composables/api/authApi";
 
 const emit = defineEmits(["verified"]);
 
 const email = ref("");
+const password = ref("");
+
 const userData = ref(null);
 
 const loginLoading = ref(false);
@@ -12,7 +14,7 @@ const loginError = ref("");
 const showError = ref(false);
 
 const handleLogin = async () => {
-  if (!email.value) {
+  if (!email.value || !password.value) {
     return;
   }
 
@@ -21,12 +23,14 @@ const handleLogin = async () => {
   showError.value = false;
 
   try {
-    // Payload shape expected by your login_test endpoint
-    const payload = { email: email.value }; // <-- adjust if needed
-    const response = await login_test(payload);
+    // Payload shape expected by your login endpoint
+    const payload = { email: email.value, password: password.value };
+    const response = await login(payload);
+    console.log("response: ", response);
 
     // handle success, e.g.:
     userData.value = response.data;
+    console.log(userData);
     emit("verified", { email: email.value });
   } catch (error) {
     showError.value = true;
@@ -43,6 +47,10 @@ const handleLogin = async () => {
 const hideError = () => {
   showError.value = false;
 };
+
+const handleGoogleLogin = () => {
+  window.location.href = 'http://localhost:8000/api/v1/auth/google/login';
+}
 </script>
 
 <template>
@@ -87,11 +95,20 @@ const hideError = () => {
       </div>
     </transition>
 
-    <div id="authInput">
+    <div id="authInputEmail">
       <input
         v-model="email"
         type="text"
         placeholder="Email"
+        class="w-full px-4 py-2 rounded-3xl border-0 focus:outline-none outline-3 outline-purple-200 focus:ring-3 focus:ring-blue-600 h-10.5 font-"
+        :disabled="loginLoading"
+      />
+    </div>
+    <div id="authInputPass">
+      <input
+        v-model="password"
+        type="password"
+        placeholder="Password"
         class="w-full px-4 py-2 rounded-3xl border-0 focus:outline-none outline-3 outline-purple-200 focus:ring-3 focus:ring-blue-600 mb-6 h-10.5 font-"
         :disabled="loginLoading"
       />
