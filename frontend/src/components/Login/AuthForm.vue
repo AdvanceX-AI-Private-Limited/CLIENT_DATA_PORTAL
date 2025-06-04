@@ -49,7 +49,7 @@ const hideError = () => {
 };
 
 const handleGoogleLogin = () => {
-  window.location.href = 'http://localhost:8000/api/v1/auth/google/login';
+  window.location.href = '/api/v1/auth/google/login';
 }
 </script>
 

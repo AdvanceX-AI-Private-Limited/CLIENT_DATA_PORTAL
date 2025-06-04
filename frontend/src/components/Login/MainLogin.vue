@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import OtpInput from '@/components/Login/OtpInput.vue'
 import AuthForm from '@/components/Login/AuthForm.vue'
-import { googleLogin } from "@/composables/api/authApi";
 import { useRouter } from "vue-router";
 
 const username = ref('')
@@ -28,8 +27,7 @@ const handleVerified = (payload) => {
 }
 
 const handleGoogleLogin = () => {
-  const backendBaseUrl = `${window.location.origin}/api/v1/auth/google/login`;
-  window.location.href = backendBaseUrl;
+  window.location.href = '/api/v1/auth/google/login';
 };
 </script>
 <template>
