@@ -164,7 +164,7 @@ try {
 
 export function setAuthState(authenticated) {
 	isUserAuthenticated = authenticated;
-
+	// console.log("setAuthState isUserAuthenticated: ", isUserAuthenticated);
 	if (authenticated) {
 		localStorage.setItem('auth-token', 'true');
 	} else {

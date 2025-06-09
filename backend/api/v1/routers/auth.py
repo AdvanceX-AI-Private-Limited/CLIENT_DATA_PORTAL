@@ -269,7 +269,8 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
                     "user": {
                         "email": session_data["email"],
                         "client_id": session_data["client_id"]
-                    }
+                    },
+                    "is_signed_in": True
                 }
             )
         
@@ -314,7 +315,8 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
                 "message": "Login successful. OTP sent to your email.",
                 "temp_token": temp_session_id,
                 "expires_in": 300,  # 5 minutes
-                "next_step": "verify_otp"
+                "next_step": "verify_otp",
+                "is_signed_in": False
             }
         )
 
@@ -499,7 +501,7 @@ async def logout(request: Request, db: Session = Depends(get_db)):
         # Get session token from Authorization header or request body
         auth_header = request.headers.get("Authorization")
         session_token = None
-        
+        print(request.headers)
         if auth_header and auth_header.startswith("Bearer "):
             session_token = auth_header.split(" ")[1]
             logger.debug("Session token retrieved from Authorization header")

@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { useUser , UserButton } from '@clerk/vue';
+import { useAuth } from '@/stores/useAuth';
 import {
 	LockClosedIcon,
 	LockOpenIcon,
@@ -43,11 +43,7 @@ const isSubmenuOpen = (name) => openSubmenus.value[name] || false;
 const isActiveRoute = (path) => route.path === path;
 const isSubItemActive = (subLinks) => subLinks.some((subItem) => isActiveRoute(subItem.path));
 
-const { user } = useUser();
-
-const logout = () => {
-	console.log('User logged out');
-};
+const { user, logout } = useAuth();
 
 const props = defineProps({
 	navigation: Array,
@@ -142,22 +138,15 @@ const props = defineProps({
 				<div class="w-full py-2">
 					<div class="flex items-center space-x-3 p-1.5 rounded-xl bg-gray-900">
 						<!-- <UserCircleIcon class="w-8 h-8 text-gray-400" /> -->
-						 <UserButton after-sign-out-url="/login"/>
+						 <button @click="logout" class="flex items-center space-x-3 w-full text-md font-medium text-white opacity-85 hover:bg-red-600/50 transition-all duration-300 cursor-pointer bg-red-700 p-2 rounded-xl">
+							<ArrowRightOnRectangleIcon class="w-6 h-6 text-white" />
+							<span v-if="isOpen">Logout</span>
+						</button>
 						<div v-if="isOpen" class="overflow-hidden whitespace-nowrap">
-							<div class="text-sm font-med">{{ user?.primaryEmailAddress?.emailAddress }}</div>
+							<div class="text-sm font-med">{{ user?.email }}</div>
 						</div>
 					</div>
 				</div>
-
-				<!-- <div class="w-full py-2">
-					<button
-						@click="logout"
-						class="flex items-center space-x-3 w-full text-md font-medium text-white opacity-85 hover:bg-red-600/50 transition-all duration-300 cursor-pointer bg-red-700 p-2 rounded-xl"
-					>
-						<ArrowRightOnRectangleIcon class="w-6 h-6 text-white" />
-						<span v-if="isOpen">Logout</span>
-					</button>
-				</div> -->
 			</div>
 		</div>
 	</aside>

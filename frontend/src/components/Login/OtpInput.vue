@@ -1,11 +1,38 @@
 <script setup>
 import { ref } from 'vue'
+import { useAuth } from '@/stores/useAuth';
+import { verifyOtp } from '@/composables/api/authApi';
 
-const otp = ref('')
+const props = defineProps({
+  tempToken: { type: String, required: true },
+  email: { type: String, required: true }
+});
 
-const verifyOtp = () => {
-  console.log('OTP entered:', otp.value)
-  // add your verification logic here
+const emit = defineEmits(['otp-success']);
+
+const otp = ref('');
+const error = ref('');
+const loading = ref(false);
+const { setAuthFromApiResponse } = useAuth();
+
+const verifyOtpHandler = async () => {
+  error.value = '';
+  loading.value = true;
+  try {
+    const payload = { token: props.tempToken, otp: otp.value };
+    const response = await verifyOtp(payload);
+    const data = response.data;
+    if (data.session_token) {
+      setAuthFromApiResponse(data);
+      emit('otp-success');
+    } else {
+      error.value = data.message || 'OTP verification failed.';
+    }
+  } catch (e) {
+    error.value = e.response?.data?.message || e.message || 'OTP verification failed.';
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
 
@@ -21,12 +48,16 @@ const verifyOtp = () => {
     type="text"
     placeholder="Enter OTP"
     class="w-full px-4 py-2 rounded-3xl border-0 focus:outline-none outline-3 outline-purple-200 focus:ring-3 focus:ring-blue-600 mb-6 h-10.5 font-"
+    :disabled="loading"
     />
     <button
-      @click="verifyOtp"
+      @click="verifyOtpHandler"
       class="w-full bg-blue-800 text-white py-2.5 rounded-3xl hover:bg-blue-900 transition font-medium"
+      :disabled="loading"
     >
-      Verify OTP
+      <span v-if="!loading">Verify OTP</span>
+      <span v-else>Verifying...</span>
     </button>
+    <div v-if="error" class="text-red-600 text-sm mt-2">{{ error }}</div>
   </div>
 </template>

@@ -15,17 +15,18 @@ import { storeToRefs } from "pinia";
 import { useSidebarStore } from "@/stores/useSidebar"; 
 import LoginView from "./views/auth/LoginView.vue";
 import { useRoute, useRouter } from 'vue-router';
-import { useAuth, ClerkLoaded, useUser } from '@clerk/vue';
+import { useAuth } from '@/stores/useAuth';
 import { setAuthState } from '@/router';
 
 const isSidebarOpen = ref(false)
 const route = useRoute();
 const router = useRouter();
-const { isSignedIn, isLoaded } = useAuth();
-
+const { isSignedIn, loaded } = useAuth();
+// console.log("App isSignedIn: ", isSignedIn.value);
 // For debugging
 watchEffect(() => {
-  if (isLoaded.value) {
+  if (loaded.value) {
+    // console.log("App watchEffect isSignedIn: ", isSignedIn.value);
     // console.log('Clerk authentication loaded, isSignedIn:', isSignedIn.value);
     // console.log('Current route:', route.path);
   }
@@ -36,42 +37,32 @@ let previousAuthState = null;
 
 // Initialize the auth state once when component is mounted
 onMounted(() => {
-  // Use watchEffect within onMounted to handle async loading of Clerk
-  const stopWatcher = watchEffect(() => {
-    if (isLoaded.value) {
-    //   console.log('Component mounted and Clerk loaded, setting initial auth state:', isSignedIn.value);
+  let stopWatcher = null;
+  stopWatcher = watchEffect(() => {
+    if (loaded.value) {
       previousAuthState = isSignedIn.value;
       setAuthState(isSignedIn.value);
       // Stop this watcher once it's executed
-      stopWatcher();
+      if (stopWatcher) stopWatcher();
     }
   });
 });
 
 // Watch for changes in authentication state and update the router's global state
 watchEffect(() => {
-  if (isLoaded.value) {
-    // Always update the global auth state
+  if (loaded.value) {
+    // console.log("App watchEffect isSignedIn: ", isSignedIn.value);
     setAuthState(isSignedIn.value);
-    
-    // Set or remove authentication token in storage
     if (isSignedIn.value) {
       localStorage.setItem('auth-token', 'true');
     } else {
       localStorage.removeItem('auth-token');
     }
-    
-    // Only redirect if auth state actually changes from a previous known state 
-    // AND this isn't the initial load (previousAuthState will be non-null after onMounted)
     if (previousAuthState !== null && previousAuthState !== isSignedIn.value) {
       previousAuthState = isSignedIn.value;
-      
-      // Handle current route based on new auth state
       const currentPath = route.path;
       const publicRoutes = ['/login', '/sign-up'];
       const isPublicRoute = publicRoutes.includes(currentPath);
-      
-      // Redirect if needed based on auth state change
       if (isSignedIn.value && isPublicRoute) {
         router.push('/');
       } else if (!isSignedIn.value && !isPublicRoute) {
@@ -128,21 +119,19 @@ const shouldShowSidebar = computed(() => !hideSidebarRoutes.includes(route.path)
 </script>
 
 <template>
-	<ClerkLoaded>
-		<div :class="{ 'min-h-screen flex transition-all duration-300': isLocked, 'min-h-screen': !isLocked }">
-			<Sidebar v-if="shouldShowSidebar" :navigation="navigation" />
-			<main :class="[
-				isSidebarOpen && !isLocked ? 'ml-64' : 'md:ml-16',
-				{
-					'transition-all duration-300 flex-1 lg:pl-48': isLocked,
-					'transition-all duration-300': !isLocked,
-					'ml-0': !shouldShowSidebar 
-				}
-				]">
-					<router-view />
-				</main>
-		</div>
-	</ClerkLoaded>
+	<div :class="{ 'min-h-screen flex transition-all duration-300': isLocked, 'min-h-screen': !isLocked }">
+		<Sidebar v-if="shouldShowSidebar" :navigation="navigation" />
+		<main :class="[
+			isSidebarOpen && !isLocked ? 'ml-64' : 'md:ml-16',
+			{
+				'transition-all duration-300 flex-1 lg:pl-48': isLocked,
+				'transition-all duration-300': !isLocked,
+				'ml-0': !shouldShowSidebar 
+			}
+			]">
+				<router-view />
+			</main>
+	</div>
 </template>
 
 <style>

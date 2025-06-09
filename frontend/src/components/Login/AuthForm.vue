@@ -1,19 +1,23 @@
 <script setup>
 import { ref } from "vue";
 import { login } from "@/composables/api/authApi";
+import { useAuth } from '@/stores/useAuth';
 
-const emit = defineEmits(["verified"]);
+const emit = defineEmits(["otp-required", "login-success"]);
 
 const email = ref("");
 const password = ref("");
 
 const userData = ref(null);
-
 const loginLoading = ref(false);
 const loginError = ref("");
 const showError = ref(false);
 
+const { setAuthFromApiResponse } = useAuth();
+
 const handleLogin = async () => {
+  email.value = "dontaskrahul@advancex.ai"
+  password.value = "Rahul@123"
   if (!email.value || !password.value) {
     return;
   }
@@ -23,15 +27,20 @@ const handleLogin = async () => {
   showError.value = false;
 
   try {
-    // Payload shape expected by your login endpoint
     const payload = { email: email.value, password: password.value };
     const response = await login(payload);
-    console.log("response: ", response);
+    const data = response.data;
+    console.log("response: ", data);
 
-    // handle success, e.g.:
-    userData.value = response.data;
-    console.log(userData);
-    emit("verified", { email: email.value });
+    if (data.is_signed_in) {
+      setAuthFromApiResponse(data);
+      emit("login-success");
+    } else if (data.temp_token) {
+      emit("otp-required", { temp_token: data.temp_token, email: email.value });
+    } else {
+      loginError.value = data.message || "Unknown login error.";
+      showError.value = true;
+    }
   } catch (error) {
     showError.value = true;
     loginError.value =
@@ -107,7 +116,7 @@ const handleGoogleLogin = () => {
     <div id="authInputPass">
       <input
         v-model="password"
-        type="password"
+        type="text"
         placeholder="Password"
         class="w-full px-4 py-2 rounded-3xl border-0 focus:outline-none outline-3 outline-purple-200 focus:ring-3 focus:ring-blue-600 mb-6 h-10.5 font-"
         :disabled="loginLoading"

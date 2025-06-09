@@ -1,12 +1,10 @@
 <script setup>
-import { useAuth } from '@clerk/vue'
+import { useAuth } from '@/stores/useAuth'
 
-const { getToken, isLoaded, isSignedIn, sessionId } = useAuth()
+const { isSignedIn, loaded } = useAuth()
 
-const token = await getToken.value()
-// const sessionid = await sessionId.value()
-// console.log("Session id: ", sessionid)
-console.log("TOKEN", token)
+// Example usage
+console.log('Is signed in:', isSignedIn.value, 'Loaded:', loaded.value)
 </script>
 
 <template>

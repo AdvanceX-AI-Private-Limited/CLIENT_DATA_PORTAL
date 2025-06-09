@@ -4,26 +4,23 @@ import OtpInput from '@/components/Login/OtpInput.vue'
 import AuthForm from '@/components/Login/AuthForm.vue'
 import { useRouter } from "vue-router";
 
-const username = ref('')
-const password = ref('')
 const showOtp = ref(false)
-const userData = ref({})
+const otpData = ref({ temp_token: '', email: '' })
 const router = useRouter();
-const unauthorizedMessage = ref("");
 
-const login = () => {
-  if (username.value && password.value) {
-    // console.log('Valid credentials:', username.value, password.value)
-    showOtp.value = true
-  } else {
-    console.log('Please enter both fields')
-  }
+const handleOtpRequired = ({ temp_token, email }) => {
+  otpData.value = { temp_token, email };
+  showOtp.value = true;
 }
 
-const handleVerified = (payload) => {
-  // console.log('Received verified data:', payload)
-  userData.value = payload
-  showOtp.value = true
+const handleLoginSuccess = () => {
+  // Redirect to dashboard or home
+  router.push('/');
+}
+
+const handleOtpSuccess = () => {
+  // After OTP is verified, redirect
+  router.push('/');
 }
 
 const handleGoogleLogin = () => {
@@ -43,8 +40,17 @@ const handleGoogleLogin = () => {
         <h2 class="text-3xl font-bold text-gray-900">Welcome Back</h2>
       </div>
       
-      <AuthForm v-if="!showOtp" @verified="handleVerified" />
-      <OtpInput v-else :user="userData" />
+      <AuthForm 
+        v-if="!showOtp" 
+        @otp-required="handleOtpRequired" 
+        @login-success="handleLoginSuccess" 
+      />
+      <OtpInput 
+        v-else 
+        :temp-token="otpData.temp_token" 
+        :email="otpData.email" 
+        @otp-success="handleOtpSuccess"
+      />
 
       <div class="flex items-center my-4">
         <div class="flex-grow border-t border-gray-300"></div>
