@@ -11,8 +11,21 @@ const get = axios.create({
   }
 })
 
+// Add a request interceptor to include the session token in all requests
+get.interceptors.request.use(
+  (config) => {
+    const token = sessionStorage.getItem('session_token');
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 // Function to POST with fallback prefixes if endpoint fails
-async function post(endpoint, payload) {
+async function post(endpoint, payload, config = {}) {
   const prefixes = [
     '', // No prefix
     '/api',
@@ -22,7 +35,7 @@ async function post(endpoint, payload) {
 
   try {
     // Try the original endpoint first
-    const response = await get.post(endpoint, payload)
+    const response = await get.post(endpoint, payload, config)
     return response
   } catch (error) {
     console.warn(`Failed with ${endpoint}, trying fallbacks...`)
@@ -33,7 +46,7 @@ async function post(endpoint, payload) {
         try {
           const fullPath = `${prefix}${endpoint}`
           console.log(`Trying fallback: ${fullPath}`)
-          const response = await get.post(fullPath, payload)
+          const response = await get.post(fullPath, payload, config)
           console.log(`Success with ${fullPath}`)
           return response
         } catch (prefixError) {

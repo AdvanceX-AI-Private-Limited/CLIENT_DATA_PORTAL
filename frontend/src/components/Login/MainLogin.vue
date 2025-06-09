@@ -15,6 +15,7 @@ const handleOtpRequired = ({ temp_token, email }) => {
 
 const handleLoginSuccess = () => {
   // Redirect to dashboard or home
+  console.log("MainLogin handleLoginSuccess")
   router.push('/');
 }
 

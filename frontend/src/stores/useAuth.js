@@ -7,10 +7,22 @@ const loaded = ref(false);
 const isSignedIn = ref(false);
 // console.log("useAuth isSignedIn: ", isSignedIn.value);
 
+function setCookie(name, value, expiresAt) {
+    let cookie = `${name}=${value}; path=/;`;
+    if (expiresAt) {
+        cookie += ` expires=${new Date(expiresAt).toUTCString()};`;
+    }
+    document.cookie = cookie;
+}
+
+function deleteCookie(name) {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+}
+
 // Helper to check if token is valid
 function isTokenValid() {
-    const token = localStorage.getItem('session_token');
-    const expiresAt = localStorage.getItem('expires_at');
+    const token = sessionStorage.getItem('session_token');
+    const expiresAt = sessionStorage.getItem('expires_at');
     if (!token || !expiresAt) return false;
     const now = new Date();
     const expiry = new Date(expiresAt);
@@ -19,44 +31,52 @@ function isTokenValid() {
 
 // Set token and expiry from API response
 function setAuthFromApiResponse(response) {
+    // Accept if session_token and expires_at are present, regardless of is_signed_in
     if (response.session_token && response.expires_at) {
-        localStorage.setItem('session_token', response.session_token);
-        localStorage.setItem('expires_at', response.expires_at);
+        sessionStorage.setItem('session_token', response.session_token);
+        sessionStorage.setItem('expires_at', response.expires_at);
+        setCookie('session_token', response.session_token, response.expires_at);
+        setCookie('expires_at', response.expires_at, response.expires_at);
         user.value = response.user || null;
         isSignedIn.value = true;
+    } else {
+        console.warn('setAuthFromApiResponse: Missing session_token or expires_at in response', response);
     }
 }
 
 // Clear token and expiry (logout)
 function clearAuth() {
-    localStorage.removeItem('session_token');
-    localStorage.removeItem('expires_at');
+    sessionStorage.removeItem('session_token');
+    sessionStorage.removeItem('expires_at');
+    deleteCookie('session_token');
+    deleteCookie('expires_at');
     user.value = null;
     isSignedIn.value = false;
 }
 
 // Logout and redirect
+// async function logout() {
+//     const token = sessionStorage.getItem('session_token');
+//     const headers = token ? { Authorization: `Bearer ${token}` } : {};
+//     console.log("authApi headers: ", headers);
+//     return await apiLogout(headers);
+// }
+
 async function logout() {
-    const token = localStorage.getItem('session_token');
-    console.log()
-    if (token) {
-        try {
-            const response = await apiLogout();
-            if (response?.status === 200) {
-                console.log('Logged out successfully:', response.data?.message);
-            } else {
-                console.warn('Logout error (possibly already logged out):', response?.data?.detail || response?.statusText);
-            }
-        } catch (e) {
-            console.warn('Logout API error (possibly already logged out):', e?.response?.data?.detail || e.message || e);
-        }
-    } else {
-        console.log('No session token found, skipping logout API call.');
+    const token = sessionStorage.getItem('session_token');
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    console.log("authApi headers: ", headers);
+
+    try {
+        await apiLogout(headers);
+    } catch (error) {
+        console.warn("Logout API failed or returned error, proceeding with frontend logout", error);
     }
+
     clearAuth();
-    // Always redirect after logout
     window.location.href = '/login';
 }
+
 
 // On load, check if token is valid
 if (isTokenValid()) {

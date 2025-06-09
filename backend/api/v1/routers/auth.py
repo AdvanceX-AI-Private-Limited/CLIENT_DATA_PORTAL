@@ -396,12 +396,19 @@ async def verify_otp_route(otp_data: OTPVerificationRequest, db: Session = Depen
             del session_store[otp_data.token]
             logger.debug(f"Temporary session deleted for token: {otp_data.token}")
 
+            # Fetch the session from the DB to get the expires_at value
+            db_session = db.query(models.UserSession).filter(
+                models.UserSession.session_token == db_session_token
+            ).first()
+
+            expires_at = db_session.expires_at.isoformat() if db_session and db_session.expires_at else None
+
             return JSONResponse(
                 status_code=status.HTTP_200_OK,
                 content={
                     "message": "OTP verified successfully",
                     "session_token": db_session_token,
-                    "expires_in": 7 * 24 * 60 * 60,  # 7 days in seconds
+                    "expires_at": expires_at,
                     "user": {
                         "email": session_data.email,
                         "client_id": session_data.client_id
@@ -499,9 +506,10 @@ async def logout(request: Request, db: Session = Depends(get_db)):
         logger.info("Logout request received")
 
         # Get session token from Authorization header or request body
-        auth_header = request.headers.get("Authorization")
+        auth_header = request.headers.get("authorization")
         session_token = None
-        print(request.headers)
+        print(request.headers.get("authorization"))
+        
         if auth_header and auth_header.startswith("Bearer "):
             session_token = auth_header.split(" ")[1]
             logger.debug("Session token retrieved from Authorization header")

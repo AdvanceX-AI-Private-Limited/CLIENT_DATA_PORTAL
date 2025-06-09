@@ -6,10 +6,10 @@ export async function login(payload) {
 
 export async function logout() {
   // Send session token in Authorization header if present
-  // const token = localStorage.getItem('session_token');
-  // const headers = token ? { Authorization: `Bearer ${token}` } : {};
-  // console.log("authApi headers: ", headers);
-  return await post('/auth/logout');
+  const token = sessionStorage.getItem('session_token');
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  console.log("authApi headers: ", headers);
+  return await post('/auth/logout', {}, { headers });
 }
 
 export async function verifyOtp(payload) {

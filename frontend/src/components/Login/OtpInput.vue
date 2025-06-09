@@ -21,6 +21,7 @@ const verifyOtpHandler = async () => {
   try {
     const payload = { token: props.tempToken, otp: otp.value };
     const response = await verifyOtp(payload);
+    console.log("OtpInput otp send data: ", response.data);
     const data = response.data;
     if (data.session_token) {
       setAuthFromApiResponse(data);
