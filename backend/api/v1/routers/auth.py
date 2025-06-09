@@ -134,12 +134,12 @@ def get_current_session(request: Request, db: Session = Depends(get_db)):
     """
     logger.info("Checking current session")
     
-    auth_header = request.headers.get("Authorization")
+    auth_header = request.headers.get("authorization")
     session_token = None
     
     if auth_header and auth_header.startswith("Bearer "):
         session_token = auth_header.split(" ")[1]
-        logger.debug("Session token retrieved from Authorization header")
+        logger.debug("Session token retrieved from authorization header")
     else:
         session_token = request.cookies.get("session_token")
         if session_token:
@@ -502,17 +502,18 @@ async def logout(request: Request, db: Session = Depends(get_db)):
     Logout endpoint - invalidates session token
     Returns: JSON confirmation
     """
+    print("Cookies: ", request.cookies.get("session_token"))
     try:
         logger.info("Logout request received")
 
-        # Get session token from Authorization header or request body
+        # Get session token from authorization header or request body
         auth_header = request.headers.get("authorization")
         session_token = None
         print(request.headers.get("authorization"))
         
         if auth_header and auth_header.startswith("Bearer "):
             session_token = auth_header.split(" ")[1]
-            logger.debug("Session token retrieved from Authorization header")
+            logger.debug("Session token retrieved from authorization header")
         else:
             session_token = request.cookies.get("session_token")
             if session_token:
@@ -559,86 +560,8 @@ async def logout(request: Request, db: Session = Depends(get_db)):
             detail="Internal server error during logout"
         )
 
-
-@router.get("/session/validate")
-async def validate_session(request: Request, db: Session = Depends(get_db)):
-    """
-    Validate current session token
-    Returns: JSON with user info if valid
-    """
-    try:
-        logger.info("Session validation request received")
-
-        # Get session token from Authorization header
-        auth_header = request.headers.get("Authorization")
-        session_token = None
-        
-        if auth_header and auth_header.startswith("Bearer "):
-            session_token = auth_header.split(" ")[1]
-            logger.debug("Session token retrieved from Authorization header")
-        else:
-            session_token = request.cookies.get("session_token")
-            if session_token:
-                logger.debug("Session token retrieved from cookies")
-        
-        if not session_token:
-            logger.warning("No session token provided in request")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="No session token provided"
-            )
-        
-        logger.info(f"Validating session token: {session_token}")
-        db_session = db.query(models.UserSession).filter(
-            models.UserSession.session_token == session_token,
-            models.UserSession.is_active == True,
-            models.UserSession.expires_at > datetime.utcnow()
-        ).first()
-        
-        if not db_session:
-            logger.warning(f"Invalid or expired session token: {session_token}")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid or expired session token"
-            )
-        
-        logger.info(f"Session token {session_token} is valid. Fetching user info.")
-        client = db.query(models.Client).filter(
-            models.Client.id == db_session.client_id
-        ).first()
-
-        if not client:
-            logger.warning(f"Client not found for session token: {session_token}")
-        
-        return JSONResponse(
-            status_code=status.HTTP_200_OK,
-            content={
-                "message": "Session is valid",
-                "user": {
-                    "email": db_session.email,
-                    "client_id": db_session.client_id,
-                    "session_expires_at": db_session.expires_at.isoformat()
-                },
-                "session_info": {
-                    "created_at": db_session.created_at.isoformat(),
-                    "expires_at": db_session.expires_at.isoformat()
-                }
-            }
-        )
-        
-    except HTTPException as e:
-        logger.error(f"HTTPException during session validation: {e.detail}")
-        raise
-    except Exception as e:
-        logger.exception("Unhandled exception during session validation")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error during session validation"
-        )
-    
-
 # Example protected route
-@router.get("/protected/profile")
+@router.post("/protected/profile")
 async def get_profile(
     current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
@@ -671,7 +594,6 @@ async def get_profile(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired session token"
         )
-    
 
 #_____________________________ GOOGLE LOGIN FLOW _____________________________
 # Configure Google O2 Auth

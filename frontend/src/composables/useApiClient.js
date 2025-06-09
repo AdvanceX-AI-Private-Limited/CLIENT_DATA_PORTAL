@@ -1,4 +1,4 @@
-// src/composables/useget.js
+// src/composables/useApiClient.js
 import axios from 'axios'
 import config from '@/config'
 
@@ -8,24 +8,13 @@ const get = axios.create({
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
-  }
-})
-
-// Add a request interceptor to include the session token in all requests
-get.interceptors.request.use(
-  (config) => {
-    const token = sessionStorage.getItem('session_token');
-    if (token) {
-      config.headers = config.headers || {};
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
-    return config;
   },
-  (error) => Promise.reject(error)
-);
+  withCredentials: true
+})
 
 // Function to POST with fallback prefixes if endpoint fails
 async function post(endpoint, payload, config = {}) {
+  console.log("Calling POST endpoint:", endpoint)
   const prefixes = [
     '', // No prefix
     '/api',

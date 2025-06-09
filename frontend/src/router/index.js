@@ -172,36 +172,81 @@ export function setAuthState(authenticated) {
 	}
 }
 
-router.beforeEach((to, from, next) => {
-	const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-	const isPublicRoute = publicRoutes.includes(to.path);
+// router.beforeEach((to, from, next) => {
+// 	const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+// 	const isPublicRoute = publicRoutes.includes(to.path);
 
-	if (isPublicRoute) {
-		next();
+// 	if (isPublicRoute) {
+// 		next();
+// 		return;
+// 	}
+
+// 	if (requiresAuth) {
+// 		const isPageRefresh = from.name === undefined;
+
+// 		if (isPageRefresh) {
+// 			const hasStoredAuth = localStorage.getItem('auth-token') || 
+// 				sessionStorage.getItem('auth-token') ||
+// 				isUserAuthenticated;
+
+// 			if (hasStoredAuth) {
+// 				next();
+// 			} else {
+// 				next('/login');
+// 			}
+// 		} else if (!isUserAuthenticated) {
+// 			next('/login');
+// 		} else {
+// 			next();
+// 		}
+// 	} else {
+// 		next();
+// 	}
+// });
+
+function isAuthPage(route) {
+  return publicRoutes.includes(route.path);
+}
+
+router.afterEach((to, from) => {
+  // Only save last route if it's not an auth page
+  if (!isAuthPage(to)) {
+    sessionStorage.setItem('lastRoute', to.fullPath);
+  }
+});
+
+router.beforeEach((to, from, next) => {
+    const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+    const isPublicRoute = publicRoutes.includes(to.path);
+
+    if (isPublicRoute && isUserAuthenticated) {
+		// Use sessionStorage for last visited route (excluding login/sign-up)
+		const lastRoute = sessionStorage.getItem('lastRoute') || '/';
+		next(lastRoute === to.fullPath ? '/' : lastRoute); // avoid redirect loop
 		return;
 	}
 
-	if (requiresAuth) {
-		const isPageRefresh = from.name === undefined;
+    if (requiresAuth) {
+        const isPageRefresh = from.name === undefined;
 
-		if (isPageRefresh) {
-			const hasStoredAuth = localStorage.getItem('auth-token') || 
-				sessionStorage.getItem('auth-token') ||
-				isUserAuthenticated;
+        if (isPageRefresh) {
+            const hasStoredAuth = localStorage.getItem('auth-token') || 
+                sessionStorage.getItem('auth-token') ||
+                isUserAuthenticated;
 
-			if (hasStoredAuth) {
-				next();
-			} else {
-				next('/login');
-			}
-		} else if (!isUserAuthenticated) {
-			next('/login');
-		} else {
-			next();
-		}
-	} else {
-		next();
-	}
+            if (hasStoredAuth) {
+                next();
+            } else {
+                next('/login');
+            }
+        } else if (!isUserAuthenticated) {
+            next('/login');
+        } else {
+            next();
+        }
+    } else {
+        next();
+    }
 });
 
 export default router;

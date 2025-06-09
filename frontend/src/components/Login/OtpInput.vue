@@ -54,7 +54,7 @@ const verifyOtpHandler = async () => {
     <button
       @click="verifyOtpHandler"
       class="w-full bg-blue-800 text-white py-2.5 rounded-3xl hover:bg-blue-900 transition font-medium"
-      :disabled="loading"
+      :disabled="loading || !otp"
     >
       <span v-if="!loading">Verify OTP</span>
       <span v-else>Verifying...</span>

@@ -16,8 +16,8 @@ const showError = ref(false);
 const { setAuthFromApiResponse } = useAuth();
 
 const handleLogin = async () => {
-  email.value = "dontaskrahul@advancex.ai"
-  password.value = "Rahul@123"
+  email.value = "aslam.miya@advancex.ai"
+  password.value = "123@Aslam"
   if (!email.value || !password.value) {
     return;
   }

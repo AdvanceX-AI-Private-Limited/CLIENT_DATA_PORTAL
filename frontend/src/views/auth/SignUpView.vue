@@ -125,6 +125,18 @@
             </div>
 
             <div>
+              <label for="createPassword" class="block text-sm font-medium text-gray-700 mb-1">Create Password<span class="text-red-500">*</span></label>
+              <input 
+                type="text" 
+                id="createPassword" 
+                v-model="formData.password" 
+                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                placeholder="Create Password"
+                required
+              />
+            </div>
+
+            <div>
               <label for="contactNumber" class="block text-sm font-medium text-gray-700 mb-1">Company Contact Number<span class="text-red-500">*</span></label>
               <input 
                 type="tel" 
@@ -376,6 +388,7 @@ const formData = reactive({
   legalEntityName: '',
   companyEmail: '',
   contactNumber: '',
+  password: '',
   alternateContactNumber: '',
   businessType: '',
   operatingStores: null,

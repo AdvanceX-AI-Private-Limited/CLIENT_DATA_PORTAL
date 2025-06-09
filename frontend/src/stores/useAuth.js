@@ -63,18 +63,16 @@ function clearAuth() {
 // }
 
 async function logout() {
-    const token = sessionStorage.getItem('session_token');
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    console.log("authApi headers: ", headers);
-
     try {
-        await apiLogout(headers);
+        // No need to pass headers or token, cookie is sent automatically!
+        await apiLogout();
     } catch (error) {
         console.warn("Logout API failed or returned error, proceeding with frontend logout", error);
     }
 
-    clearAuth();
-    window.location.href = '/login';
+    // You may still want to clear *frontend* user state, if any
+    clearAuth(); // Clear app state, Vuex store, etc.
+    window.location.href = '/login'; // Redirect to login
 }
 
 
