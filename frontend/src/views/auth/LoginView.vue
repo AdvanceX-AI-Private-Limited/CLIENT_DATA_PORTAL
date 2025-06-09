@@ -2,7 +2,7 @@
 <script setup>
 import MainLogin from '@/components/Login/MainLogin.vue';
 import RightImg from '@/components/Login/RightImg.vue';
-import { SignIn, useAuth } from '@clerk/vue';
+import { useAuth } from '@clerk/vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();

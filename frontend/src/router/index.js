@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { nextTick } from 'vue';
 
 import HomeView from '@/views/home/HomeView.vue';
 import LayoutWrapper from '@/components/LayoutWrapper.vue';
