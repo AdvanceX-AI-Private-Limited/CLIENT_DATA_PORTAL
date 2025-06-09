@@ -3,6 +3,9 @@ import { ref } from 'vue'
 import OtpInput from '@/components/Login/OtpInput.vue'
 import AuthForm from '@/components/Login/AuthForm.vue'
 import { useRouter } from "vue-router";
+import { useAuth } from '@/stores/useAuth';
+
+const { setAuthFromApiResponse } = useAuth();
 
 const showOtp = ref(false)
 const otpData = ref({ temp_token: '', email: '' })
@@ -20,12 +23,12 @@ const handleLoginSuccess = () => {
 }
 
 const handleOtpSuccess = () => {
-  // After OTP is verified, redirect
   router.push('/');
 }
 
 const handleGoogleLogin = () => {
-  window.location.href = '/api/v1/auth/google/login';
+  window.location.href = 'http://localhost:8000/api/v1/auth/google/login';
+  
 };
 </script>
 <template>

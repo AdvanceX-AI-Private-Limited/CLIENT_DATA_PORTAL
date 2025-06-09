@@ -1,3 +1,275 @@
+<script setup>
+import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
+import { verifygstin } from '@/composables/api/authApi';
+
+// Form state
+const currentStep = ref(1);
+const confirmationPhase = ref(1); // Track the current phase within Step 3
+const otpInput = ref(''); // For OTP verification in phase 2
+const showConfetti = ref(false); // Control confetti visibility
+const isVerifying = ref(false);
+const gstVerified = ref(false);
+const gstError = ref(false);
+const showStatesDropdown = ref(false);
+const stateSearchQuery = ref('');
+const dropdownPosition = ref('bottom');
+const dropdownWidth = ref(0);
+const statesDropdownContainer = ref(null);
+const statesDropdown = ref(null);
+const searchInput = ref(null);
+
+// Form data
+const formData = reactive({
+  brandName: '',
+  legalEntityName: '',
+  companyEmail: '',
+  contactNumber: '',
+  businessType: '',
+  operatingStores: null,
+  platforms: {
+    swiggy: false,
+    zomato: false,
+    other: {
+      selected: false,
+      value: ''
+    }
+  },
+  operatingStates: [],
+  gstNumber: '',
+  termsAccepted: false,
+  sendTerms: false
+});
+
+// List of Indian states
+const indianStates = [
+  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 
+  'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 
+  'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 
+  'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+  'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu', 
+  'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'
+];
+
+// Filtered states based on search query
+const filteredStates = computed(() => {
+  if (!stateSearchQuery.value) return indianStates;
+  return indianStates.filter(state => 
+    state.toLowerCase().includes(stateSearchQuery.value.toLowerCase())
+  );
+});
+
+// Toggle states dropdown
+const toggleStatesDropdown = async () => {
+  showStatesDropdown.value = !showStatesDropdown.value;
+  
+  if (showStatesDropdown.value) {
+    await nextTick();
+    positionDropdown();
+    // Focus the search input
+    if (searchInput.value) {
+      searchInput.value.focus();
+    }
+  }
+};
+
+// Position the dropdown
+const positionDropdown = () => {
+  if (!statesDropdownContainer.value) return;
+  
+  // Check if there's enough space below
+  const containerRect = statesDropdownContainer.value.getBoundingClientRect();
+  const spaceBelow = window.innerHeight - containerRect.bottom;
+  const requiredSpace = 240; // Max dropdown height
+  
+  if (spaceBelow < requiredSpace && containerRect.top > requiredSpace) {
+    // Position above if not enough space below but enough space above
+    dropdownPosition.value = 'top';
+  } else {
+    // Position below
+    dropdownPosition.value = 'bottom';
+  }
+};
+
+// Toggle state selection
+const toggleState = (state) => {
+  const index = formData.operatingStates.indexOf(state);
+  if (index === -1) {
+    formData.operatingStates.push(state);
+  } else {
+    formData.operatingStates.splice(index, 1);
+  }
+};
+
+// Close dropdown when clicking outside
+const closeDropdown = (event) => {
+  if (!showStatesDropdown.value) return;
+  
+  // Check if click is outside dropdown
+  if (statesDropdownContainer.value && 
+      !statesDropdownContainer.value.contains(event.target) &&
+      statesDropdown.value && 
+      !statesDropdown.value.contains(event.target)) {
+    showStatesDropdown.value = false;
+  }
+};
+
+// Event listeners for dropdown
+onMounted(() => {
+  document.addEventListener('mousedown', closeDropdown);
+  window.addEventListener('resize', () => {
+    if (showStatesDropdown.value) {
+      positionDropdown();
+    }
+  });
+  window.addEventListener('scroll', () => {
+    if (showStatesDropdown.value) {
+      positionDropdown();
+    }
+  });
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('mousedown', closeDropdown);
+  window.removeEventListener('resize', positionDropdown);
+  window.removeEventListener('scroll', positionDropdown);
+});
+
+// Check if Step 1 is valid
+const isStep1Valid = computed(() => {
+  return formData.brandName && 
+         formData.companyEmail && 
+         formData.contactNumber > 0;
+});
+
+// Check if form can be submitted
+const canSubmit = computed(() => {
+  return gstVerified.value && formData.termsAccepted && formData.sendTerms;
+});
+
+// Go to Step 2
+const goToStep2 = () => {
+  currentStep.value = 2;
+  // if (isStep1Valid.value) {
+  // } else {
+  //   alert("Please fill all required fields before proceeding.");
+  // }
+};
+
+// Mock GST verification function
+
+
+// const verifyGST = () => {
+//   if (!formData.gstNumber) {
+//     return;
+//   }
+  
+//   isVerifying.value = true;
+//   gstError.value = false;
+  
+//   // Simulate API call with timeout
+//   setTimeout(() => {
+//     // Simple mock - GST numbers starting with '27' will return true, others false
+//     // You can replace this with your actual API call later
+//     const result = formData.gstNumber.startsWith('27');
+//     gstVerified.value = result;
+//     gstError.value = !result;
+//     isVerifying.value = false;
+//   }, 1500);
+// };
+
+const verifyGST = async () => {
+  console.log(formData);
+  gstError.value = null;
+
+  if (!formData.gstNumber) {
+    return;
+  }
+
+  const brandName = formData.brandName?.toString().trim() || '';
+  const gstNumber = formData.gstNumber?.toString().toUpperCase().trim() || '';
+
+  isVerifying.value = true;
+  console.log(`name: ${typeof brandName}, number: ${typeof gstNumber}`);
+  console.log(`Verifying GST for ${brandName} with number ${gstNumber}`);
+  try {
+    const payload = {
+      business_name: brandName,
+      GSTIN: gstNumber
+    }
+    console.log("payload: ", payload);
+    const response = await verifygstin(payload);
+    // handle the response as needed
+    console.log('GST verification result:', response.data);
+    if (response.data.data.message != "GSTIN Doesn't Exist") {
+      gstVerified.value = response.data.success;
+      gstError.value = !response.data.success;
+    }else{
+      gstVerified.value = false;
+      gstError.value = true;
+    }
+
+  } catch (error) {
+    gstError.value = error.response?.data?.message || error.message || "GST verification failed";
+    console.error("Error verifying GST:", error);
+  } finally {
+    isVerifying.value = false;
+  }
+};
+
+// Submit form
+const submitForm = () => {
+  if (canSubmit.value) {
+    // Here you would typically send the form data to your backend
+    console.log('Form submitted:', formData);
+    
+    // Go to confirmation step
+    currentStep.value = 3;
+    // Start at phase 1 of confirmation
+    confirmationPhase.value = 1;
+  }
+};
+
+// Move to phase 2 after agreeing to terms
+const proceedToPhase2 = () => {
+  // Here you would send terms and conditions email
+  console.log('Sending terms and conditions email');
+  confirmationPhase.value = 2;
+};
+
+// Verify OTP and move to final phase
+const verifyOTP = () => {
+  // Here you would verify the OTP with backend
+  // For demo purposes, any 4-digit OTP works
+  if (otpInput.value.length === 4) {
+    console.log('OTP verified');
+    confirmationPhase.value = 3;
+    
+    // Show confetti when reaching the final phase
+    showConfetti.value = true;
+    
+    // Hide confetti after 5 seconds
+    setTimeout(() => {
+      showConfetti.value = false;
+    }, 5000);
+  } else {
+    alert('Please enter a valid 4-digit OTP');
+  }
+};
+
+// Watch for changes to confirmationPhase as an alternative trigger
+watch(() => confirmationPhase.value, (newPhase) => {
+  if (newPhase === 3 && !showConfetti.value) {
+    // Show confetti when reaching the final phase
+    showConfetti.value = true;
+    
+    // Hide confetti after 5 seconds
+    setTimeout(() => {
+      showConfetti.value = false;
+    }, 5000);
+  }
+});
+</script>
+
 <template>
   <div class="min-h-screen bg-gradient-to-br from-white via-blue-100 to-purple-200 py-5 px-4 sm:px-6 lg:px-8">
     <!-- Confetti container - positioned absolutely to cover the entire screen -->
@@ -89,25 +361,13 @@
         <div v-if="currentStep === 1" class="px-6 py-8">          
           <div class="space-y-6">
             <div>
-              <label for="restaurantName" class="block text-sm font-medium text-gray-700 mb-1">Restaurant Name<span class="text-red-500">*</span></label>
+              <label for="brandName" class="block text-sm font-medium text-gray-700 mb-1">Brand Name<span class="text-red-500">*</span></label>
               <input 
                 type="text" 
-                id="restaurantName" 
-                v-model="formData.restaurantName" 
+                id="brandName" 
+                v-model="formData.brandName" 
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                 placeholder="Enter restaurant name"
-                required
-              />
-            </div>
-
-            <div>
-              <label for="legalEntityName" class="block text-sm font-medium text-gray-700 mb-1">Legal Entity Name<span class="text-red-500">*</span></label>
-              <input 
-                type="text" 
-                id="legalEntityName" 
-                v-model="formData.legalEntityName" 
-                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                placeholder="Can be same as Restaurant Name"
                 required
               />
             </div>
@@ -125,18 +385,6 @@
             </div>
 
             <div>
-              <label for="createPassword" class="block text-sm font-medium text-gray-700 mb-1">Create Password<span class="text-red-500">*</span></label>
-              <input 
-                type="text" 
-                id="createPassword" 
-                v-model="formData.password" 
-                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                placeholder="Create Password"
-                required
-              />
-            </div>
-
-            <div>
               <label for="contactNumber" class="block text-sm font-medium text-gray-700 mb-1">Company Contact Number<span class="text-red-500">*</span></label>
               <input 
                 type="tel" 
@@ -145,17 +393,6 @@
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                 placeholder="Enter company contact number"
                 required
-              />
-            </div>
-
-            <div>
-              <label for="alternateContactNumber" class="block text-sm font-medium text-gray-700 mb-1">Alternate Contact Number <span class="text-gray-400 text-xs">(Optional)</span></label>
-              <input 
-                type="tel" 
-                id="alternateContactNumber" 
-                v-model="formData.alternateContactNumber" 
-                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                placeholder="Enter alternate contact number (optional)"
               />
             </div>
           </div>
@@ -362,244 +599,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
-
-// Form state
-const currentStep = ref(1);
-const confirmationPhase = ref(1); // Track the current phase within Step 3
-const otpInput = ref(''); // For OTP verification in phase 2
-const showConfetti = ref(false); // Control confetti visibility
-const isVerifying = ref(false);
-const gstVerified = ref(false);
-const gstError = ref(false);
-const showStatesDropdown = ref(false);
-const stateSearchQuery = ref('');
-const dropdownPosition = ref('bottom');
-const dropdownWidth = ref(0);
-const statesDropdownContainer = ref(null);
-const statesDropdown = ref(null);
-const searchInput = ref(null);
-
-// Form data
-const formData = reactive({
-  restaurantName: '',
-  legalEntityName: '',
-  companyEmail: '',
-  contactNumber: '',
-  password: '',
-  alternateContactNumber: '',
-  businessType: '',
-  operatingStores: null,
-  platforms: {
-    swiggy: false,
-    zomato: false,
-    other: {
-      selected: false,
-      value: ''
-    }
-  },
-  operatingStates: [],
-  gstNumber: '',
-  termsAccepted: false,
-  sendTerms: false
-});
-
-// List of Indian states
-const indianStates = [
-  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 
-  'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 
-  'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 
-  'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
-  'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu', 
-  'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'
-];
-
-// Filtered states based on search query
-const filteredStates = computed(() => {
-  if (!stateSearchQuery.value) return indianStates;
-  return indianStates.filter(state => 
-    state.toLowerCase().includes(stateSearchQuery.value.toLowerCase())
-  );
-});
-
-// Toggle states dropdown
-const toggleStatesDropdown = async () => {
-  showStatesDropdown.value = !showStatesDropdown.value;
-  
-  if (showStatesDropdown.value) {
-    await nextTick();
-    positionDropdown();
-    // Focus the search input
-    if (searchInput.value) {
-      searchInput.value.focus();
-    }
-  }
-};
-
-// Position the dropdown
-const positionDropdown = () => {
-  if (!statesDropdownContainer.value) return;
-  
-  // Check if there's enough space below
-  const containerRect = statesDropdownContainer.value.getBoundingClientRect();
-  const spaceBelow = window.innerHeight - containerRect.bottom;
-  const requiredSpace = 240; // Max dropdown height
-  
-  if (spaceBelow < requiredSpace && containerRect.top > requiredSpace) {
-    // Position above if not enough space below but enough space above
-    dropdownPosition.value = 'top';
-  } else {
-    // Position below
-    dropdownPosition.value = 'bottom';
-  }
-};
-
-// Toggle state selection
-const toggleState = (state) => {
-  const index = formData.operatingStates.indexOf(state);
-  if (index === -1) {
-    formData.operatingStates.push(state);
-  } else {
-    formData.operatingStates.splice(index, 1);
-  }
-};
-
-// Close dropdown when clicking outside
-const closeDropdown = (event) => {
-  if (!showStatesDropdown.value) return;
-  
-  // Check if click is outside dropdown
-  if (statesDropdownContainer.value && 
-      !statesDropdownContainer.value.contains(event.target) &&
-      statesDropdown.value && 
-      !statesDropdown.value.contains(event.target)) {
-    showStatesDropdown.value = false;
-  }
-};
-
-// Event listeners for dropdown
-onMounted(() => {
-  document.addEventListener('mousedown', closeDropdown);
-  window.addEventListener('resize', () => {
-    if (showStatesDropdown.value) {
-      positionDropdown();
-    }
-  });
-  window.addEventListener('scroll', () => {
-    if (showStatesDropdown.value) {
-      positionDropdown();
-    }
-  });
-});
-
-onBeforeUnmount(() => {
-  document.removeEventListener('mousedown', closeDropdown);
-  window.removeEventListener('resize', positionDropdown);
-  window.removeEventListener('scroll', positionDropdown);
-});
-
-// Check if Step 1 is valid
-const isStep1Valid = computed(() => {
-  return formData.restaurantName && 
-         formData.legalEntityName && 
-         formData.companyEmail && 
-         formData.contactNumber && 
-         formData.businessType && 
-         formData.operatingStores && 
-         (formData.platforms.swiggy || formData.platforms.zomato || 
-          (formData.platforms.other.selected && formData.platforms.other.value)) && 
-         formData.operatingStates.length > 0;
-});
-
-// Check if form can be submitted
-const canSubmit = computed(() => {
-  return gstVerified.value && formData.termsAccepted && formData.sendTerms;
-});
-
-// Go to Step 2
-const goToStep2 = () => {
-  if (isStep1Valid.value) {
-    currentStep.value = 2;
-  } else {
-    alert("Please fill all required fields before proceeding.");
-  }
-};
-
-// Mock GST verification function
-const verifyGST = () => {
-  if (!formData.gstNumber) {
-    return;
-  }
-  
-  isVerifying.value = true;
-  gstError.value = false;
-  
-  // Simulate API call with timeout
-  setTimeout(() => {
-    // Simple mock - GST numbers starting with '27' will return true, others false
-    // You can replace this with your actual API call later
-    const result = formData.gstNumber.startsWith('27');
-    gstVerified.value = result;
-    gstError.value = !result;
-    isVerifying.value = false;
-  }, 1500);
-};
-
-// Submit form
-const submitForm = () => {
-  if (canSubmit.value) {
-    // Here you would typically send the form data to your backend
-    console.log('Form submitted:', formData);
-    
-    // Go to confirmation step
-    currentStep.value = 3;
-    // Start at phase 1 of confirmation
-    confirmationPhase.value = 1;
-  }
-};
-
-// Move to phase 2 after agreeing to terms
-const proceedToPhase2 = () => {
-  // Here you would send terms and conditions email
-  console.log('Sending terms and conditions email');
-  confirmationPhase.value = 2;
-};
-
-// Verify OTP and move to final phase
-const verifyOTP = () => {
-  // Here you would verify the OTP with backend
-  // For demo purposes, any 4-digit OTP works
-  if (otpInput.value.length === 4) {
-    console.log('OTP verified');
-    confirmationPhase.value = 3;
-    
-    // Show confetti when reaching the final phase
-    showConfetti.value = true;
-    
-    // Hide confetti after 5 seconds
-    setTimeout(() => {
-      showConfetti.value = false;
-    }, 5000);
-  } else {
-    alert('Please enter a valid 4-digit OTP');
-  }
-};
-
-// Watch for changes to confirmationPhase as an alternative trigger
-watch(() => confirmationPhase.value, (newPhase) => {
-  if (newPhase === 3 && !showConfetti.value) {
-    // Show confetti when reaching the final phase
-    showConfetti.value = true;
-    
-    // Hide confetti after 5 seconds
-    setTimeout(() => {
-      showConfetti.value = false;
-    }, 5000);
-  }
-});
-</script>
 
 <style scoped>
 /* Optional: Add transition for smoother dropdown */

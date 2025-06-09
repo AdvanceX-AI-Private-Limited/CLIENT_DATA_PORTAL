@@ -24,3 +24,7 @@ export async function googleCallback() {
 export async function protectedProfile() {
   return await post('/auth/protected/profile')
 }
+
+export async function verifygstin(payload) {
+  return await post('/auth/verify-gstin', payload)
+}
