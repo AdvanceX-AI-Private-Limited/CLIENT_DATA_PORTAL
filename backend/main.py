@@ -87,7 +87,7 @@ logger.debug(f"Timezone set to IST: {IST}")
 logger.info("Configuring CORS middleware...")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*", "http://35.154.63.163"],  # Adjust for production
+    allow_origins=["*", "http://client.advancex.ai"],  # Adjust for production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

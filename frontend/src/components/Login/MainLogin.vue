@@ -28,7 +28,7 @@ const handleOtpSuccess = () => {
 
 const handleGoogleLogin = () => {
   // window.location.href = 'http://localhost:8000/api/v1/auth/google/login';
-  window.location.href = 'http://35.154.63.163/api/v1/auth/google/login';
+  window.location.href = 'http://client.advancex.ai/api/v1/auth/google/login';
 };
 </script>
 <template>

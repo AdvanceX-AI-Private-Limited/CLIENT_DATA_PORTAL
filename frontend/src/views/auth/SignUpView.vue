@@ -143,7 +143,7 @@ const isStep1Valid = computed(() => {
 
 // Check if form can be submitted
 const canSubmit = computed(() => {
-  return gstVerified.value && formData.termsAccepted && formData.sendTerms;
+  return gstVerified.value && formData.termsAccepted;
 });
 
 // Go to Step 2
@@ -158,75 +158,74 @@ const goToStep2 = () => {
 // Mock GST verification function
 
 
-// const verifyGST = () => {
-//   if (!formData.gstNumber) {
-//     return;
-//   }
-  
-//   isVerifying.value = true;
-//   gstError.value = false;
-  
-//   // Simulate API call with timeout
-//   setTimeout(() => {
-//     // Simple mock - GST numbers starting with '27' will return true, others false
-//     // You can replace this with your actual API call later
-//     const result = formData.gstNumber.startsWith('27');
-//     gstVerified.value = result;
-//     gstError.value = !result;
-//     isVerifying.value = false;
-//   }, 1500);
-// };
-
-const verifyGST = async () => {
-  console.log(formData);
-  gstError.value = null;
-
+const verifyGST = () => {
   if (!formData.gstNumber) {
     return;
   }
-
-  const brandName = formData.brandName?.toString().trim() || '';
-  const gstNumber = formData.gstNumber?.toString().toUpperCase().trim() || '';
-
+  
   isVerifying.value = true;
-  console.log(`name: ${typeof brandName}, number: ${typeof gstNumber}`);
-  console.log(`Verifying GST for ${brandName} with number ${gstNumber}`);
-  try {
-    const payload = {
-      business_name: brandName,
-      GSTIN: gstNumber
-    }
-    console.log("payload: ", payload);
-    const response = await verifygstin(payload);
-    // handle the response as needed
-    console.log('GST verification result:', response.data);
-    if (response.data.data.message != "GSTIN Doesn't Exist") {
-      gstVerified.value = response.data.success;
-      gstError.value = !response.data.success;
-    }else{
-      gstVerified.value = false;
-      gstError.value = true;
-    }
-
-  } catch (error) {
-    gstError.value = error.response?.data?.message || error.message || "GST verification failed";
-    console.error("Error verifying GST:", error);
-  } finally {
+  gstError.value = false;
+  
+  // Simulate API call with timeout
+  setTimeout(() => {
+    // Simple mock - GST numbers starting with '27' will return true, others false
+    // You can replace this with your actual API call later
+    const result = formData.gstNumber.startsWith('27');
+    gstVerified.value = result;
+    gstError.value = !result;
     isVerifying.value = false;
-  }
+  }, 100);
 };
 
+// const verifyGST = async () => {
+//   console.log(formData);
+//   gstError.value = null;
+
+//   if (!formData.gstNumber) {
+//     return;
+//   }
+
+//   const brandName = formData.brandName?.toString().trim() || '';
+//   const gstNumber = formData.gstNumber?.toString().toUpperCase().trim() || '';
+
+//   isVerifying.value = true;
+//   console.log(`name: ${typeof brandName}, number: ${typeof gstNumber}`);
+//   console.log(`Verifying GST for ${brandName} with number ${gstNumber}`);
+//   try {
+//     const payload = {
+//       business_name: brandName,
+//       GSTIN: gstNumber
+//     }
+//     console.log("payload: ", payload);
+//     const response = await verifygstin(payload);
+//     // handle the response as needed
+//     console.log('GST verification result:', response.data);
+//     if (response.data.data.message != "GSTIN Doesn't Exist") {
+//       gstVerified.value = response.data.success;
+//       gstError.value = !response.data.success;
+//     }else{
+//       gstVerified.value = false;
+//       gstError.value = true;
+//     }
+
+//   } catch (error) {
+//     gstError.value = error.response?.data?.message || error.message || "GST verification failed";
+//     console.error("Error verifying GST:", error);
+//   } finally {
+//     isVerifying.value = false;
+//   }
+// };
+
 // Submit form
+
 const submitForm = () => {
-  if (canSubmit.value) {
-    // Here you would typically send the form data to your backend
-    console.log('Form submitted:', formData);
-    
-    // Go to confirmation step
-    currentStep.value = 3;
-    // Start at phase 1 of confirmation
-    confirmationPhase.value = 1;
-  }
+  console.log("submitForm called");
+  console.log('Form submitted:', formData);
+  
+  // Go to confirmation step
+  currentStep.value = 3;
+  // Start at phase 1 of confirmation
+  confirmationPhase.value = 1;
 };
 
 // Move to phase 2 after agreeing to terms
@@ -256,6 +255,38 @@ const verifyOTP = () => {
   }
 };
 
+const logThings = () => {
+  console.log("hre", formData.gstNumber);
+  console.log("gstError", gstError.value);
+}
+
+const shouldBlockButton = computed(() => {
+  if (gstError.value == true){
+    return false;
+  }
+  if(formData.gstNumber == ''){
+    return false;
+  }
+});
+
+const handelBack = () => {
+  if (confirmationPhase.value > 1) {
+    confirmationPhase.value--;
+  }else{
+    currentStep.value--;
+  }
+}
+
+watch(
+  [currentStep, confirmationPhase],
+  ([step, phase]) => {
+    if (step === 3 && phase === 2) {
+      console.log('Trigger: currentStep is 3 and confirmationPhase is 2')
+
+    }
+  }
+);
+
 // Watch for changes to confirmationPhase as an alternative trigger
 watch(() => confirmationPhase.value, (newPhase) => {
   if (newPhase === 3 && !showConfetti.value) {
@@ -283,9 +314,11 @@ watch(() => confirmationPhase.value, (newPhase) => {
       }"></div>
     </div>
     <div class="flex justify-between items-center mb-6">
-      <div class="flex items-center">
-        <img class="w-40 md:w-39" src="/logo-advancex.png" alt="">
-      </div>
+      <a href="/">
+        <div class="flex items-center">
+          <img class="w-40 md:w-39" src="/logo-advancex.png" alt="">
+        </div>
+      </a>
       <div>
         <span class="text-md">Already a member? </span>
         <a href="#" class="text-blue-600 font-semibold text-md hover:underline">Sign In</a>
@@ -461,6 +494,25 @@ watch(() => confirmationPhase.value, (newPhase) => {
               </div>
             </div>
 
+            
+          </div>
+        </div>
+        <!-- <button class="bg-blue-500 px-4 text-white rounded-lg py-2 m-3" @click="logThings" >yo</button> -->
+
+        <!-- Step 3: Confirmation -->
+        <div v-if="currentStep === 3" class="px-6 py-8">
+          <!-- Phase 1: Terms Agreement -->
+          <div v-if="confirmationPhase === 1" class="space-y-6">
+            <h3 class="text-lg font-medium text-gray-900">Terms and Conditions</h3>
+            <div class="bg-gray-50 p-4 rounded-md border border-gray-200 h-48 overflow-y-auto">
+              <p class="text-sm text-gray-700">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisi vel consectetur
+                euismod, nisl nisi consectetur nisl, euismod nisl nisi euismod nisl. Nullam euismod, nisi vel
+                consectetur euismod, nisl nisi consectetur nisl, euismod nisl nisi euismod nisl.
+                lorem1000
+                <!-- Terms content would go here -->
+              </p>
+            </div>
             <div v-if="gstVerified">
               <div class="flex items-center">
                 <input 
@@ -476,23 +528,6 @@ watch(() => confirmationPhase.value, (newPhase) => {
                   <a href="#" class="text-blue-600 hover:text-blue-500">Privacy Policy</a>
                 </label>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 3: Confirmation -->
-        <div v-if="currentStep === 3" class="px-6 py-8">
-          <!-- Phase 1: Terms Agreement -->
-          <div v-if="confirmationPhase === 1" class="space-y-6">
-            <h3 class="text-lg font-medium text-gray-900">Terms and Conditions</h3>
-            <div class="bg-gray-50 p-4 rounded-md border border-gray-200 h-48 overflow-y-auto">
-              <p class="text-sm text-gray-700">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisi vel consectetur
-                euismod, nisl nisi consectetur nisl, euismod nisl nisi euismod nisl. Nullam euismod, nisi vel
-                consectetur euismod, nisl nisi consectetur nisl, euismod nisl nisi euismod nisl.
-                lorem1000
-                <!-- Terms content would go here -->
-              </p>
             </div>
             <div class="flex items-center">
               <input 
@@ -545,8 +580,8 @@ watch(() => confirmationPhase.value, (newPhase) => {
         <!-- Form Navigation Buttons -->
         <div v-if="currentStep !== 3 || (currentStep === 3 && confirmationPhase < 3)" class="px-6 pb-6 mx-auto flex justify-between">
           <button 
-            v-if="currentStep > 1 && !(currentStep === 3 && confirmationPhase > 1)" 
-            @click="currentStep--" 
+            v-if="currentStep > 1"
+            @click="handelBack"
             type="button" 
             class="inline-flex items-center px-10 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
           >
@@ -570,7 +605,7 @@ watch(() => confirmationPhase.value, (newPhase) => {
             @click="submitForm"
             type="button" 
             class="inline-flex items-center px-10 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
-            :disabled="!canSubmit"
+            :disabled="!gstVerified"
           >
             Submit
           </button>
