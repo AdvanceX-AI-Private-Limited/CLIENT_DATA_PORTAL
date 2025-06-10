@@ -7,6 +7,38 @@ class DisplayBase(BaseModel):
 
 # ============== CORE ENTITIES ==============
 
+class NewRegistration(BaseModel):
+    client_id: int = Field(
+        ..., 
+        description="The ID of the client this brand belongs to.", 
+        examples=[1]
+    )
+    brand_id: int = Field(
+        ..., 
+        description="The ID of the brand", 
+        examples=[1]
+    )
+    client_password: str = Field(
+        ...,
+        description="Temprory password assigned to the client"
+    )
+    tnc_status: Optional[bool] = Field(
+        default=False,
+        description="Whether the brand has accepted terms and conditions",
+        example=False
+    )
+    tnc_accepted_at: datetime = Field(
+        ...,
+        description="Time of terms and conditions acceptance"
+    )
+    date_of_registration: datetime = Field(
+        ...,
+        description="Time of registation completion and form submission"
+    )
+    date_of_acceptance: datetime = Field(
+        description="Date of acceptance by Us"
+    )
+
 # ______________ CLIENTS ____________________
 class ClientBase(BaseModel):
     username: str = Field(

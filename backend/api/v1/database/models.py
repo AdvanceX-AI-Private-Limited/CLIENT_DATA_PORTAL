@@ -31,15 +31,22 @@ class StatusEnum(str, Enum):
 
 class MailOptions(BaseModel):
     otp: bool = False
+    tnc: bool = False
+    registration: bool = False
     waitlist: bool = False
     confirmation: bool = False
-    tnc: bool = False
     invoice: bool = False
+
+class RegistrationDetails(BaseModel):
+    username: str
+    mail: str
+    password: str
 
 class MailContext(BaseModel):
     otp: int
-    invoice_location: Optional[str] = None
     tnc_location: Optional[str] = None
+    registation_details: Optional[RegistrationDetails] = None
+    invoice_location: Optional[str] = None
 
 class MailRequest(BaseModel):
     recipient_email: str
@@ -87,6 +94,7 @@ class Client(Base):
     user_services = relationship("UserService", back_populates="client", cascade="all, delete-orphan")
     user_outlets = relationship("UserOutlet", back_populates="client", cascade="all, delete-orphan")
     sessions = relationship("UserSession", back_populates="client", cascade="all, delete-orphan")
+    registrations = relationship("NewRegistration", back_populates="client", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Client(id={self.id}, username={self.username})>"
@@ -98,20 +106,43 @@ class Brand(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     brandname = Column(String(255), unique=True, index=True, nullable=False)
+    contact_number = Column(Integer, nullable=True)
+    contact_email = Column(String(255), nullable=True)
     gstin = Column(String(15), unique=True, nullable=False)
     legal_name_of_business = Column(String(255), nullable=False)
     date_of_registration = Column(Date, nullable=False)
-    gstdoc = Column(JSON, nullable=False)  # Stores the GST data as a JSON/dict
-    created_at = Column(DateTime, default=datetime.now(IST))
-    updated_at = Column(DateTime, onupdate=datetime.now(IST))
+    gstdoc = Column(JSON, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(IST))
+    updated_at = Column(DateTime, onupdate=lambda: datetime.now(IST))
     client_id = Column(Integer, ForeignKey("clients.id"), nullable=False)
 
     # Relationships
     client = relationship("Client", back_populates="brands")
     outlets = relationship("Outlet", back_populates="brand", cascade="all, delete-orphan")
+    registration = relationship("NewRegistration", back_populates="brand", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Brand(id={self.id}, brandname={self.brandname})>"
+
+
+class NewRegistration(Base):
+    __tablename__ = "new_registration"
+    logger.debug(f"Initializing {__tablename__} table")
+
+    id = Column(Integer, primary_key=True, index=True)
+    client_id = Column(Integer, ForeignKey("clients.id"), nullable=False)
+    brand_id = Column(Integer, ForeignKey("brands.id"), nullable=False)
+    tnc_status = Column(String(255), nullable=False)
+    tnc_accepted_at = Column(DateTime, default=lambda: datetime.now(IST))
+    date_of_registration = Column(DateTime, default=lambda: datetime.now(IST))
+    date_of_acceptance = Column(DateTime, nullable=True)
+
+    # Relationships
+    client = relationship("Client", back_populates="registrations")
+    brand = relationship("Brand", back_populates="registration")
+
+    def __repr__(self):
+        return f"<Registration(id={self.id}, brand_id={self.brand_id})>"
 
 
 class Outlet(Base):

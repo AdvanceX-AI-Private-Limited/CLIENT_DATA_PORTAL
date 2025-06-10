@@ -3,7 +3,7 @@ from typing import List, Optional
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from datetime import datetime
-from .auth import get_password_hash, verify_password
+from .auth import get_current_session
 from ..database.database import get_db
 from ..schemas import schemas
 from ..database import models
@@ -19,6 +19,7 @@ async def get_clients(
     is_active: Optional[bool] = Query(None, description="Filter by active status"),
     accesstype: Optional[str] = Query(None, description="Filter by access type"),
     search: Optional[str] = Query(None, description="Search by username or email"),
+    current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
     query = db.query(models.Client)

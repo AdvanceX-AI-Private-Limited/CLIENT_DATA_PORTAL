@@ -25,6 +25,12 @@ router = APIRouter()
 logger = create_logger()
 env = load_dotenv('.env')
 
+TNC_FILE_PATH = os.getenv("TNC_FILE_PATH")
+
+CASHFREE_CLIENT_ID = os.getenv("CASHFREE_CLIENT_ID")
+CASHFREE_CLIENT_SECRET = os.getenv("CASHFREE_CLIENT_SECRET")
+CASHFREE_VERIFICATION_URL = os.getenv("CASHFREE_VERIFICATION_URL")
+
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 IST = timezone(timedelta(hours=5, minutes=30))
 SECRET_KEY = "your-secret-key"
@@ -329,15 +335,6 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error during login"
         )
-    except HTTPException as http_exc:
-        logger.warning(f"HTTPException during login for {login_data.email}: {http_exc.detail}")
-        raise
-    except Exception as e:
-        logger.exception(f"Unexpected error during login for {login_data.email}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error during login"
-        )
 
 @router.post("/verify-otp")
 async def verify_otp_route(otp_data: OTPVerificationRequest, db: Session = Depends(get_db)):
@@ -495,6 +492,96 @@ async def resend_otp(resend_data: ResendOTPRequest):
             detail="Internal server error while resending OTP"
         )
 
+@router.post("/new-registration")
+async def new_registration(
+    registration_data: schemas.NewRegistration,
+    current_session = Depends(get_current_session), 
+    db: Session = Depends(get_db)):
+    
+    logger.info(f"Login attempt for registration")
+
+    try:
+        # Check if brand and client exists
+        brand_exists = db.query(models.Brand).filter(
+            models.Brand.id == registration_data.brand_id
+            ).first()
+        if not brand_exists:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=f"Invalid brand id passed - {registration_data.brand_id}"
+            )
+
+        client_exists = db.query(models.Client).filter(
+            models.Client.id == registration_data.client_id
+            ).first()
+        if not client_exists:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=f"Invalid client id passed - {registration_data.client_id}"
+            )
+        
+        if brand_exists and client_exists:
+            try:
+                db_registration = models.NewRegistration(
+                    client_id=registration_data.client_id,
+                    brand_id=registration_data.brand_id,
+                    tnc_status=registration_data.tnc_status,
+                    tnc_accepted_at=registration_data.tnc_accepted_at,
+                    date_of_registration=registration_data.date_of_registration,
+                )
+                db.add(db_registration)
+                db.commit()
+                db.refresh(db_registration)
+                logger.info(f"New Registration completed for brand_id:{registration_data.brand_id} | client_id:{registration_data.client_id}")
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Failed to insert data to database - {e}"
+                )
+        
+        # Welcome mail + Temp Login Details
+        send_mail({
+            "recipient_email": client_exists.email,
+            "mail_options": {
+                "registration": True
+            },
+            "mail_context": {
+                "registation_details": {
+                    "username": client_exists.username,
+                    "email": client_exists.email,
+                    "password": registration_data.client_password
+                }
+            }
+        })
+        # Terms and Conditions
+        if "send_on_mail" in registration_data.tnc_status:
+            send_mail({
+                "recipient_email": client_exists.email,
+                "mail_options": {
+                    "tnc": True
+                },
+                "mail_context": {
+                    "tnc_location": TNC_FILE_PATH
+                }
+            })
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "message": "Registation successful. Account is created.",
+                "registration_id": db_registration.id 
+            }
+        )
+    
+    except HTTPException as http_exc:
+        logger.warning(f"HTTPException during registration for {registration_data.brand_id}: {http_exc.detail}")
+        raise
+    except Exception as e:
+        logger.exception(f"Unexpected error during registration for {registration_data.brand_id}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error during registration"
+        )
 
 @router.post("/logout")
 async def logout(request: Request, db: Session = Depends(get_db)):
@@ -643,7 +730,7 @@ async def google_login():
         )
 
 @router.get('/google/callback')
-def callback(code: str, fastapi_request: Request, db: Session = Depends(get_db)):
+async def callback(code: str, fastapi_request: Request, db: Session = Depends(get_db)):
     """Handle Google OAuth2 callback and create user session."""
     logger.info('Google OAuth2 callback received.')
     logger.info(f'Received code: {code}')
@@ -802,7 +889,7 @@ def callback(code: str, fastapi_request: Request, db: Session = Depends(get_db))
         )
     
 @router.post("/google/link", response_model=LinkedUserResponse)
-def link_google_account(
+async def link_google_account(
     request: Request,
     db: Session = Depends(get_db),
     current_session = Depends(get_current_session)
@@ -857,104 +944,178 @@ def link_google_account(
 
 
 #_____________________________ REGISTER LOGIN FLOW _____________________________
-CASHFREE_CLIENT_ID = os.getenv("CASHFREE_CLIENT_ID")
-CASHFREE_CLIENT_SECRET = os.getenv("CASHFREE_CLIENT_SECRET")
-CASHFREE_VERIFICATION_URL = os.getenv("CASHFREE_VERIFICATION_URL")
-
 @router.post("/clients/register/", response_model=schemas.DisplayClient, status_code=status.HTTP_201_CREATED)
 async def register_client(
     client: schemas.ClientCreate, 
     db: Session = Depends(get_db)
 ):
-    # Check if email already exists
-    db_client = db.query(models.Client).filter(
-        (models.Client.email == client.email)
-    ).first()
-    if db_client:
-        raise HTTPException(
-            status_code=400,
-            detail="Email already registered"
-        )
-    
-    hashed_password = get_password_hash(client.password.get_secret_value())
-    db_client = models.Client(
-        username=client.username,
-        email=client.email,
-        hashed_password=hashed_password,
-        accesstype=client.accesstype,
-        is_active=client.is_active,
-        google_linked=client.google_linked
-    )
-    db.add(db_client)
-    db.commit()
-    db.refresh(db_client)
-    return db_client
-
-@router.post("/verify-gstin", response_model=GSTINResponse, status_code=status.HTTP_200_OK)
-def verify_gstin(payload: GSTINRequest):
-    headers = {
-        "x-client-id": CASHFREE_CLIENT_ID,
-        "x-client-secret": CASHFREE_CLIENT_SECRET,
-        "Content-Type": "application/json"
-    }
-
-    response = requests.post(CASHFREE_VERIFICATION_URL, json=payload.model_dump(), headers=headers)
+    logger.info(f"Login attempt for Client Registation - {client.email}")
 
     try:
-        response_data = response.json()
-    except Exception:
+        # Check if email already exists
+        db_client = db.query(models.Client).filter(
+            (models.Client.email == client.email)
+        ).first()
+        if db_client:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already registered"
+            )
+        
+        try:
+            hashed_password = get_password_hash(client.password.get_secret_value())
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Failed to get password hash - {e}"
+            )
+        
+        access_type = client.accesstype
+        if "@advancex.ai" in client.email:
+            access_type = "internal"
+        else:
+            access_type = client.accesstype
+        
+        try:
+            db_client = models.Client(
+                username=client.username,
+                email=client.email,
+                hashed_password=hashed_password,
+                accesstype=access_type,
+                is_active=client.is_active,
+                google_linked=client.google_linked
+            )
+            db.add(db_client)
+            db.commit()
+            db.refresh(db_client)
+            logger.info(f"New Client created successfully")
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    "message": "Registation successful. Account is created.",
+                    "client_id": db_client.id 
+                }
+            )
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Failed to insert data to database - {e}"
+            )
+        
+    except HTTPException as http_exc:
+        logger.warning(f"HTTPException during registration for {client.email}: {http_exc.detail}")
+        raise
+    except Exception as e:
+        logger.exception(f"Unexpected error during registration for {client.email}")
         raise HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
-            detail="Invalid response from Cashfree API"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error during registration"
         )
 
-    if response.status_code == 200:
-        return GSTINResponse(
-            success=True,
-            data=response_data,
-            message="GSTIN verified successfully"
-        )
-    else:
-        raise HTTPException(
-            status_code=response.status_code,
-            detail=response_data.get("message", "Failed to verify GSTIN")
-        )
+@router.post("/verify-gstin", response_model=GSTINResponse, status_code=status.HTTP_200_OK)
+async def verify_gstin(payload: GSTINRequest):
 
+    logger.info(f"Verify gst attempt for  - {payload.business_name}")
+
+    try:
+        headers = {
+            "x-client-id": CASHFREE_CLIENT_ID,
+            "x-client-secret": CASHFREE_CLIENT_SECRET,
+            "Content-Type": "application/json"
+        }
+
+        response = requests.post(CASHFREE_VERIFICATION_URL, json=payload.model_dump(), headers=headers)
+
+        try:
+            response_data = response.json()
+        except Exception:
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail="Invalid response from Cashfree API"
+            )
+
+        if response.status_code == 200:
+            return GSTINResponse(
+                success=True,
+                data=response_data,
+                message="GSTIN verified successfully"
+            )
+        else:
+            raise HTTPException(
+                status_code=response.status_code,
+                detail=response_data.get("message", "Failed to verify GSTIN")
+            )
+    
+    except HTTPException as http_exc:
+        logger.warning(f"HTTPException during registration for {payload.business_name}: {http_exc.detail}")
+        raise
+    except Exception as e:
+        logger.exception(f"Unexpected error during registration for {payload.business_name}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error during registration"
+        )
 
 @router.post("/brands/register/", response_model=schemas.DisplayBrand, status_code=status.HTTP_201_CREATED)
 async def register_brand(
     brand: schemas.BrandCreate, 
     db: Session = Depends(get_db)
 ):
-    # Check if brand/gstin already exists
-    existing_by_gst = db.query(models.Brand).filter(
-        models.Brand.gstin == brand.gstin
-        ).first()
-    if existing_by_gst:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="A brand with this GSTIN already exists."
-        )
+    logger.info(f"Login attempt for Brand Registation - {brand.brandname}")
     
-    # Check for existing brand under same client
-    existing_by_client = db.query(models.Brand).filter(
-        models.Brand.client_id == brand.client_id
-        ).first()
-    if existing_by_client:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="This client already has a brand registered."
-        )
+    try:
+        # Check if brand/gstin already exists
+        existing_by_gst = db.query(models.Brand).filter(
+            models.Brand.gstin == brand.gstin
+            ).first()
+        if existing_by_gst:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="A brand with this GSTIN already exists."
+            )
+        
+        # Check for existing brand under same client
+        existing_by_client = db.query(models.Brand).filter(
+            models.Brand.client_id == brand.client_id
+            ).first()
+        if existing_by_client:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="This client already has a brand registered."
+            )
+        
+        try:
+            db_brand = models.Brand(
+                brandname=brand.brandname,
+                gstin=brand.gstin,
+                legal_name_of_business=brand.legal_name_of_business,
+                date_of_registration=brand.date_of_registration,
+                gstdoc=brand.gstdoc,
+                client_id=brand.client_id,
+            )
+            db.add(db_brand)
+            db.commit()
+            db.refresh(db_brand)
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    "message": "Registation successful. Brand is created.",
+                    "client_id": db_brand.id 
+                }
+            )
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Failed to insert data to database - {e}"
+            )
     
-    db_brand = models.Brand(
-        brandname=brand.brandname,
-        gstin=brand.gstin,
-        legal_name_of_business=brand.legal_name_of_business,
-        date_of_registration=brand.date_of_registration,
-        gstdoc=brand.gstdoc,
-        client_id=brand.client_id,
-    )
-    db.add(db_brand)
-    db.commit()
-    db.refresh(db_brand)
-    return db_brand
+    except HTTPException as http_exc:
+        logger.warning(f"HTTPException during registration for {brand.brandname}: {http_exc.detail}")
+        raise
+    except Exception as e:
+        logger.exception(f"Unexpected error during registration for {brand.brandname}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error during registration"
+        )
+
