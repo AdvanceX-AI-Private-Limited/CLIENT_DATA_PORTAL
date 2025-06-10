@@ -87,7 +87,7 @@ logger.debug(f"Timezone set to IST: {IST}")
 logger.info("Configuring CORS middleware...")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust for production
+    allow_origins=["*", "http://35.154.63.163"],  # Adjust for production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -175,7 +175,7 @@ if __name__ == "__main__":
     
     uvicorn.run(
         app,
-        host="localhost",
+        host="0.0.0.0",
         port=8000,
         log_level="info",
     )

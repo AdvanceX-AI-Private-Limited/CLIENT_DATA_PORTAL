@@ -11,9 +11,15 @@ onMounted(async () => {
     const fullUrl = window.location.href;
 
     // This makes GET /google/callback?code=XYZ
-    const response = await fetch(`http://localhost:8000/api/v1/auth/google/callback${window.location.search}`, {
+
+    // const response = await fetch(`http://localhost:8000/api/v1/auth/google/callback${window.location.search}`, {
+    //   method: 'GET',
+    //   credentials: 'include'  // Use this only if you're using cookies
+    // });
+    
+    const response = await fetch(`http://35.154.63.163/api/v1/auth/google/callback${window.location.search}`, {
       method: 'GET',
-      credentials: 'include'  // Use this only if you're using cookies
+      credentials: 'include'
     });
 
     const data = await response.json();
