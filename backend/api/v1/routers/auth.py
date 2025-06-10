@@ -602,8 +602,8 @@ GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 DATA = {
     'response_type': "code",
-    'redirect_uri': "http://localhost:8000/api/v1/auth/google/callback",
-    # 'redirect_uri': "https://client.advancex.ai/api/v1/auth/google/callback",
+    # 'redirect_uri': "http://localhost:8000/api/v1/auth/google/callback",
+    'redirect_uri': "https://client.advancex.ai/api/v1/auth/google/callback",
     'scope': 'https://www.googleapis.com/auth/userinfo.email',
     'client_id': GOOGLE_CLIENT_ID,
     'prompt': 'consent'
