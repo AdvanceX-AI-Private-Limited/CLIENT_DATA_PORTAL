@@ -1,20 +1,24 @@
+from contextlib import contextmanager
 import json
 import os
+import threading
+import sqlite3
 import pytz
 import random
 import string
 import time
 import uuid
 import requests
+from pathlib import Path
 from dotenv import load_dotenv
-from fastapi import APIRouter, Request, Form, Depends, HTTPException, status
+from fastapi import APIRouter, Request, Form, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse, RedirectResponse
 from oauthlib.oauth2 import WebApplicationClient
 from datetime import datetime, timedelta, timezone
 from pydantic import BaseModel
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-from typing import Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 from logger import create_logger
 from ..database import models
 from ..database.database import get_db
@@ -22,10 +26,11 @@ from ..schemas import schemas
 from .helpers.send_mail import send_mail
 
 router = APIRouter() 
-logger = create_logger()
+logger = create_logger(__name__)
 env = load_dotenv('.env')
 
-TNC_FILE_PATH = os.getenv("TNC_FILE_PATH")
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+TNC_FILE_PATH = BASE_DIR / "templates" / "dummy.pdf"
 
 CASHFREE_CLIENT_ID = os.getenv("CASHFREE_CLIENT_ID")
 CASHFREE_CLIENT_SECRET = os.getenv("CASHFREE_CLIENT_SECRET")
@@ -44,8 +49,189 @@ def get_password_hash(password: str):
     return pwd_context.hash(password)
 
 #_____________________________ HELPERS _____________________________
-# Combined storage for OTP and temporary sessions
-session_store = {}
+class SessionStore:
+    def __init__(self, db_path: str = "sessions.db"):
+        self.db_path = db_path
+        self.lock = threading.Lock()
+        self._init_database()
+    
+    def _init_database(self):
+        """Initialize the SQLite database with required tables"""
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            
+            # Create sessions table
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS temp_sessions (
+                    id TEXT PRIMARY KEY,
+                    email TEXT NOT NULL,
+                    client_id INTEGER NOT NULL,
+                    otp TEXT NOT NULL,
+                    otp_timestamp REAL NOT NULL,
+                    otp_expiry INTEGER NOT NULL,
+                    otp_verified INTEGER DEFAULT 0,
+                    session_token TEXT,
+                    created_at REAL NOT NULL,
+                    updated_at REAL NOT NULL
+                )
+            ''')
+            
+            # Create index for faster lookups
+            cursor.execute('''
+                CREATE INDEX IF NOT EXISTS idx_email_client 
+                ON temp_sessions(email, client_id)
+            ''')
+            
+            cursor.execute('''
+                CREATE INDEX IF NOT EXISTS idx_client_unverified 
+                ON temp_sessions(client_id, otp_verified)
+            ''')
+            
+            conn.commit()
+    
+    @contextmanager
+    def _get_connection(self):
+        """Context manager for database connections"""
+        conn = sqlite3.connect(self.db_path, timeout=30.0)
+        conn.row_factory = sqlite3.Row
+        try:
+            yield conn
+        finally:
+            conn.close()
+    
+    def cleanup_expired_sessions(self):
+        """Remove expired sessions from the database"""
+        current_time = time.time()
+        with self.lock:
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    DELETE FROM temp_sessions 
+                    WHERE (? - otp_timestamp) > otp_expiry
+                ''', (current_time,))
+                deleted_count = cursor.rowcount
+                conn.commit()
+                if deleted_count > 0:
+                    logger.info(f"Cleaned up {deleted_count} expired sessions")
+    
+    def store_session(self, session_id: str, session_data: 'SessionData'):
+        """Store session data in SQLite"""
+        current_time = time.time()
+        with self.lock:
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    INSERT OR REPLACE INTO temp_sessions 
+                    (id, email, client_id, otp, otp_timestamp, otp_expiry, 
+                     otp_verified, session_token, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    session_id,
+                    session_data.email,
+                    session_data.client_id,
+                    session_data.otp,
+                    session_data.otp_timestamp,
+                    session_data.otp_expiry,
+                    int(session_data.otp_verified),
+                    session_data.session_token,
+                    current_time,
+                    current_time
+                ))
+                conn.commit()
+    
+    def get_session(self, session_id: str) -> Optional['SessionData']:
+        """Retrieve session data from SQLite"""
+        with self.lock:
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    SELECT * FROM temp_sessions WHERE id = ?
+                ''', (session_id,))
+                row = cursor.fetchone()
+                
+                if not row:
+                    return None
+                
+                # Convert row to SessionData object
+                session_data = SessionData(
+                    email=row['email'],
+                    client_id=row['client_id']
+                )
+                session_data.otp = row['otp']
+                session_data.otp_timestamp = row['otp_timestamp']
+                session_data.otp_expiry = row['otp_expiry']
+                session_data.otp_verified = bool(row['otp_verified'])
+                session_data.session_token = row['session_token']
+                
+                return session_data
+    
+    def update_session(self, session_id: str, **updates):
+        """Update specific fields of a session"""
+        if not updates:
+            return
+        
+        # Build dynamic UPDATE query
+        set_clauses = []
+        values = []
+        for key, value in updates.items():
+            set_clauses.append(f"{key} = ?")
+            values.append(value)
+        
+        set_clauses.append("updated_at = ?")
+        values.append(time.time())
+        values.append(session_id)
+        
+        query = f'''
+            UPDATE temp_sessions 
+            SET {', '.join(set_clauses)}
+            WHERE id = ?
+        '''
+        
+        with self.lock:
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute(query, values)
+                conn.commit()
+    
+    def delete_session(self, session_id: str):
+        """Delete a specific session"""
+        with self.lock:
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('DELETE FROM temp_sessions WHERE id = ?', (session_id,))
+                conn.commit()
+    
+    def check_existing_otp(self, email: str, client_id: int) -> Optional[Dict[str, Any]]:
+        """Check if there's an active (non-expired) OTP session for the email/client"""
+        current_time = time.time()
+        with self.lock:
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    SELECT id, otp_timestamp, otp_expiry, otp_verified 
+                    FROM temp_sessions 
+                    WHERE email = ? AND client_id = ? AND otp_verified = 0
+                    ORDER BY created_at DESC
+                    LIMIT 1
+                ''', (email, client_id))
+                
+                row = cursor.fetchone()
+                if not row:
+                    return None
+                
+                # Check if OTP is still valid
+                time_elapsed = current_time - row['otp_timestamp']
+                if time_elapsed > row['otp_expiry']:
+                    # OTP expired, clean it up
+                    cursor.execute('DELETE FROM temp_sessions WHERE id = ?', (row['id'],))
+                    conn.commit()
+                    return None
+                
+                return {
+                    'session_id': row['id'],
+                    'time_remaining': row['otp_expiry'] - time_elapsed,
+                    'otp_verified': bool(row['otp_verified'])
+                }
 
 class LoginRequest(BaseModel):
     email: str
@@ -231,6 +417,8 @@ def check_existing_session(db: Session, client_id: int) -> Tuple[Optional[dict],
 def get_password_hash(password: str):
     return pwd_context.hash(password)
 
+session_store = SessionStore()
+
 #_____________________________ EMAIL LOGIN FLOW _____________________________
 @router.post("/login")
 async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
@@ -283,11 +471,33 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
         if was_expired:
             logger.info(f"Expired session was found and deleted for client {client.id}, proceeding with new login")
 
-        # No valid session exists, proceed with OTP flow
+        # Clean up any expired temporary sessions
+        session_store.cleanup_expired_sessions()
+        
+        # Check if there's already an active OTP session
+        existing_otp = session_store.check_existing_otp(login_data.email, client.id)
+        
+        if existing_otp:
+            logger.info(f"Active OTP session found for {login_data.email}, time remaining: {existing_otp['time_remaining']:.0f}s")
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    "message": f"OTP already sent. Please check your email or wait {int(existing_otp['time_remaining'])} seconds to request a new one.",
+                    "temp_token": existing_otp['session_id'],
+                    "expires_in": int(existing_otp['time_remaining']),
+                    "next_step": "verify_otp",
+                    "is_signed_in": False,
+                    "otp_already_sent": True
+                }
+            )
+
+        # No valid session exists and no active OTP, proceed with new OTP flow
         # Create session data with OTP
         temp_session_id = str(uuid.uuid4())
         session_data = SessionData(email=login_data.email, client_id=client.id)
-        session_store[temp_session_id] = session_data
+        
+        # Store in SQLite instead of memory
+        session_store.store_session(temp_session_id, session_data)
 
         logger.info(f"Temporary session created for email: {login_data.email}, session_id: {temp_session_id}")
 
@@ -307,14 +517,13 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
         except Exception as mail_error:
             logger.error(f"Failed to send OTP email to {login_data.email}: {mail_error}")
             # Clean up session if email fails
-            del session_store[temp_session_id]
+            session_store.delete_session(temp_session_id)
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Failed to send OTP email"
             )
 
         logger.debug(f"Login flow complete for {login_data.email}, returning temp_token")
-
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
@@ -322,7 +531,8 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
                 "temp_token": temp_session_id,
                 "expires_in": 300,  # 5 minutes
                 "next_step": "verify_otp",
-                "is_signed_in": False
+                "is_signed_in": False,
+                "otp_already_sent": False
             }
         )
 
@@ -345,8 +555,8 @@ async def verify_otp_route(otp_data: OTPVerificationRequest, db: Session = Depen
     logger.info(f"OTP verification attempt with token: {otp_data.token}")
 
     try:
-        # Check if temporary session exists
-        session_data = session_store.get(otp_data.token)
+        session_data = session_store.get_session(otp_data.token)
+
         if not session_data:
             logger.warning(f"Invalid or expired temp token: {otp_data.token}")
             raise HTTPException(
@@ -357,8 +567,8 @@ async def verify_otp_route(otp_data: OTPVerificationRequest, db: Session = Depen
         # Check if OTP is expired
         if session_data.is_otp_expired():
             logger.warning(f"Expired OTP for token: {otp_data.token}, email: {session_data.email}")
-            # Clean up expired session
-            del session_store[otp_data.token]
+            # Clean up expired session from SQLite
+            session_store.delete_session(otp_data.token)
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="OTP has expired. Please login again."
@@ -372,8 +582,8 @@ async def verify_otp_route(otp_data: OTPVerificationRequest, db: Session = Depen
                 detail="Invalid OTP"
             )
 
-        # Mark OTP as verified
-        session_data.otp_verified = True
+        # Mark OTP as verified in SQLite
+        session_store.update_session(otp_data.token, otp_verified=1)
         logger.info(f"OTP verified for email: {session_data.email}")
 
         try:
@@ -384,13 +594,10 @@ async def verify_otp_route(otp_data: OTPVerificationRequest, db: Session = Depen
                 email=session_data.email
             )
 
-            # Store the database session token in our session data
-            session_data.session_token = db_session_token
-
             logger.info(f"Session token created for email: {session_data.email}")
 
-            # Clean up temporary session after successful verification
-            del session_store[otp_data.token]
+            # Clean up temporary session from SQLite after successful verification
+            session_store.delete_session(otp_data.token)
             logger.debug(f"Temporary session deleted for token: {otp_data.token}")
 
             # Fetch the session from the DB to get the expires_at value
@@ -430,7 +637,11 @@ async def verify_otp_route(otp_data: OTPVerificationRequest, db: Session = Depen
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error during OTP verification"
         )
-    
+
+# Cleanup function that can be called periodically
+def cleanup_expired_temp_sessions():
+    """Function to clean up expired temporary sessions - can be called by a scheduler"""
+    session_store.cleanup_expired_sessions()
 
 @router.post("/resend-otp")
 async def resend_otp(resend_data: ResendOTPRequest):
@@ -581,6 +792,54 @@ async def new_registration(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error during registration"
+        )
+    
+@router.get("/send-mail")
+async def send_mail_endpoint():
+    try:
+        if not os.path.exists(TNC_FILE_PATH):
+            logger.error(f"T&C attachment file not found: {TNC_FILE_PATH}")
+            raise FileNotFoundError(f"T&C file not found: {TNC_FILE_PATH}")
+
+        mail_request_data = {
+            "recipient_email": "dontaskrahul@advancex.ai",
+            "mail_options": {
+                "tnc": True
+            },
+            "mail_context": {
+                "tnc_location": str(TNC_FILE_PATH)
+            }
+        }
+
+        mail_request = models.MailRequest(**mail_request_data)
+        send_mail(mail_request)
+
+        return {"message": "Mail sent successfully"}
+    except Exception as e:
+        logger.exception("Error sending mail")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/download/terms")
+def download_terms():
+    try:
+        s3_url = "https://adx-backend.s3.ap-south-1.amazonaws.com/PUBLIC/DOCUMENTS/dummy.pdf"
+        file = requests.get(s3_url)
+        return Response(
+            content=file.content,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": 'attachment; filename="Terms_and_Conditions.pdf"'
+            }
+        )
+    
+    except HTTPException as http_exc:
+        logger.warning(f"HTTPException during Google login: {http_exc}")
+        raise
+    except Exception as e:
+        logger.exception("Unexpected error during Google login")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error during login"
         )
 
 @router.post("/logout")

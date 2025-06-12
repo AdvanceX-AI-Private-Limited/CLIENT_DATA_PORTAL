@@ -43,7 +43,7 @@ class RegistrationDetails(BaseModel):
     password: str
 
 class MailContext(BaseModel):
-    otp: int
+    otp: Optional[int] = None
     tnc_location: Optional[str] = None
     registation_details: Optional[RegistrationDetails] = None
     invoice_location: Optional[str] = None

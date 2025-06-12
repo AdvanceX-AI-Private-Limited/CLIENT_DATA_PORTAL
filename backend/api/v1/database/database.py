@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from logger import create_logger
 
-logger = create_logger()
+logger = create_logger(__name__)
 
 #__________________ Load environment variables from .env file __________________
 env = load_dotenv('.env')
