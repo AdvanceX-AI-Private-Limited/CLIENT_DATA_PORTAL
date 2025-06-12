@@ -968,7 +968,8 @@ from fastapi.responses import RedirectResponse, JSONResponse
 from sqlalchemy.orm import Session
 import json
 import base64
-FRONTEND_BASE_URL = "http://localhost:5173"  # Change this to your Vue app URL
+# FRONTEND_BASE_URL = "http://localhost:5173"
+FRONTEND_BASE_URL = "https://client.advancex.ai"  
 FRONTEND_LOGIN_SUCCESS_PATH = "/auth/callback/success"
 FRONTEND_LOGIN_ERROR_PATH = "/auth/callback/error"
 
