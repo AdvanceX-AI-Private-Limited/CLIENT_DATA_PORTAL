@@ -1,3 +1,4 @@
+import base64
 from contextlib import contextmanager
 import json
 import os
@@ -941,6 +942,7 @@ async def get_profile(
             detail="Invalid or expired session token"
         )
 
+
 #_____________________________ GOOGLE LOGIN FLOW _____________________________
 # Configure Google O2 Auth
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  # Remove this in production
@@ -960,7 +962,31 @@ URL_DICT = {
     'get_user_info': 'https://www.googleapis.com/oauth2/v3/userinfo'
 }
 GOOGLE_CLIENT = WebApplicationClient(GOOGLE_CLIENT_ID)
+import urllib.parse
+from fastapi import HTTPException, status, Request, Depends
+from fastapi.responses import RedirectResponse, JSONResponse
+from sqlalchemy.orm import Session
+import json
+import base64
+FRONTEND_BASE_URL = "http://localhost:5173"  # Change this to your Vue app URL
+FRONTEND_LOGIN_SUCCESS_PATH = "/auth/callback/success"
+FRONTEND_LOGIN_ERROR_PATH = "/auth/callback/error"
 
+def encode_response_data(data: dict) -> str:
+    """Encode response data to be safely passed in URL parameters"""
+    json_str = json.dumps(data)
+    encoded = base64.urlsafe_b64encode(json_str.encode()).decode()
+    return encoded
+
+def create_frontend_redirect_url(success: bool, data: dict) -> str:
+    """Create the frontend redirect URL with encoded data"""
+    if success:
+        path = FRONTEND_LOGIN_SUCCESS_PATH
+    else:
+        path = FRONTEND_LOGIN_ERROR_PATH
+    
+    encoded_data = encode_response_data(data)
+    return f"{FRONTEND_BASE_URL}{path}?data={encoded_data}"
 
 @router.get('/google/login')
 async def google_login():
@@ -979,22 +1005,32 @@ async def google_login():
 
     except HTTPException as http_exc:
         logger.warning(f"HTTPException during Google login: {http_exc}")
-        raise
+        # Redirect to frontend with error
+        error_data = {
+            "error": "oauth_init_failed",
+            "message": "Failed to initialize Google OAuth",
+            "details": str(http_exc.detail) if hasattr(http_exc, 'detail') else str(http_exc)
+        }
+        redirect_url = create_frontend_redirect_url(success=False, data=error_data)
+        return RedirectResponse(url=redirect_url)
 
     except Exception as e:
         logger.exception("Unexpected error during Google login")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error during login"
-        )
+        error_data = {
+            "error": "internal_error",
+            "message": "Internal server error during login initialization"
+        }
+        redirect_url = create_frontend_redirect_url(success=False, data=error_data)
+        return RedirectResponse(url=redirect_url)
 
 @router.get('/google/callback')
 async def callback(code: str, fastapi_request: Request, db: Session = Depends(get_db)):
-    """Handle Google OAuth2 callback and create user session."""
+    """Handle Google OAuth2 callback and redirect to frontend with results."""
     logger.info('Google OAuth2 callback received.')
     logger.info(f'Received code: {code}')
 
     try:
+        # Token exchange
         token_url, headers, body = GOOGLE_CLIENT.prepare_token_request(
             URL_DICT['token_gen'],
             authorization_response=str(fastapi_request.url),
@@ -1017,15 +1053,28 @@ async def callback(code: str, fastapi_request: Request, db: Session = Depends(ge
 
         if not token_response.ok:
             logger.error(f'Token request failed: {token_response.text}')
-            raise HTTPException(status_code=400, detail="Failed to retrieve token from Google")
+            error_data = {
+                "error": "token_exchange_failed",
+                "message": "Failed to retrieve token from Google",
+                "details": token_response.text
+            }
+            redirect_url = create_frontend_redirect_url(success=False, data=error_data)
+            return RedirectResponse(url=redirect_url)
 
         GOOGLE_CLIENT.parse_request_body_response(token_response.text)
 
     except Exception as e:
         logger.exception("Token exchange failed")
-        raise HTTPException(status_code=500, detail="OAuth token exchange failed")
+        error_data = {
+            "error": "token_exchange_failed",
+            "message": "OAuth token exchange failed",
+            "details": str(e)
+        }
+        redirect_url = create_frontend_redirect_url(success=False, data=error_data)
+        return RedirectResponse(url=redirect_url)
 
     try:
+        # Get user info from Google
         uri, headers, body = GOOGLE_CLIENT.add_token(URL_DICT['get_user_info'])
         user_info_resp = requests.get(uri, headers=headers, data=body)
         user_info = user_info_resp.json()
@@ -1033,11 +1082,22 @@ async def callback(code: str, fastapi_request: Request, db: Session = Depends(ge
         logger.info(f'User info obtained: {user_info}')
     except Exception as e:
         logger.exception("Failed to fetch user info")
-        raise HTTPException(status_code=500, detail="Failed to retrieve user info")
+        error_data = {
+            "error": "user_info_failed",
+            "message": "Failed to retrieve user info from Google",
+            "details": str(e)
+        }
+        redirect_url = create_frontend_redirect_url(success=False, data=error_data)
+        return RedirectResponse(url=redirect_url)
 
     user_email = user_info.get('email')
     if not user_email:
-        raise HTTPException(status_code=400, detail="Email not found in Google account")
+        error_data = {
+            "error": "no_email",
+            "message": "Email not found in Google account"
+        }
+        redirect_url = create_frontend_redirect_url(success=False, data=error_data)
+        return RedirectResponse(url=redirect_url)
 
     # ______________________ LOGGED IN VIA GOOGLE __________________________
     # Now we will check if google is linked with any account
@@ -1052,13 +1112,14 @@ async def callback(code: str, fastapi_request: Request, db: Session = Depends(ge
 
         if not client:
             logger.warning(f"Login failed: No account for {user_email}")
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                content={
-                    "message": "Account not found. Please sign up first.",
-                    "email": user_email
-                }
-            )
+            error_data = {
+                "error": "account_not_found",
+                "message": "Account not found. Please sign up first.",
+                "email": user_email,
+                "action_required": "signup"
+            }
+            redirect_url = create_frontend_redirect_url(success=False, data=error_data)
+            return RedirectResponse(url=redirect_url)
 
         # Check for existing session first
         session_data, was_expired = check_existing_session(db, client.id)
@@ -1067,10 +1128,11 @@ async def callback(code: str, fastapi_request: Request, db: Session = Depends(ge
             logger.info(f"Expired session was found and deleted for client {client.id}")
 
         if not client.google_linked:
-            # Google is not linked - return appropriate response
+            # Google is not linked - redirect with error
             logger.info(f"Account found but Google not linked for {user_email}")
             
-            response_content = {
+            error_data = {
+                "error": "google_not_linked",
                 "message": "Google account is not connected to this user. Please link your Google account.",
                 "email": user_email,
                 "user": {
@@ -1078,45 +1140,44 @@ async def callback(code: str, fastapi_request: Request, db: Session = Depends(ge
                     "name": client.username,
                     "email": client.email
                 },
-                "next_step": "link_google"
+                "action_required": "link_google"
             }
             
             # If valid session exists, include it in response
             if session_data:
                 logger.info(f"Valid session exists for client {client.id} but Google not linked")
-                response_content.update({
+                error_data.update({
                     "session_token": session_data["session_token"],
                     "expires_at": session_data["expires_at"],
                     "session_status": "valid_session_exists"
                 })
             else:
-                response_content["session_status"] = "no_valid_session"
+                error_data["session_status"] = "no_valid_session"
             
-            return JSONResponse(
-                status_code=status.HTTP_403_FORBIDDEN,
-                content=response_content
-            )
+            redirect_url = create_frontend_redirect_url(success=False, data=error_data)
+            return RedirectResponse(url=redirect_url)
 
         # Google is linked - check session and proceed accordingly
         if session_data:
-            # Valid session exists - return existing session
+            # Valid session exists - redirect with success
             logger.info(f"Valid session exists for Google-linked client {client.id}")
-            return JSONResponse(
-                status_code=status.HTTP_200_OK,
-                content={
-                    "message": "Login successful. Existing session found.",
-                    "session_token": session_data["session_token"],
-                    "expires_at": session_data["expires_at"],
-                    "expires_in": 7 * 24 * 60 * 60,  # 7 days in seconds
-                    "user": {
-                        "email": client.email,
-                        "client_id": client.id
-                    },
-                    "session_status": "existing_session"
-                }
-            )
+            success_data = {
+                "message": "Login successful. Existing session found.",
+                "session_token": session_data["session_token"],
+                "expires_at": session_data["expires_at"],
+                "expires_in": 7 * 24 * 60 * 60,  # 7 days in seconds
+                "user": {
+                    "email": client.email,
+                    "client_id": client.id,
+                    "name": client.username
+                },
+                "session_status": "existing_session",
+                "login_method": "google_oauth"
+            }
+            redirect_url = create_frontend_redirect_url(success=True, data=success_data)
+            return RedirectResponse(url=redirect_url)
         else:
-            # No valid session exists - create new session
+            # No valid session exists - create new session and redirect with success
             logger.info(f"No valid session found for Google-linked client {client.id}, creating new session")
             session_token = create_session_token_in_db(
                 db=db,
@@ -1125,28 +1186,53 @@ async def callback(code: str, fastapi_request: Request, db: Session = Depends(ge
             )
             logger.info(f"New session token created for {user_email}")
 
-            return JSONResponse(
-                status_code=status.HTTP_200_OK,
-                content={
-                    "message": "Login successful. New session created.",
-                    "session_token": session_token,
-                    "expires_in": 7 * 24 * 60 * 60,  # 7 days in seconds
-                    "user": {
-                        "email": client.email,
-                        "client_id": client.id
-                    },
-                    "session_status": "new_session_created"
-                }
-            )
+            # Get the created session to include expires_at
+            db_session = db.query(models.UserSession).filter(
+                models.UserSession.session_token == session_token
+            ).first()
+            
+            expires_at = db_session.expires_at.isoformat() if db_session and db_session.expires_at else None
+
+            success_data = {
+                "message": "Login successful. New session created.",
+                "session_token": session_token,
+                "expires_at": expires_at,
+                "expires_in": 7 * 24 * 60 * 60,  # 7 days in seconds
+                "user": {
+                    "email": client.email,
+                    "client_id": client.id,
+                    "name": client.username
+                },
+                "session_status": "new_session_created",
+                "login_method": "google_oauth"
+            }
+            redirect_url = create_frontend_redirect_url(success=True, data=success_data)
+            return RedirectResponse(url=redirect_url)
 
     except Exception as e:
         logger.exception("Error during account lookup or session creation")
         db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error during login"
-        )
-    
+        error_data = {
+            "error": "internal_error",
+            "message": "Internal server error during login",
+            "details": str(e)
+        }
+        redirect_url = create_frontend_redirect_url(success=False, data=error_data)
+        return RedirectResponse(url=redirect_url)
+
+# Optional: Add a health check endpoint for frontend to verify backend connectivity
+@router.get('/auth/status')
+async def auth_status():
+    """Simple endpoint to check if auth service is running"""
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "status": "active",
+            "service": "auth",
+            "timestamp": datetime.now().isoformat()
+        }
+    )
+
 @router.post("/google/link", response_model=LinkedUserResponse)
 async def link_google_account(
     request: Request,
