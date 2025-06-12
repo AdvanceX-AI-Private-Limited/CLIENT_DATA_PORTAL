@@ -45,7 +45,6 @@ class ClientBase(BaseModel):
         ..., 
         min_length=3,
         max_length=50,
-        pattern=r"^[a-zA-Z0-9_]+$",
         examples=["user_123"],
         description="alphanumeric + underscore",
         json_schema_extra={"pattern_error": "Only letters, numbers and underscores allowed"}

@@ -69,7 +69,7 @@ const handleGoogleLogin = () => {
         </button>
       </div>
 
-      <p class="text-center text-sm text-gray-500">
+      <p class="text-center text-sm text-gray-500 font-bold">
         Don't have an account?
         <a href="/sign-up" class="text-blue-600 hover:underline">Sign Up</a>
       </p>

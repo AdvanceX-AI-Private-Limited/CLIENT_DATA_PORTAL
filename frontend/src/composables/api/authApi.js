@@ -28,3 +28,11 @@ export async function protectedProfile() {
 export async function verifygstin(payload) {
   return await post('/auth/verify-gstin', payload)
 }
+
+export async function clientsRegister(payload) {
+  return await post('/auth/clients/register', payload)
+}
+
+export async function brandsRegister(payload) {
+  return await post('/auth/brands/register', payload)
+}
