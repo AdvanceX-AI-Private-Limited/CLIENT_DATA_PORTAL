@@ -751,31 +751,50 @@ async def new_registration(
                     detail=f"Failed to insert data to database - {e}"
                 )
         
-        # Welcome mail + Temp Login Details
-        send_mail({
-            "recipient_email": client_exists.email,
-            "mail_options": {
-                "registration": True
-            },
-            "mail_context": {
-                "registation_details": {
-                    "username": client_exists.username,
-                    "email": client_exists.email,
-                    "password": registration_data.client_password
-                }
-            }
-        })
+        # # Welcome mail + Temp Login Details
+        # try:
+        #     mail_payload = {
+        #         "recipient_email": client_exists.email,
+        #         "mail_options": {
+        #             "registration": True
+        #         },
+        #         "mail_context": {
+        #             "registation_details": {
+        #                 "username": client_exists.username,
+        #                 "email": client_exists.email,
+        #                 "password": registration_data.client_password
+        #             }
+        #         }
+        #     }
+        #     send_mail(data=models.MailRequest(**mail_payload))
+        #     logger.info(f"Welcome mail sent: {client_exists.email}")
+        # except Exception as mail_error:
+        #     logger.error(f"Failed to send OTP email to {client_exists.email}: {mail_error}")
+        #     raise HTTPException(
+        #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        #         detail="Failed to send welcome email"
+        #     )
+        
         # Terms and Conditions
         if "send_on_mail" in registration_data.tnc_status:
-            send_mail({
-                "recipient_email": client_exists.email,
-                "mail_options": {
-                    "tnc": True
-                },
-                "mail_context": {
-                    "tnc_location": TNC_FILE_PATH
+            try:
+                mail_payload = {
+                    "recipient_email": client_exists.email,
+                    "mail_options": {
+                        "tnc": True
+                    },
+                    "mail_context": {
+                        "tnc_location": TNC_FILE_PATH
+                    }
                 }
-            })
+                send_mail(data=models.MailRequest(**mail_payload))
+                logger.info(f"TnC mail sent: {client_exists.email}")
+            except Exception as mail_error:
+                logger.error(f"Failed to send OTP email to {client_exists.email}: {mail_error}")
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Failed to send TnC email"
+                )
 
         return JSONResponse(
             status_code=status.HTTP_200_OK,
@@ -1220,19 +1239,6 @@ async def callback(code: str, fastapi_request: Request, db: Session = Depends(ge
         }
         redirect_url = create_frontend_redirect_url(success=False, data=error_data)
         return RedirectResponse(url=redirect_url)
-
-# Optional: Add a health check endpoint for frontend to verify backend connectivity
-@router.get('/auth/status')
-async def auth_status():
-    """Simple endpoint to check if auth service is running"""
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content={
-            "status": "active",
-            "service": "auth",
-            "timestamp": datetime.now().isoformat()
-        }
-    )
 
 @router.post("/google/link", response_model=LinkedUserResponse)
 async def link_google_account(
