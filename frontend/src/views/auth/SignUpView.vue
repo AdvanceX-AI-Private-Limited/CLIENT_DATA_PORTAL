@@ -8,7 +8,7 @@ import { verifyOtp } from '@/composables/api/authApi';
 import TermsAndConditions from '@/components/Login/TermsAndConditions.vue';
 
 // Form state
-const currentStep = ref(4);
+const currentStep = ref(1);
 const otpInput = ref('');
 const showConfetti = ref(false); 
 const isVerifying = ref(false);
