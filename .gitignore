@@ -228,3 +228,7 @@ pnpm-debug.log*
 
 ### Heroicons SVGs (if dynamically generated) ###
 heroicons/*.svg
+backend/gst_test.py
+backend/test.ipynb
+frontend/package-lock.json
+frontend/package-lock.json

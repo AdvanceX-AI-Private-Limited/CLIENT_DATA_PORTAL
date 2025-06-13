@@ -241,6 +241,7 @@ class LoginRequest(BaseModel):
 class OTPVerificationRequest(BaseModel):
     token: str
     otp: str
+    is_active: bool
 
 class ResendOTPRequest(BaseModel):
     token: str
@@ -440,6 +441,8 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid email or password"
             )
+        
+        is_active = client.is_active
 
         if not verify_password(login_data.password, client.hashed_password):
             logger.warning(f"Login failed: Incorrect password for email - {login_data.email}")
@@ -465,7 +468,8 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
                         "email": session_data["email"],
                         "client_id": session_data["client_id"]
                     },
-                    "is_signed_in": True
+                    "is_signed_in": True,
+                    "is_active": is_active
                 }
             )
         
@@ -488,7 +492,8 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
                     "expires_in": int(existing_otp['time_remaining']),
                     "next_step": "verify_otp",
                     "is_signed_in": False,
-                    "otp_already_sent": True
+                    "otp_already_sent": True,
+                    "is_active": is_active
                 }
             )
 
@@ -533,7 +538,8 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
                 "expires_in": 300,  # 5 minutes
                 "next_step": "verify_otp",
                 "is_signed_in": False,
-                "otp_already_sent": False
+                "otp_already_sent": False,
+                "is_active": is_active
             }
         )
 
@@ -617,7 +623,8 @@ async def verify_otp_route(otp_data: OTPVerificationRequest, db: Session = Depen
                     "user": {
                         "email": session_data.email,
                         "client_id": session_data.client_id
-                    }
+                    },
+                    "is_active": otp_data.is_active
                 }
             )
 

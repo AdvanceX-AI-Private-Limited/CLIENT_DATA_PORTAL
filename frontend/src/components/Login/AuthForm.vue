@@ -36,7 +36,7 @@ const handleLogin = async () => {
       setAuthFromApiResponse(data);
       emit("login-success");
     } else if (data.temp_token) {
-      emit("otp-required", { temp_token: data.temp_token, email: email.value });
+      emit("otp-required", { temp_token: data.temp_token, email: email.value, is_active: data.is_active });
     } else {
       loginError.value = data.message || "Unknown login error.";
       showError.value = true;

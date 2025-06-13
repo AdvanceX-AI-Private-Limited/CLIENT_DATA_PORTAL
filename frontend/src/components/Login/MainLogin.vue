@@ -8,11 +8,11 @@ import { useAuth } from '@/stores/useAuth';
 const { setAuthFromApiResponse } = useAuth();
 
 const showOtp = ref(false)
-const otpData = ref({ temp_token: '', email: '' })
+const otpData = ref({ temp_token: '', email: '', is_active: true })
 const router = useRouter();
 
-const handleOtpRequired = ({ temp_token, email }) => {
-  otpData.value = { temp_token, email };
+const handleOtpRequired = ({ temp_token, email, is_active }) => {
+  otpData.value = { temp_token, email, is_active };
   showOtp.value = true;
 }
 
@@ -53,6 +53,7 @@ const handleGoogleLogin = () => {
         v-else 
         :temp-token="otpData.temp_token" 
         :email="otpData.email" 
+        :is-active="otpData.is_active"
         @otp-success="handleOtpSuccess"
       />
 
