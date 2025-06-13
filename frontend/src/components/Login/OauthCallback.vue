@@ -14,7 +14,7 @@ onMounted(async () => {
 
     // const response = await fetch(`http://localhost:8000/api/v1/auth/google/callback${window.location.search}`, {
     //   method: 'GET',
-    //   credentials: 'include'  // Use this only if you're using cookies
+    //   credentials: 'include'
     // });
     
     const response = await fetch(`https://client.advancex.ai/api/v1/auth/google/callback${window.location.search}`, {

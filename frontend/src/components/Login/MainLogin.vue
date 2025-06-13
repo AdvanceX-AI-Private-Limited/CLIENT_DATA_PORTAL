@@ -3,9 +3,6 @@ import { ref } from 'vue'
 import OtpInput from '@/components/Login/OtpInput.vue'
 import AuthForm from '@/components/Login/AuthForm.vue'
 import { useRouter } from "vue-router";
-import { useAuth } from '@/stores/useAuth';
-
-const { setAuthFromApiResponse } = useAuth();
 
 const showOtp = ref(false)
 const otpData = ref({ temp_token: '', email: '', is_active: true })
@@ -27,8 +24,8 @@ const handleOtpSuccess = () => {
 }
 
 const handleGoogleLogin = () => {
-  // window.location.href = 'http://localhost:8000/api/v1/auth/google/login';
-  window.location.href = 'https://client.advancex.ai/api/v1/auth/google/login';
+  window.location.href = 'http://localhost:8000/api/v1/auth/google/login';
+  // window.location.href = 'https://client.advancex.ai/api/v1/auth/google/login';
 };
 </script>
 <template>

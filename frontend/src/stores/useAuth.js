@@ -1,10 +1,12 @@
+//src/stores/useAuth.js
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 import { logout as apiLogout } from '@/composables/api/authApi';
 
 const user = ref(null);
 const loaded = ref(false);
 const isSignedIn = ref(false);
+const isActive = ref(false);
+
 // console.log("useAuth isSignedIn: ", isSignedIn.value);
 
 function setCookie(name, value, expiresAt) {
@@ -54,14 +56,6 @@ function clearAuth() {
     isSignedIn.value = false;
 }
 
-// Logout and redirect
-// async function logout() {
-//     const token = sessionStorage.getItem('session_token');
-//     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-//     console.log("authApi headers: ", headers);
-//     return await apiLogout(headers);
-// }
-
 async function logout() {
     try {
         // No need to pass headers or token, cookie is sent automatically!
@@ -100,6 +94,7 @@ export function useAuth() {
         user,
         isSignedIn,
         loaded,
+        isActive,
         setAuthFromApiResponse,
         clearAuth,
         logout

@@ -13,7 +13,7 @@ const loginLoading = ref(false);
 const loginError = ref("");
 const showError = ref(false);
 
-const { setAuthFromApiResponse } = useAuth();
+const { setAuthFromApiResponse, isActive } = useAuth();
 
 const handleLogin = async () => {
   // email.value = "aslam.miya@advancex.ai"
@@ -31,6 +31,10 @@ const handleLogin = async () => {
     const response = await login(payload);
     const data = response.data;
     console.log("response: ", data);
+    
+    if (data.is_active){
+      isActive.value = data.is_active;
+    }
 
     if (data.is_signed_in) {
       setAuthFromApiResponse(data);

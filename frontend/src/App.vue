@@ -17,12 +17,13 @@ import LoginView from "./views/auth/LoginView.vue";
 import { useRoute, useRouter } from 'vue-router';
 import { useAuth } from '@/stores/useAuth';
 import { setAuthState } from '@/router';
+import AccountReviewNotice from "./components/Login/AccountReviewNotice.vue";
 
 const isSidebarOpen = ref(false)
 const route = useRoute();
 const router = useRouter();
-const { isSignedIn, loaded } = useAuth();
-// console.log("App isSignedIn: ", isSignedIn.value);
+const { isSignedIn, loaded, isActive } = useAuth();
+
 // For debugging
 watchEffect(() => {
   if (loaded.value) {
@@ -113,13 +114,23 @@ const navigation = [
 	{ name: 'Settings', path: '/settings', icon: Cog6ToothIcon }
 ];
 
+onMounted(() => {
+  // Check if the user is active
+//   isActive.value = true;
+	console.log("Hreee");
+	console.log("is avtive value: ", isActive.value);
+});
+
 const hideSidebarRoutes = ['/login', '/sign-up'];
 
 const shouldShowSidebar = computed(() => !hideSidebarRoutes.includes(route.path) && isSignedIn.value);
 </script>
 
 <template>
-	<div :class="{ 'min-h-screen flex transition-all duration-300': isLocked, 'min-h-screen': !isLocked }">
+	<div v-if="!isActive && isSignedIn">
+		<AccountReviewNotice/>
+	</div>
+	<div v-else :class="{ 'min-h-screen flex transition-all duration-300': isLocked, 'min-h-screen': !isLocked }">
 		<Sidebar v-if="shouldShowSidebar" :navigation="navigation" />
 		<main :class="[
 			isSidebarOpen && !isLocked ? 'ml-64' : 'md:ml-16',
