@@ -1,12 +1,13 @@
 <script setup>
 import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
-import { clientsRegister, verifygstin, brandsRegister } from '@/composables/api/authApi';
+import { clientsRegister, verifygstin, brandsRegister, resendOtp, newRegistration } from '@/composables/api/authApi';
 import Confetti from '@/components/Confetti.vue';
+import { login } from "@/composables/api/authApi";
+import { verifyOtp } from '@/composables/api/authApi';
 
 // Form state
 const currentStep = ref(1);
-const confirmationPhase = ref(1);
 const otpInput = ref('');
 const showConfetti = ref(false); 
 const isVerifying = ref(false);
@@ -18,7 +19,7 @@ const dropdownPosition = ref('bottom');
 const statesDropdownContainer = ref(null);
 const statesDropdown = ref(null);
 const showFormUi = ref(true);// ...
-
+const showClientBrandError = ref(false);
 
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
@@ -35,31 +36,15 @@ const formData = reactive({
   confirmPassword: '',
 
   clientId: '',
+  brand_id: '',
   gstNumber: '',
   dateOfregistration: '',
 
   termsAccepted: false,
+  termsConditionsTimestamp: '',
   sendTerms: false,
 
   gstObj: null
-});
-
-// List of Indian states
-const indianStates = [
-  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 
-  'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 
-  'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 
-  'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
-  'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu', 
-  'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'
-];
-
-// Filtered states based on search query
-const filteredStates = computed(() => {
-  if (!stateSearchQuery.value) return indianStates;
-  return indianStates.filter(state => 
-    state.toLowerCase().includes(stateSearchQuery.value.toLowerCase())
-  );
 });
 
 // Position the dropdown
@@ -115,143 +100,181 @@ onBeforeUnmount(() => {
 });
 
 // Mock GST verification function
-const verifyGST = () => {
-  if (!formData.gstNumber) {
-    return;
-  }
-  
-  isVerifying.value = true;
-  gstError.value = false;
-  
-  // Simulate API call with timeout
-  setTimeout(() => {
-    // Simple mock - GST numbers starting with '27' will return true, others false
-    // You can replace this with your actual API call later
-    const result = formData.gstNumber.startsWith('27');
-    gstVerified.value = result;
-    gstError.value = !result;
-    isVerifying.value = false;
-    
-    // Set GST data only if verification is successful
-    gstData.value = result ? {
-      reference_id: 1364072,
-      GSTIN: "27ABBCA2714N1ZN",
-      legal_name_of_business: "ADVANCEX AI PRIVATE LIMITED",
-      center_jurisdiction: "RANGE-I",
-      state_jurisdiction: "CHAKALA_701",
-      date_of_registration: "2024-10-24",
-      constitution_of_business: "Private Limited",
-      taxpayer_type: "Regular",
-      gst_in_status: "Active",
-      last_update_date: "2024-11-11",
-      nature_of_business_activities: ["Supplier of Services"],
-      principal_place_address: "7TH FLOOR, INNOV8 SOLITAIRE CORPORATE PARK, S-11, UNIT NO.1171,1172, Mumbai, ANDHERI EAST, Maharashtra, 400093",
-      principal_place_split_address: {
-        building_name: "INNOV8 SOLITAIRE CORPORATE PARK",
-        street: "ANDHERI EAST",
-        location: "Mumbai",
-        building_number: "S-11, UNIT NO.1171,1172",
-        district: "Mumbai Suburban",
-        state: "Maharashtra",
-        city: "",
-        flat_number: "7TH FLOOR",
-        latitude: "19.117449",
-        longitude: "72.8651080000001",
-        pincode: "400093"
-      },
-      valid: true,
-      message: "GSTIN Exists"
-    } : null;
-  }, 1500);
-};
-
-// const verifyGST = async () => {
-//   console.log(formData);
-//   gstError.value = null;
-
+// const verifyGST = () => {
 //   if (!formData.gstNumber) {
 //     return;
 //   }
-
-//   const brandName = formData.brandName?.toString().trim() || '';
-//   const gstNumber = formData.gstNumber?.toString().toUpperCase().trim() || '';
-
+  
 //   isVerifying.value = true;
-//   console.log(`name: ${typeof brandName}, number: ${typeof gstNumber}`);
-//   console.log(`Verifying GST for ${brandName} with number ${gstNumber}`);
-//   try {
-//     const payload = {
-//       business_name: brandName,
-//       GSTIN: gstNumber
-//     }
-//     console.log("payload: ", payload);
-//     const response = await verifygstin(payload);
-//     // handle the response as needed
-//     console.log('GST verification result:', JSON.stringify(response.data));
-//     gstData.value = response.data.data;
-//     if (response.data.data.message != "GSTIN Doesn't Exist") {
-//       gstVerified.value = response.data.success;
-//       gstError.value = !response.data.success;
-//     }else{
-//       gstVerified.value = false;
-//       gstError.value = true;
-//     }
-
-//   } catch (error) {
-//     gstError.value = error.response?.data?.message || error.message || "GST verification failed";
-//     console.error("Error verifying GST:", error);
-//   } finally {
+//   gstError.value = false;
+  
+//   // Simulate API call with timeout
+//   setTimeout(() => {
+//     // Simple mock - GST numbers starting with '27' will return true, others false
+//     // You can replace this with your actual API call later
+//     const result = formData.gstNumber.startsWith('27');
+//     gstVerified.value = result;
+//     gstError.value = !result;
 //     isVerifying.value = false;
-//   }
+    
+//     // Set GST data only if verification is successful
+  //   gstData.value = result ? {
+  //     reference_id: 1364072,
+  //     GSTIN: "27ABBCA2714N1ZN",
+  //     legal_name_of_business: "ADVANCEX AI PRIVATE LIMITED",
+  //     center_jurisdiction: "RANGE-I",
+  //     state_jurisdiction: "CHAKALA_701",
+  //     date_of_registration: "2024-10-24",
+  //     constitution_of_business: "Private Limited",
+  //     taxpayer_type: "Regular",
+  //     gst_in_status: "Active",
+  //     last_update_date: "2024-11-11",
+  //     nature_of_business_activities: ["Supplier of Services"],
+  //     principal_place_address: "7TH FLOOR, INNOV8 SOLITAIRE CORPORATE PARK, S-11, UNIT NO.1171,1172, Mumbai, ANDHERI EAST, Maharashtra, 400093",
+  //     principal_place_split_address: {
+  //       building_name: "INNOV8 SOLITAIRE CORPORATE PARK",
+  //       street: "ANDHERI EAST",
+  //       location: "Mumbai",
+  //       building_number: "S-11, UNIT NO.1171,1172",
+  //       district: "Mumbai Suburban",
+  //       state: "Maharashtra",
+  //       city: "",
+  //       flat_number: "7TH FLOOR",
+  //       latitude: "19.117449",
+  //       longitude: "72.8651080000001",
+  //       pincode: "400093"
+  //     },
+  //     valid: true,
+  //     message: "GSTIN Exists"
+  //   } : null;
+  // }, 1500);
 // };
 
-// Verify OTP and move to final phase
-const verifyOTP = () => {
-  // Here you would verify the OTP with backend
-  // For demo purposes, any 4-digit OTP works
-  if (otpInput.value.length === 4) {
-    console.log('OTP verified');
-    confirmationPhase.value = 3;
-    
-    // Show confetti when reaching the final phase
-    showConfetti.value = true;
-    
-    // Hide confetti after 5 seconds
-    setTimeout(() => {
-      showConfetti.value = false;
-    }, 5000);
-  } else {
-    alert('Please enter a valid 4-digit OTP');
+const verifyGST = async () => {
+  console.log(formData);
+  gstError.value = null;
+
+  if (!formData.gstNumber) {
+    return;
+  }
+
+  const brandName = formData.brandName?.toString().trim() || '';
+  const gstNumber = formData.gstNumber?.toString().toUpperCase().trim() || '';
+
+  isVerifying.value = true;
+  console.log(`name: ${typeof brandName}, number: ${typeof gstNumber}`);
+  console.log(`Verifying GST for ${brandName} with number ${gstNumber}`);
+  try {
+    const payload = {
+      business_name: brandName,
+      GSTIN: gstNumber
+    }
+    console.log("payload: ", payload);
+    const response = await verifygstin(payload);
+    // handle the response as needed
+    console.log('GST verification result:', JSON.stringify(response.data));
+    gstData.value = response.data.data;
+    if (response.data.data.message != "GSTIN Doesn't Exist") {
+      gstVerified.value = response.data.success;
+      gstError.value = !response.data.success;
+    }else{
+      gstVerified.value = false;
+      gstError.value = true;
+    }
+
+  } catch (error) {
+    gstError.value = error.response?.data?.message || error.message || "GST verification failed";
+    console.error("Error verifying GST:", error);
+  } finally {
+    isVerifying.value = false;
   }
 };
+
+const loginLoading = ref(false);
+const loginError = ref("");
+const showError = ref(false);
+const loginApiData = ref(null);
+
+const handleLogin = async () => {
+  if (!formData.companyEmail || !formData.password) {
+    return;
+  }
+
+  loginLoading.value = true;
+  loginError.value = "";
+  showError.value = false;
+
+  try {
+    const payload = { email: formData.companyEmail, password: formData.password };
+    const response = await login(payload);
+    const data = response.data;
+    
+    if (response.status === 200) {
+      loginApiData.value = data;
+      console.log("response: ", loginApiData.value);
+      return true;
+    } else {
+      loginError.value = data.message || "Unknown login error.";
+      showError.value = true;
+      return false;
+    }
+  } catch (error) {
+    showError.value = true;
+    loginError.value = error.response?.data?.message || error.message || "An error occurred. Please try again later.";
+    setTimeout(() => {
+      showError.value = false;
+    }, 3000);
+    return false;
+  } finally {
+    loginLoading.value = false;
+  }
+};
+
+// Verify OTP and move to final phase
+const otpVerificationError = ref("");
+const otpResponseData = ref('');
+
+async function verifyOtpApi() {
+  if (!otpInput.value || !loginApiData.value?.temp_token) {
+    otpVerificationError.value = "Missing OTP or temp token.";
+    return false;
+  }
+
+  loading.value = true;
+  otpVerificationError.value = "";
+
+  try {
+    const payload = {
+      token: loginApiData.value.temp_token,
+      otp: otpInput.value,
+    };
+    const response = await verifyOtp(payload);
+
+    // if (response.data.session_token) {
+    //   setAuthFromApiResponse(response.data);
+    //   console.log("Registration successful, session token set.");
+    // }
+
+    if (response.status === 200) {
+      otpResponseData.value = response.data;
+      console.log("OTP verification successful:", otpResponseData.value);
+      return true;
+    } else {
+      otpVerificationError.value = response.data?.message || "Invalid code.";
+      return false;
+    }
+  } catch (err) {
+    otpVerificationError.value = err.response?.data?.message || err.message || "OTP verification failed.";
+    return false;
+  } finally {
+    loading.value = false;
+  }
+}
 
 const logThings = () => {
   console.log("hre", formData.gstNumber);
   console.log("gstError", gstError.value);
 }
-
-watch(
-  [currentStep, confirmationPhase],
-  ([step, phase]) => {
-    if (step === 3 && phase === 2) {
-      console.log('Trigger: currentStep is 3 and confirmationPhase is 2')
-
-    }
-  }
-);
-
-// Watch for changes to confirmationPhase as an alternative trigger
-watch(() => confirmationPhase.value, (newPhase) => {
-  if (newPhase === 3 && !showConfetti.value) {
-    // Show confetti when reaching the final phase
-    showConfetti.value = true;
-    
-    // Hide confetti after 5 seconds
-    setTimeout(() => {
-      showConfetti.value = false;
-    }, 5000);
-  }
-});
 
 // Button actions
 function handleBack() {
@@ -264,26 +287,18 @@ async function handleNext() {
     if (currentStep.value < 5) currentStep.value++;
   } else if (currentStep.value === 2) {
     loading.value = true;
-    const result = await brandDetails();  // Wait for API to finish
+    const result = await brandDetails();
     loading.value = false;
-    // Only move to next step if creation was successful (no error):
+    
     if (result === true) {
       if (currentStep.value < 5) currentStep.value++;
     }
-    // Otherwise: show error, DO NOT move forward
   } else if (currentStep.value === 3) {
-    otpVerification();
-    if (currentStep.value < 5) currentStep.value++;
+    const passed = await verifyOtpApi();
+    if (passed && currentStep.value < 5) currentStep.value++;
+    // if failed, error message is already set, stay on step
   }
-}
-
-function handleSubmit() {
-  showFormUi.value = false;
-  currentStep.value = 5;
-  showConfetti.value = true;
-  setTimeout(() => showConfetti.value = false, 3000);
-  
-  console.log("pritty form data: ", JSON.stringify(formData));
+  console.log("current step after OTP verification: ", currentStep.value);
 }
 
 const passwordMatchStatus = computed(() => {
@@ -351,23 +366,6 @@ async function createClient() {
   }
 }
 
-// {
-//   "brandname": "CoolBrand_2025",
-//   "client_id": 1,
-//   "gstin": "22ABCDE1234F1Z5",
-//   "legal_name_of_business": "CoolBrand Private Limited",
-//   "date_of_registration": "2022-07-15",
-//   "gstdoc": {
-//     "address": "123 Market Street, Bangalore, KA",
-//     "gstin": "22ABCDE1234F1Z5",
-//     "legalName": "CoolBrand Private Limited",
-//     "registrationDate": "2022-07-15",
-//     "stateCode": "22",
-//     "status": "Active",
-//     "tradeName": "CoolBrand"
-//   }
-// }
-
 async function createBrand() {
   clientBrandLoading.value = true;
   clientBrandError.value = false;
@@ -418,19 +416,35 @@ function gstVerification() {
 async function brandDetails() {
   loading.value = true;
   try {
-    // First API request: Create client
+    // 1. Create client
     let createClientVar = await createClient();
     console.log("client created data: ", clientApiData.value);
-    
+
     if (createClientVar) {
       formData.clientId = clientApiData.value.client_id;
       console.log('Client created successfully:', formData);
-      
+
+      // 2. Create brand
       let createBrandVar = await createBrand();
-      
+
       if (createBrandVar) {
+        formData.brand_id = brandApiData.value.brand_id;
         console.log('Brand created successfully');
-        return true; 
+
+        // ====== 3. LOGIN FLOW INTEGRATION ======
+        const loginSuccess = await handleLogin();
+        if (loginSuccess) {
+          // Optionally, do something after successful login (eg: redirect)
+          console.log('Login after brand creation successful!', loginApiData.value);
+          return true;
+        } else {
+          // Handle login failure scenario
+          console.error('Login failed after brand creation:', loginError.value);
+          clientBrandError.value = true;
+          clientBrandErrorMessage.value = loginError.value || "Login failed after registration";
+          return false;
+        }
+        // =======================================
       } else {
         console.error('Failed to create brand');
         return false;
@@ -447,10 +461,6 @@ async function brandDetails() {
   } finally {
     loading.value = false;
   }
-}
-
-function otpVerification() {
-  console.log('Step 3 Next!', formData);
 }
 
 const allowNextBtn = computed(() => {
@@ -480,7 +490,107 @@ const allowNextBtn = computed(() => {
   return false;
 });
 
+watch(
+  [clientBrandError, clientBrandErrorMessage, currentStep],
+  ([err, msg, step]) => {
+    if (step === 2 && err && msg) {
+      showClientBrandError.value = true;
+      setTimeout(() => {
+        showClientBrandError.value = false;
+        clientBrandError.value = false;
+        clientBrandErrorMessage.value = '';
+      }, 3000);
+    }
+  }
+);
 
+const resendSuccessMessage = ref('');
+const resendErrorMessage = ref('');
+const resendCooldown = ref(30);
+const cooldownInterval = ref(null);
+
+// Start cooldown helper
+function startResendCooldown() {
+  resendCooldown.value = 30;
+  cooldownInterval.value = setInterval(() => {
+    resendCooldown.value--;
+    if (resendCooldown.value <= 0) {
+      clearInterval(cooldownInterval.value);
+      cooldownInterval.value = null;
+    }
+  }, 1000);
+}
+
+// On destroy, clear interval
+onBeforeUnmount(() => {
+  if (cooldownInterval.value) clearInterval(cooldownInterval.value);
+});
+
+// Handle resend
+async function handleResendOtp() {
+  loading.value = true;
+  resendSuccessMessage.value = '';
+  resendErrorMessage.value = '';
+  try {
+    // You'll need to pass your temp token or email as needed
+    const payload = { token: loginApiData.value.temp_token };
+    await resendOtp(payload);
+    resendSuccessMessage.value = 'OTP has been resent to your email.';
+    startResendCooldown();
+  } catch (err) {
+    resendErrorMessage.value = err.response?.data?.message || err.message || "Failed to resend OTP.";
+  } finally {
+    loading.value = false;
+  }
+}
+
+// Automatically start cooldown when step 3 is first rendered
+watch(() => currentStep.value, (step) => {
+  if(step === 3 && !cooldownInterval.value) startResendCooldown();
+});
+
+const submitError = ref("");
+
+async function handleSubmit() {
+  loading.value = true;
+  submitError.value = '';       // clear previous errors
+
+  try {
+    const nowIsoString = new Date().toISOString();
+    const registrationPayload = {
+      client_id: Number(formData.clientId),
+      brand_id: Number(formData.brand_id),
+      client_password: String(formData.password),
+      tnc_status: String(formData.termsAccepted),
+      tnc_accepted_at: formData.termsConditionsTimestamp 
+                          ? new Date(formData.termsConditionsTimestamp).toISOString()
+                          : nowIsoString,              
+      date_of_registration: nowIsoString,
+      date_of_acceptance: nowIsoString,
+    };
+    console.log("Registration Payload: ", registrationPayload);
+    console.log("form data: ", formData);
+    // Call Registration API
+    const regResponse = await newRegistration(registrationPayload, otpResponseData.value.session_token);
+    console.log("submit: ", regResponse.data);
+    
+    if (regResponse.status !== 200) {
+      submitError.value = regResponse.data?.message || 'Registration failed';
+      return;
+    }
+
+    // If both succeeded:
+    showFormUi.value = false;
+    currentStep.value = 5;
+    showConfetti.value = true;
+    setTimeout(() => showConfetti.value = false, 3000);
+
+  } catch (err) {
+    submitError.value = err.response?.data?.message || err.message || 'An error occurred. Please try again.';
+  } finally {
+    loading.value = false;
+  }
+}
 </script>
 
 <template>
@@ -584,7 +694,6 @@ const allowNextBtn = computed(() => {
         </div>
       </div>
 
-      <!-- Form Card -->
       <!-- Loading State -->
       <div v-if="showFormUi" class="bg-white/80 shadow-xl rounded-lg overflow-hidden backdrop-blur-md border border-white/30 ring-1 ring-blue-100/50 px-4">
         <div v-if="loading" class="absolute inset-0 bg-white/70 flex items-center justify-center z-20">
@@ -595,6 +704,7 @@ const allowNextBtn = computed(() => {
           <span class="text-blue-700 text-lg font-semibold">Loading...</span>
         </div>
 
+        <!-- Form Cards -->
         <!-- Step 1: GST Verification -->
         <div v-if="currentStep === 1" class="px-6 py-8">
           <div class="space-y-6">
@@ -637,7 +747,7 @@ const allowNextBtn = computed(() => {
               </div>
             </div>
 
-            <div v-if="gstVerified" class="bg-green-50 border border-green-200 rounded-md p-4">
+            <div v-if="gstVerified && gstData" class="bg-green-50 border border-green-200 rounded-md p-4">
               <div class="flex">
                 <div class="flex-shrink-0">
                   <svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -648,6 +758,25 @@ const allowNextBtn = computed(() => {
                   <h3 class="text-sm font-medium text-green-800">GST verified successfully</h3>
                   <div class="mt-2 text-sm text-green-700">
                     <p>Your GST number has been verified. You can now proceed to the next step.</p>
+                    <div class="mt-4 space-y-1">
+                      <div><span class="font-semibold">GSTIN Number:</span> {{ gstData.GSTIN }}</div>
+                      <div><span class="font-semibold">Legal Business Name:</span> {{ gstData.legal_name_of_business }}</div>
+                      <div><span class="font-semibold">Date of Registration:</span> {{ gstData.date_of_registration }}</div>
+                      <div><span class="font-semibold">Principal Place Address:</span> {{ gstData.principal_place_address }}</div>
+                      <div>
+                        <span class="font-semibold">Company Address:</span>
+                        <span>
+                          {{ gstData.principal_place_split_address.flat_number }},
+                          {{ gstData.principal_place_split_address.building_name }},
+                          {{ gstData.principal_place_split_address.building_number }},
+                          {{ gstData.principal_place_split_address.street }},
+                          {{ gstData.principal_place_split_address.location }},
+                          {{ gstData.principal_place_split_address.district }},
+                          {{ gstData.principal_place_split_address.state }},
+                          Pincode: {{ gstData.principal_place_split_address.pincode }}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -675,7 +804,10 @@ const allowNextBtn = computed(() => {
         <div v-if="currentStep === 2" class="px-6 py-8">          
           <div class="space-y-6">
             <!-- Error message -->
-            <div v-if="clientBrandError" class="bg-red-50 border border-red-300 text-red-700 px-4 py-2 mb-4 rounded">
+            <div
+              v-if="clientBrandError && showClientBrandError"
+              class="bg-red-50 border border-red-300 text-red-700 px-4 py-2 mb-4 rounded"
+            >
               {{ clientBrandErrorMessage }}
             </div>
             <div>
@@ -780,14 +912,14 @@ const allowNextBtn = computed(() => {
         <!-- <button class="bg-blue-500 px-4 text-white rounded-lg py-2 m-3" @click="logThings" >yo</button> -->
 
         <!-- Step 3: OTP Verification -->
-        <div v-if="currentStep === 3" class="px-6 py-8 space-y-6">
+        <div v-if="currentStep === 3" class="px-6 py-8 space-y-3">
           <div class="text-center">
             <h3 class="text-lg font-medium text-gray-900">Verify Your Email</h3>
             <p class="mt-2 text-sm text-gray-500">
               We've sent a verification code to your email address. Please enter the code below to complete your registration.
             </p>
           </div>
-          <div class="mt-4 mx-">
+          <div class="mt-4">
             <!-- <label for="otp" class="block text-sm font-medium text-gray-700 mb-3 mx-0.5">Verification Code</label> -->
             <input 
               type="text" 
@@ -798,47 +930,72 @@ const allowNextBtn = computed(() => {
               maxlength="6"
             />
           </div>
+          <div v-if="otpVerificationError" class="text-red-500 text-sm mt-2">
+            {{ otpVerificationError }}
+          </div>
+          <!-- OTP resend/cooldown -->
+          <div class="flex items-center space-x-3">
+            <button
+              class="text-blue-600 font-medium mx-1 hover:underline disabled:text-gray-400"
+              :disabled="resendCooldown > 0 || loading"
+              @click="handleResendOtp"
+              type="button"
+            >
+              <span v-if="!loading">Resend OTP</span>
+              <span v-else>
+                Sending...
+              </span>
+            </button>
+            <span v-if="resendCooldown > 0" class="text-xs text-gray-500 select-none">
+              (Wait {{ resendCooldown }}s)
+            </span>
+          </div>
+          <div v-if="resendSuccessMessage" class="text-green-500 text-xs mt-2">{{ resendSuccessMessage }}</div>
+          <div v-if="resendErrorMessage" class="text-red-500 text-xs mt-2">{{ resendErrorMessage }}</div>
         </div>
 
         <!-- Step 4: Terms and Conditions -->
-        <div v-if="currentStep === 4" class="px-6 py-8 space-y-6">
-            <h3 class="text-lg font-medium text-gray-900">Terms and Conditions</h3>
-            <div class="bg-gray-50 p-4 rounded-md border border-gray-200 h-48 overflow-y-auto">
-              <p class="text-sm text-gray-700">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisi vel consectetur
-                euismod, nisl nisi consectetur nisl, euismod nisl nisi euismod nisl. Nullam euismod, nisi vel
-                consectetur euismod, nisl nisi consectetur nisl, euismod nisl nisi euismod nisl.
-                lorem1000
-                <!-- Terms content would go here -->
-              </p>
-            </div>
-            <div v-if="gstVerified">
-              <div class="flex items-center">
-                <input 
-                  type="checkbox" 
-                  id="termsAccepted" 
-                  v-model="formData.termsAccepted" 
-                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  required
-                />
-                <label for="termsAccepted" class="ml-2 text-sm text-gray-700">
-                  I consent to use my company information and accept the 
-                  <a href="#" class="text-blue-600 hover:text-blue-500">Terms of Service</a> and 
-                  <a href="#" class="text-blue-600 hover:text-blue-500">Privacy Policy</a>
-                </label>
-              </div>
-            </div>
+          <div v-if="currentStep === 4" class="px-6 py-8 space-y-6">
+            <div v-if="submitError" class="bg-red-50 border border-red-300 text-red-700 px-4 py-2 mb-4 rounded text-center">
+            {{ submitError }}
+          </div>
+          <h3 class="text-lg font-medium text-gray-900">Terms and Conditions</h3>
+          <div class="bg-gray-50 p-4 rounded-md border border-gray-200 h-48 overflow-y-auto">
+            <p class="text-sm text-gray-700">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisi vel consectetur
+              euismod, nisl nisi consectetur nisl, euismod nisl nisi euismod nisl. Nullam euismod, nisi vel
+              consectetur euismod, nisl nisi consectetur nisl, euismod nisl nisi euismod nisl.
+              lorem1000
+              <!-- Terms content would go here -->
+            </p>
+          </div>
+          <div v-if="gstVerified">
             <div class="flex items-center">
               <input 
                 type="checkbox" 
-                id="sendTerms" 
-                v-model="formData.sendTerms" 
+                id="termsAccepted" 
+                v-model="formData.termsAccepted" 
                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                required
               />
-              <label for="sendTerms" class="ml-2 text-sm text-gray-700">
-                Send copy to email
+              <label for="termsAccepted" class="ml-2 text-sm text-gray-700">
+                I consent to use my company information and accept the 
+                <a href="#" class="text-blue-600 hover:text-blue-500">Terms of Service</a> and 
+                <a href="#" class="text-blue-600 hover:text-blue-500">Privacy Policy</a>
               </label>
             </div>
+          </div>
+          <!-- <div class="flex items-center">
+            <input 
+              type="checkbox" 
+              id="sendTerms" 
+              v-model="formData.sendTerms" 
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <label for="sendTerms" class="ml-2 text-sm text-gray-700">
+              Send copy to email
+            </label>
+          </div> -->
         </div>
 
         <!-- Form Navigation Buttons -->

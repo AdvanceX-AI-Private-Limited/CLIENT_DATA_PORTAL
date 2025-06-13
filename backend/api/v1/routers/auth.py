@@ -1451,8 +1451,8 @@ async def register_brand(
             return JSONResponse(
                 status_code=status.HTTP_200_OK,
                 content={
-                    "message": "Registation successful. Brand is created.",
-                    "client_id": db_brand.id 
+                    "message": "Registration successful. Brand is created.",
+                    "brand_id": db_brand.id
                 }
             )
         except Exception as e:

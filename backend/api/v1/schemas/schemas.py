@@ -22,10 +22,10 @@ class NewRegistration(BaseModel):
         ...,
         description="Temprory password assigned to the client"
     )
-    tnc_status: Optional[bool] = Field(
-        default=False,
+    tnc_status: Optional[str] = Field(
+        default='False',
         description="Whether the brand has accepted terms and conditions",
-        example=False
+        example='True,send_on_mail'
     )
     tnc_accepted_at: datetime = Field(
         ...,

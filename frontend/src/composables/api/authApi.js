@@ -36,3 +36,21 @@ export async function clientsRegister(payload) {
 export async function brandsRegister(payload) {
   return await post('/auth/brands/register', payload)
 }
+
+export async function resendOtp(payload) {
+  return await post('/auth/resend-otp', payload)
+}
+
+export async function newRegistration(payload, session_token) {
+  console.log("newRegistration payload: ", payload);
+  console.log("newRegistration session_token: ", session_token);
+  return await post('/auth/new-registration', payload, {
+    headers: {
+      Authorization: `Bearer ${session_token}`
+    }
+  })
+}
+
+export async function sendEmail() {
+  return await get('/auth/send-mail');
+}
