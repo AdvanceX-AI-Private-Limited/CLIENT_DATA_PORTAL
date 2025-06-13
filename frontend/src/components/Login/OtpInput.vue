@@ -58,7 +58,7 @@ const verifyOtpHandler = async () => {
   </div> -->
   <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md">
     <!-- Debug: show alreadySent value -->
-    <div>alreadySent: {{ alreadySent }}</div>
+    <!-- <div>alreadySent: {{ alreadySent }}</div> -->
     <p v-if="alreadySent">
       {{ message.value || 'An OTP has already been sent to your email. Please check your inbox.' }}
     </p>
