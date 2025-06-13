@@ -152,7 +152,7 @@ onBeforeUnmount(() => {
 // };
 
 const verifyGST = async () => {
-  console.log(formData);
+  // console.log(formData);
   gstError.value = null;
 
   if (!formData.gstNumber) {
@@ -163,17 +163,17 @@ const verifyGST = async () => {
   const gstNumber = formData.gstNumber?.toString().toUpperCase().trim() || '';
 
   isVerifying.value = true;
-  console.log(`name: ${typeof brandName}, number: ${typeof gstNumber}`);
-  console.log(`Verifying GST for ${brandName} with number ${gstNumber}`);
+  // console.log(`name: ${typeof brandName}, number: ${typeof gstNumber}`);
+  // console.log(`Verifying GST for ${brandName} with number ${gstNumber}`);
   try {
     const payload = {
       business_name: brandName,
       GSTIN: gstNumber
     }
-    console.log("payload: ", payload);
+    // console.log("payload: ", payload);
     const response = await verifygstin(payload);
     // handle the response as needed
-    console.log('GST verification result:', JSON.stringify(response.data));
+    // console.log('GST verification result:', JSON.stringify(response.data));
     gstData.value = response.data.data;
     if (response.data.data.message != "GSTIN Doesn't Exist") {
       gstVerified.value = response.data.success;
@@ -212,7 +212,7 @@ const handleLogin = async () => {
     
     if (response.status === 200) {
       loginApiData.value = data;
-      console.log("response: ", loginApiData.value);
+      // console.log("response: ", loginApiData.value);
       return true;
     } else {
       loginError.value = data.message || "Unknown login error.";
@@ -253,12 +253,12 @@ async function verifyOtpApi() {
 
     // if (response.data.session_token) {
     //   setAuthFromApiResponse(response.data);
-    //   console.log("Registration successful, session token set.");
+    //   // console.log("Registration successful, session token set.");
     // }
 
     if (response.status === 200) {
       otpResponseData.value = response.data;
-      console.log("OTP verification successful:", otpResponseData.value);
+      // console.log("OTP verification successful:", otpResponseData.value);
       return true;
     } else {
       otpVerificationError.value = response.data?.message || "Invalid code.";
@@ -273,8 +273,8 @@ async function verifyOtpApi() {
 }
 
 const logThings = () => {
-  console.log("hre", formData.gstNumber);
-  console.log("gstError", gstError.value);
+  // console.log("hre", formData.gstNumber);
+  // console.log("gstError", gstError.value);
 }
 
 // Button actions
@@ -299,7 +299,7 @@ async function handleNext() {
     if (passed && currentStep.value < 5) currentStep.value++;
     // if failed, error message is already set, stay on step
   }
-  console.log("current step after OTP verification: ", currentStep.value);
+  // console.log("current step after OTP verification: ", currentStep.value);
 }
 
 const passwordMatchStatus = computed(() => {
@@ -333,7 +333,7 @@ async function createClient() {
   };
 
   try {
-    console.log("Payload being sent:", payload);
+    // console.log("Payload being sent:", payload);
     const response = await clientsRegister(payload);
     clientApiData.value = response.data;
     
@@ -382,10 +382,10 @@ async function createBrand() {
       gstdoc: gstData.value
     };
 
-    console.log("Brand payload being sent:", payload);
+    // console.log("Brand payload being sent:", payload);
     const response = await brandsRegister(payload);
     brandApiData.value = response.data;
-    console.log("Brand API Data:", brandApiData.value);
+    // console.log("Brand API Data:", brandApiData.value);
 
     if (response.status === 200 || response.status === 201) {
       brandApiData.value = response.data;
@@ -411,7 +411,7 @@ function gstVerification() {
   formData.gstNumber = gstData.value.GSTIN;
   formData.dateOfregistration = gstData.value.date_of_registration;
   formData.gstObj = gstData.value;
-  console.log('Step 1 Next!', formData);
+  // console.log('Step 1 Next!', formData);
 }
 
 async function brandDetails() {
@@ -419,24 +419,24 @@ async function brandDetails() {
   try {
     // 1. Create client
     let createClientVar = await createClient();
-    console.log("client created data: ", clientApiData.value);
+    // console.log("client created data: ", clientApiData.value);
 
     if (createClientVar) {
       formData.clientId = clientApiData.value.client_id;
-      console.log('Client created successfully:', formData);
+      // console.log('Client created successfully:', formData);
 
       // 2. Create brand
       let createBrandVar = await createBrand();
 
       if (createBrandVar) {
         formData.brand_id = brandApiData.value.brand_id;
-        console.log('Brand created successfully');
+        // console.log('Brand created successfully');
 
         // ====== 3. LOGIN FLOW INTEGRATION ======
         const loginSuccess = await handleLogin();
         if (loginSuccess) {
           // Optionally, do something after successful login (eg: redirect)
-          console.log('Login after brand creation successful!', loginApiData.value);
+          // console.log('Login after brand creation successful!', loginApiData.value);
           return true;
         } else {
           // Handle login failure scenario
@@ -569,11 +569,11 @@ async function handleSubmit() {
       date_of_registration: nowIsoString,
       date_of_acceptance: nowIsoString,
     };
-    console.log("Registration Payload: ", registrationPayload);
-    console.log("form data: ", formData);
+    // console.log("Registration Payload: ", registrationPayload);
+    // console.log("form data: ", formData);
     // Call Registration API
     const regResponse = await newRegistration(registrationPayload, otpResponseData.value.session_token);
-    console.log("submit: ", regResponse.data);
+    // console.log("submit: ", regResponse.data);
     
     if (regResponse.status !== 200) {
       submitError.value = regResponse.data?.message || 'Registration failed';
