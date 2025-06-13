@@ -142,6 +142,18 @@ const routes = [
 		component: () => import('@/components/Login/OauthCallback.vue')
 	},
 	{
+		path: '/auth/callback/success',
+		name: 'GoogleCallbackSuccess',
+		component: () => import('@/views/auth/GoogleCallbackSuccess.vue'),
+		meta: { requiresAuth: false }
+	},
+	{
+		path: '/auth/callback/error',
+		name: 'GoogleCallbackError',
+		component: () => import('@/views/auth/GoogleCallbackError.vue'),
+		meta: { requiresAuth: false }
+	},
+	{
 		path: '/test',
 		name: 'Test',
 		component: () => import('@/views/test/TestView.vue'),
