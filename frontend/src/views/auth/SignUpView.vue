@@ -354,9 +354,7 @@ async function createClient() {
   } catch (error) {
     console.error("Error registering client:", error);
     clientBrandError.value = true;
-    if(response.status === 400){
-      clientBrandLoading.value = false;
-      clientBrandError.value = true;
+    if(error.response?.status === 400){
       clientBrandErrorMessage.value = "Client already exists";
       return false;
     }
