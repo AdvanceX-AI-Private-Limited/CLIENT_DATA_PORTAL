@@ -5,13 +5,14 @@ import { clientsRegister, verifygstin, brandsRegister, resendOtp, newRegistratio
 import Confetti from '@/components/Confetti.vue';
 import { login } from "@/composables/api/authApi";
 import { verifyOtp } from '@/composables/api/authApi';
+import TermsAndConditions from '@/components/Login/TermsAndConditions.vue';
 
 // Form state
-const currentStep = ref(1);
+const currentStep = ref(4);
 const otpInput = ref('');
 const showConfetti = ref(false); 
 const isVerifying = ref(false);
-const gstVerified = ref(false);
+const gstVerified = ref(true);
 const gstError = ref(false);
 const showStatesDropdown = ref(false);
 const stateSearchQuery = ref('');
@@ -959,16 +960,18 @@ async function handleSubmit() {
             <div v-if="submitError" class="bg-red-50 border border-red-300 text-red-700 px-4 py-2 mb-4 rounded text-center">
             {{ submitError }}
           </div>
-          <h3 class="text-lg font-medium text-gray-900">Terms and Conditions</h3>
+          <TermsAndConditions v-if="currentStep === 4" />
+          <!-- <h3 class="text-lg font-medium text-gray-900">Terms and Conditions</h3>
           <div class="bg-gray-50 p-4 rounded-md border border-gray-200 h-48 overflow-y-auto">
             <p class="text-sm text-gray-700">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisi vel consectetur
               euismod, nisl nisi consectetur nisl, euismod nisl nisi euismod nisl. Nullam euismod, nisi vel
               consectetur euismod, nisl nisi consectetur nisl, euismod nisl nisi euismod nisl.
               lorem1000
-              <!-- Terms content would go here -->
+              lorem10000
             </p>
-          </div>
+          </div> -->
+              <!-- Terms content would go here -->
           <div v-if="gstVerified">
             <div class="flex items-center">
               <input 
@@ -980,8 +983,8 @@ async function handleSubmit() {
               />
               <label for="termsAccepted" class="ml-2 text-sm text-gray-700">
                 I consent to use my company information and accept the 
-                <a href="#" class="text-blue-600 hover:text-blue-500">Terms of Service</a> and 
-                <a href="#" class="text-blue-600 hover:text-blue-500">Privacy Policy</a>
+                <a href="https://advancex.ai/terms-and-conditions/" target="_blank" class="text-blue-600 hover:text-blue-500">Terms and Conditions </a> and 
+                <a href="https://advancex.ai/privacy-policy/" target="_blank" class="text-blue-600 hover:text-blue-500">Privacy Policy</a>
               </label>
             </div>
           </div>
