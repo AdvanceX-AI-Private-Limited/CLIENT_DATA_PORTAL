@@ -333,7 +333,7 @@ async function createClient() {
   };
 
   try {
-    // console.log("Payload being sent:", payload);
+    console.log("Payload being sent:", payload);
     const response = await clientsRegister(payload);
     clientApiData.value = response.data;
     
