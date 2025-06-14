@@ -1,10 +1,11 @@
+// src/components/Login/OauthCallback.vue
 <script setup>
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuth, isActive } from '@/stores/useAuth';
+import { useAuth } from '@/stores/useAuth';
 
 const router = useRouter();
-const { setAuthFromApiResponse } = useAuth();
+const { setAuthFromApiResponse, isActive } = useAuth();
 
 onMounted(async () => {
   try {
