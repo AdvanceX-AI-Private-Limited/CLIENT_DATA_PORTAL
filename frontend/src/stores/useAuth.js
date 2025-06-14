@@ -5,7 +5,7 @@ import { logout as apiLogout } from '@/composables/api/authApi';
 const user = ref(null);
 const loaded = ref(false);
 const isSignedIn = ref(false);
-const isActive = ref(false);
+const isActive = ref(true);
 
 // console.log("useAuth isSignedIn: ", isSignedIn.value);
 
