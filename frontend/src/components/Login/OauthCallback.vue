@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuth } from '@/stores/useAuth';
+import { useAuth, isActive } from '@/stores/useAuth';
 
 const router = useRouter();
 const { setAuthFromApiResponse } = useAuth();
@@ -32,10 +32,10 @@ onMounted(async () => {
 
     console.log("Google login response:", data);
 
-    // 🔥 HERE: Call your composable's auth function
     setAuthFromApiResponse(data);
+    
+    isActive.value = true;
 
-    // Redirect to home or dashboard
     router.push('/');
   } catch (err) {
     console.error("OAuth callback error:", err);
