@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/vue/24/outline";
 import { login } from "@/composables/api/authApi";
 import { useAuth } from "@/stores/useAuth";
 
@@ -7,6 +8,7 @@ const emit = defineEmits(["otp-required", "login-success"]);
 
 const email = ref("");
 const password = ref("");
+const showPassword = ref(false);
 
 const userData = ref(null);
 const loginLoading = ref(false);
@@ -32,9 +34,13 @@ const handleLogin = async () => {
     const data = response.data;
     console.log("response: ", data);
 
-    if (data.is_active) {
-      console.log("User is active is changing opt login.");
-      isActive.value = data.is_active;
+    if (response.status === 200) {
+      if (data.is_active === false) {
+        isActive.value = false;
+        console.log("User is inactive, redirecting to opt login.");
+      } else {
+        console.log("User is active, proceeding with login.");
+      }
     }
 
     if (data.is_signed_in) {
@@ -124,14 +130,25 @@ const handleGoogleLogin = () => {
         :disabled="loginLoading"
       />
     </div>
-    <div id="authInputPass">
+    <div id="authInputPass" class="relative">
       <input
         v-model="password"
-        type="text"
+        :type="showPassword ? 'text' : 'password'"
         placeholder="Password"
-        class="w-full px-4 py-2 rounded-3xl border-0 focus:outline-none outline-3 outline-purple-200 focus:ring-3 focus:ring-blue-600 mb-6 h-10.5 font-"
+        class="w-full px-4 py-3 rounded-3xl border-0 outline-3 outline-purple-200  mb-6 h-10.5 font-"
         :disabled="loginLoading"
       />
+      <button
+        type="button"
+        class="absolute right-0.5 top-5.5 -translate-y-1/2 text-gray-400 flex items-center justify-center"
+        style="height: 2.5rem; width: 2.5rem;"
+        @click="showPassword = !showPassword"
+        tabindex="-1"
+        aria-label="Toggle password visibility"
+      >
+        <EyeIcon v-if="!showPassword" class="h-6 w-6" />
+        <EyeSlashIcon v-else class="h-6 w-6" />
+      </button>
     </div>
     <button
       type="submit"

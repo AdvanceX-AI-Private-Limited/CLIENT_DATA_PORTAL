@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watchEffect } from "vue";
+import { ref, computed, onMounted, watchEffect, watch } from "vue";
 import Sidebar from '@/components/Sidebar.vue';
 import {
 	ChartBarIcon,
@@ -18,11 +18,13 @@ import { useRoute, useRouter } from 'vue-router';
 import { useAuth } from '@/stores/useAuth';
 import { setAuthState } from '@/router';
 import AccountReviewNotice from "./components/Login/AccountReviewNotice.vue";
+import { userIsActive } from "@/composables/api/authApi";
 
 const isSidebarOpen = ref(false)
 const route = useRoute();
 const router = useRouter();
-const { isSignedIn, loaded, isActive } = useAuth();
+const { isSignedIn, loaded, isActive, setIsActive } = useAuth();
+const checkingActiveStatus = ref(true); // <-- Add this
 
 // For debugging
 watchEffect(() => {
@@ -73,6 +75,27 @@ watchEffect(() => {
   }
 });
 
+// Check and set user active status on mounted
+onMounted(async () => {
+  if (isSignedIn.value) {
+    try {
+      const res = await userIsActive();
+      // Use res.data.is_active instead of res.is_active
+      if (res && typeof res.data.is_active === "boolean") {
+        setIsActive(res.data.is_active);
+      }
+	  if (res && res.data.is_active) {
+		isActiveChecked.value = true;
+	  } else {
+		isActiveChecked.value = false;
+	  }
+    } catch (e) {
+      console.warn("Failed to fetch user active status", e);
+    }
+  }
+  checkingActiveStatus.value = false; // <-- Set to false after check
+});
+
 const sidebarStore = useSidebarStore();
 const { isLocked } = storeToRefs(sidebarStore);
 
@@ -114,12 +137,9 @@ const navigation = [
 	{ name: 'Settings', path: '/settings', icon: Cog6ToothIcon }
 ];
 
-onMounted(() => {
-  // Check if the user is active
-//   isActive.value = true;
-	console.log("Hreee");
-	console.log("is avtive value: ", isActive.value);
-});
+watch(isActive, val => {
+  console.log("isActive changed to:", val);
+})
 
 const hideSidebarRoutes = ['/login', '/sign-up'];
 
@@ -127,22 +147,26 @@ const shouldShowSidebar = computed(() => !hideSidebarRoutes.includes(route.path)
 </script>
 
 <template>
-	<div v-if="!isActive && isSignedIn">
-		<AccountReviewNotice/>
-	</div>
-	<div v-else :class="{ 'min-h-screen flex transition-all duration-300': isLocked, 'min-h-screen': !isLocked }">
-		<Sidebar v-if="shouldShowSidebar" :navigation="navigation" />
-		<main :class="[
-			isSidebarOpen && !isLocked ? 'ml-64' : 'md:ml-16',
-			{
-				'transition-all duration-300 flex-1 lg:pl-48': isLocked,
-				'transition-all duration-300': !isLocked,
-				'ml-0': !shouldShowSidebar 
-			}
-			]">
-				<router-view />
-			</main>
-	</div>
+  <!-- Show nothing until active status is checked -->
+  <div v-if="checkingActiveStatus"></div>
+  <!-- Show review notice if user is signed in but not active -->
+  <div v-else-if="!isActive && isSignedIn">
+    <AccountReviewNotice/>
+  </div>
+  <!-- Show main app if user is active or not signed in -->
+  <div v-else :class="{ 'min-h-screen flex transition-all duration-300': isLocked, 'min-h-screen': !isLocked }">
+    <Sidebar v-if="shouldShowSidebar" :navigation="navigation" />
+    <main :class="[
+      isSidebarOpen && !isLocked ? 'ml-64' : 'md:ml-16',
+      {
+        'transition-all duration-300 flex-1 lg:pl-48': isLocked,
+        'transition-all duration-300': !isLocked,
+        'ml-0': !shouldShowSidebar 
+      }
+      ]">
+        <router-view />
+      </main>
+  </div>
 </template>
 
 <style>

@@ -1,3 +1,4 @@
+// src/components/Login/AccountReviewNotice.vue
 <script setup>
 import { logout as apiLogout } from '@/composables/api/authApi';
 
@@ -18,7 +19,6 @@ async function logout() {
     } catch (error) {
         console.warn("Logout API failed or returned error, proceeding with frontend logout", error);
     }
-
     clearAuth(); 
     window.location.href = '/login';
 }

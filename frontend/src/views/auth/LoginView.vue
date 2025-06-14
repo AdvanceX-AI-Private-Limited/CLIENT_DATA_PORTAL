@@ -7,7 +7,7 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 const { isSignedIn } = useAuth();
-console.log(isSignedIn.value);
+console.log("isSignedIn",isSignedIn.value);
 // Handle successful sign in
 const handleSignIn = () => {
   // Use router to navigate programmatically

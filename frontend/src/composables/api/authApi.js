@@ -54,3 +54,7 @@ export async function newRegistration(payload, session_token) {
 export async function sendEmail() {
   return await get('/auth/send-mail');
 }
+
+export async function userIsActive() {
+  return await get('/auth/user/is-active');
+}

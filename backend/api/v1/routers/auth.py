@@ -974,10 +974,14 @@ async def get_profile(
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  # Remove this in production
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
+FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL")
+FRONTEND_LOGIN_SUCCESS_PATH = "/auth/callback/success"
+FRONTEND_LOGIN_ERROR_PATH = "/auth/callback/error"
+
 DATA = {
     'response_type': "code",
-    # 'redirect_uri': "http://localhost:8000/api/v1/auth/google/callback",
-    'redirect_uri': "https://client.advancex.ai/api/v1/auth/google/callback",
+    'redirect_uri': GOOGLE_REDIRECT_URI,
     'scope': 'https://www.googleapis.com/auth/userinfo.email',
     'client_id': GOOGLE_CLIENT_ID,
     'prompt': 'consent'
@@ -988,14 +992,14 @@ URL_DICT = {
     'get_user_info': 'https://www.googleapis.com/oauth2/v3/userinfo'
 }
 GOOGLE_CLIENT = WebApplicationClient(GOOGLE_CLIENT_ID)
+
 import urllib.parse
 from fastapi import HTTPException, status, Request, Depends
 from fastapi.responses import RedirectResponse, JSONResponse
 from sqlalchemy.orm import Session
 import json
 import base64
-# FRONTEND_BASE_URL = "http://localhost:5173"
-FRONTEND_BASE_URL = "https://client.advancex.ai"  
+
 FRONTEND_LOGIN_SUCCESS_PATH = "/auth/callback/success"
 FRONTEND_LOGIN_ERROR_PATH = "/auth/callback/error"
 
@@ -1478,3 +1482,31 @@ async def register_brand(
             detail="Internal server error during registration"
         )
 
+@router.get("/user/is-active")
+async def get_user_is_active(
+    current_session = Depends(get_current_session),
+    db: Session = Depends(get_db)
+):
+    """
+    Returns the is_active status of the current user.
+    """
+    logger.info(f"Checking is_active for client_id: {current_session.client_id}")
+
+    client = db.query(models.Client).filter(
+        models.Client.id == current_session.client_id
+    ).first()
+
+    if client:
+        logger.info(f"is_active for user {client.email}: {client.is_active}")
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "is_active": client.is_active
+            }
+        )
+    else:
+        logger.warning(f"Client not found for client_id: {current_session.client_id}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired session token"
+        )

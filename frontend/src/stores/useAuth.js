@@ -97,6 +97,7 @@ export function useAuth() {
         isActive,
         setAuthFromApiResponse,
         clearAuth,
-        logout
+        logout,
+        setIsActive: (val) => { isActive.value = val; } // <-- Add this line
     }
 }
