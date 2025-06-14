@@ -33,7 +33,7 @@ onMounted(async () => {
     console.log("Google login response:", data);
 
     setAuthFromApiResponse(data);
-    
+
     isActive.value = true;
 
     router.push('/');
