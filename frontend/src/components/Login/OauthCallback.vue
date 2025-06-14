@@ -3,22 +3,14 @@
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '@/stores/useAuth';
+import config from '@/config';
 
 const router = useRouter();
 const { setAuthFromApiResponse, isActive } = useAuth();
 
 onMounted(async () => {
   try {
-    const fullUrl = window.location.href;
-
-    // This makes GET /google/callback?code=XYZ
-
-    // const response = await fetch(`http://localhost:8000/api/v1/auth/google/callback${window.location.search}`, {
-    //   method: 'GET',
-    //   credentials: 'include'
-    // });
-    
-    const response = await fetch(`https://client.advancex.ai/api/v1/auth/google/callback${window.location.search}`, {
+    const response = await fetch(`${config.api.baseUrl}/auth/google/callback${window.location.search}`, {
       method: 'GET',
       credentials: 'include'
     });

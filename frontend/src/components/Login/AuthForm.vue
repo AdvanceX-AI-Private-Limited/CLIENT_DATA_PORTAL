@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { login } from "@/composables/api/authApi";
-import { useAuth } from '@/stores/useAuth';
+import { useAuth } from "@/stores/useAuth";
 
 const emit = defineEmits(["otp-required", "login-success"]);
 
@@ -31,8 +31,9 @@ const handleLogin = async () => {
     const response = await login(payload);
     const data = response.data;
     console.log("response: ", data);
-    
-    if (data.is_active){
+
+    if (data.is_active) {
+      console.log("User is active is changing opt login.");
       isActive.value = data.is_active;
     }
 
@@ -40,7 +41,11 @@ const handleLogin = async () => {
       setAuthFromApiResponse(data);
       emit("login-success");
     } else if (data.temp_token) {
-      emit("otp-required", { temp_token: data.temp_token, email: email.value, is_active: data.is_active });
+      emit("otp-required", {
+        temp_token: data.temp_token,
+        email: email.value,
+        is_active: data.is_active,
+      });
     } else {
       loginError.value = data.message || "Unknown login error.";
       showError.value = true;
@@ -48,7 +53,9 @@ const handleLogin = async () => {
   } catch (error) {
     showError.value = true;
     loginError.value =
-      error.response?.data?.message || error.message || "An error occurred. Please try again later.";
+      error.response?.data?.message ||
+      error.message ||
+      "An error occurred. Please try again later.";
     setTimeout(() => {
       showError.value = false;
     }, 3000);
@@ -62,8 +69,8 @@ const hideError = () => {
 };
 
 const handleGoogleLogin = () => {
-  window.location.href = '/api/v1/auth/google/login';
-}
+  window.location.href = "/api/v1/auth/google/login";
+};
 </script>
 
 <template>
