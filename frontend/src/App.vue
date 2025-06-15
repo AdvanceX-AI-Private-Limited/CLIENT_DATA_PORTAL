@@ -80,20 +80,14 @@ onMounted(async () => {
   if (isSignedIn.value) {
     try {
       const res = await userIsActive();
-      // Use res.data.is_active instead of res.is_active
       if (res && typeof res.data.is_active === "boolean") {
         setIsActive(res.data.is_active);
       }
-	  if (res && res.data.is_active) {
-		isActiveChecked.value = true;
-	  } else {
-		isActiveChecked.value = false;
-	  }
     } catch (e) {
       console.warn("Failed to fetch user active status", e);
     }
   }
-  checkingActiveStatus.value = false; // <-- Set to false after check
+  checkingActiveStatus.value = false;
 });
 
 const sidebarStore = useSidebarStore();
