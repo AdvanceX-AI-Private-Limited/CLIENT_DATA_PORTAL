@@ -1,3 +1,4 @@
+from enum import Enum
 from pydantic import BaseModel, ConfigDict, EmailStr, HttpUrl, SecretStr, Field, constr, field_validator
 from typing import Any, Dict, Optional, List
 from datetime import date, datetime
@@ -6,7 +7,6 @@ class DisplayBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 # ============== CORE ENTITIES ==============
-
 class NewRegistration(BaseModel):
     client_id: int = Field(
         ..., 
@@ -38,6 +38,11 @@ class NewRegistration(BaseModel):
     date_of_acceptance: datetime = Field(
         description="Date of acceptance by Us"
     )
+
+class StatusEnum(str, Enum):
+    all = "all"
+    active = "active"
+    inactive = "inactive"
 
 # ______________ CLIENTS ____________________
 class ClientBase(BaseModel):
@@ -161,6 +166,24 @@ class DisplayBrand(DisplayBase):
 class BrandInDB(DisplayBrand):
     pass
 
+class BrandQueryParams(BaseModel):
+    brand_id: Optional[int] = None
+    client_id: Optional[int] = None
+    skip: int = 0
+    limit: int = 100
+
+class UpdateBrand(DisplayBase):
+    brandname: Optional[str]
+    contact_number: Optional[str]
+    contact_email: Optional[str]
+    gstin: Optional[str]
+    legal_name_of_business: Optional[str]
+    date_of_registration : Optional[str]
+    gstdoc: Optional[Dict]
+    created_at: Optional[str]
+    updated_at: Optional[str]
+    client_id: Optional[str]
+
 # ______________ OUTLETS ____________________
 class OutletBase(BaseModel):
     aggregator: str = Field(
@@ -230,13 +253,32 @@ class DisplayOutlet(DisplayBase):
     city: str
     outletnumber: str
     is_active: bool
-    created_at: datetime
-    updated_at: Optional[datetime] = None
-    client: DisplayClient
-    brand: DisplayBrand
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
+    client_id: int
+    brand_id: int
 
     def __str__(self):
         return f"Outlet {self.outletnumber} ({self.aggregator})"
+
+class OutletQueryParams(BaseModel):
+    outlet_id: Optional[int] = None
+    client_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    status: StatusEnum = StatusEnum.all
+    skip: int = 0
+    limit: int = 100
+
+class UpdateOutlet(DisplayBase):
+    aggregator: Optional[str]
+    resid: Optional[str]
+    subzone: Optional[str]
+    resshortcode: Optional[str]
+    city: Optional[str]
+    outletnumber: Optional[str]
+    is_active: Optional[bool]
+    client_id: Optional[int]
+    brand_id: Optional[int]
 
 # ______________ USERS ____________________
 class UserBase(BaseModel):

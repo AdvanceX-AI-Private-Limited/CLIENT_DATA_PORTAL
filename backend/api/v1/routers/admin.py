@@ -1,6 +1,7 @@
 
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from ..database.database import get_db
 from ..schemas import schemas
@@ -68,67 +69,77 @@ async def create_brand(
     return created_brands
 
 @router.get("/brands/", response_model=List[schemas.DisplayBrand])
-async def read_brands(
-    skip: int = 0,
-    limit: int = 100,
+async def get_brands(
+    params: schemas.BrandQueryParams = Depends(),
     db: Session = Depends(get_db)
 ):
-    logger.info("Received request to fetch brands:%s - skip:%s - end:%s", 
-                brands, skip, limit)
     query = db.query(models.Brand)
-    brands = query.offset(skip).limit(limit).all()
-    if not brands:
-        logger.error("No brands were found. Invalid parameters passed.")
-        raise HTTPException(
-            status_code=400, 
-            detail="No brands were found. Invalid parameters passed."
-        )
 
-    logger.info("Successfully fetched brands '%s' with ID %s under client ID %s",
-        brands, skip, limit
-    )
+    # Filter by brand_id (single brand)
+    if params.brand_id is not None:
+        brand = query.filter(models.Brand.id == params.brand_id).first()
+        if brand is None:
+            raise HTTPException(status_code=404, detail="Brand not found")
+        return [brand]
+
+    # Filter by client_id
+    if params.client_id is not None:
+        query = query.filter(models.Brand.client_id == params.client_id)
+
+    # Apply pagination
+    brands = query.offset(params.skip).limit(params.limit).all()
     return brands
 
-@router.get("/brands/client/{client_id}", response_model=List[schemas.DisplayBrand])
-async def read_brand_of_clients(
-    client_id: int, 
+@router.put("/brands/{brand_id}", response_model=schemas.DisplayBrand)
+async def update_brand(
+    brand_id: int,
+    brand_update: schemas.UpdateBrand,
     db: Session = Depends(get_db)
 ):
-    logger.info("Received request to fetch brands for client_id:%s", 
-                client_id)
-    db_brand = db.query(models.Brand).filter(models.Brand.client_id == client_id).all()
-    if db_brand is None:
-        raise HTTPException(status_code=404, detail="Outlets not found for client_id")
-    
-    if not db_brand:
-        logger.error("No brands found for passed client id. Invalid parameters passed.")
-        raise HTTPException(
-            status_code=400, 
-            detail="No brands found for passed client id"
-        )
-    
-    logger.info("Successfully fetched brands for client_id:%s", 
-                client_id)  
-    return db_brand
-
-@router.get("/brands/{brand_id}", response_model=schemas.DisplayBrand)
-async def read_brand(
-    brand_id: int, 
-    db: Session = Depends(get_db)
-):
-    logger.info("Received request to fetch details for brand_id:%s", 
-                brand_id)
+    logger.info(f"Attempting to update brand with ID {brand_id}")
     db_brand = db.query(models.Brand).filter(models.Brand.id == brand_id).first()
 
-    if db_brand is None:
-        logger.error("No details found for passed brand id. Invalid parameters passed.")
-        raise HTTPException(status_code=404, 
-                            detail="Details not found for brand_id")
-    
-    logger.info("Successfully fetched details for brand_id:%s", 
-                brand_id)  
+    if not db_brand:
+        logger.warning(f"Brand with ID {brand_id} not found")
+        raise HTTPException(
+            status_code=404,
+            detail=f"Brand with ID {brand_id} not found"
+        )
+
+    updated_fields = brand_update.model_dump(exclude_unset=True)
+    for field, value in updated_fields.items():
+        setattr(db_brand, field, value)
+
+    db.commit()
+    db.refresh(db_brand)
+    logger.info(f"Successfully updated brand with ID {brand_id}")
     return db_brand
 
+@router.delete("/brands/{brand_id}", status_code=200)
+async def delete_brand(
+    brand_id: int,
+    db: Session = Depends(get_db)
+):
+    logger.info(f"Attempting to delete brand with ID {brand_id}")
+    db_brand = db.query(models.Brand).filter(models.Brand.id == brand_id).first()
+
+    if not db_brand:
+        logger.warning(f"Brand with ID {brand_id} not found for deletion")
+        raise HTTPException(
+            status_code=404,
+            detail=f"Brand with ID {brand_id} not found"
+        )
+
+    db.delete(db_brand)
+    db.commit()
+    logger.info(f"Successfully deleted Brand with ID {brand_id}")
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "message":  f"Brand with ID {brand_id} successfully deleted"
+        }
+    )
 
 #______________________________________ Outlet routes ______________________________________
 @router.post("/outlets/", response_model=List[schemas.DisplayOutlet])
@@ -202,42 +213,84 @@ async def create_outlet(
     return created_outlets
 
 @router.get("/outlets/", response_model=List[schemas.DisplayOutlet])
-async def read_outlets(
-    status: models.StatusEnum = models.StatusEnum.all,  # Add status filter (Active, Inactive, All)
-    skip: int = 0,
-    limit: int = 100,
+async def get_outlets(
+    params: schemas.OutletQueryParams = Depends(),
     db: Session = Depends(get_db)
 ):
     query = db.query(models.Outlet)
-    
-    # Apply filter based on status
-    if status == models.StatusEnum.active:
+
+    # Filter by outlet_id (single outlet)
+    if params.outlet_id is not None:
+        outlet = query.filter(models.Outlet.id == params.outlet_id).first()
+        if outlet is None:
+            raise HTTPException(status_code=404, detail="Outlet not found")
+        return [outlet]
+
+    # Filter by client_id
+    if params.client_id is not None:
+        query = query.filter(models.Outlet.client_id == params.client_id)
+
+    # Filter by brand_id
+    if params.brand_id is not None:
+        query = query.filter(models.Outlet.brand_id == params.brand_id)
+
+    # Filter by status
+    if params.status == models.StatusEnum.active:
         query = query.filter(models.Outlet.is_active == True)
-    elif status == models.StatusEnum.inactive:
+    elif params.status == models.StatusEnum.inactive:
         query = query.filter(models.Outlet.is_active == False)
-    
-    outlets = query.offset(skip).limit(limit).all()
+
+    # Apply pagination
+    outlets = query.offset(params.skip).limit(params.limit).all()
     return outlets
 
-@router.get("/outlets/client/{client_id}", response_model=List[schemas.DisplayOutlet])
-async def read_outlet_of_clients(
-    client_id: int, 
+@router.put("/outlets/{outlet_id}", response_model=schemas.DisplayOutlet)
+async def update_outlet(
+    outlet_id: int,
+    outlet_update: schemas.UpdateOutlet,
     db: Session = Depends(get_db)
 ):
-    db_outlet = db.query(models.Outlet).filter(models.Outlet.client_id == client_id).all()
-    if db_outlet is None:
-        raise HTTPException(status_code=404, detail="Outlets not found for client_id")
+    logger.info(f"Attempting to update outlet with ID {outlet_id}")
+    db_outlet = db.query(models.Outlet).filter(models.Outlet.id == outlet_id).first()
+
+    if not db_outlet:
+        logger.warning(f"Outlet with ID {outlet_id} not found")
+        raise HTTPException(
+            status_code=404,
+            detail=f"Outlet with ID {outlet_id} not found"
+        )
+
+    updated_fields = outlet_update.model_dump(exclude_unset=True)
+    for field, value in updated_fields.items():
+        setattr(db_outlet, field, value)
+
+    db.commit()
+    db.refresh(db_outlet)
+    logger.info(f"Successfully updated outlet with ID {outlet_id}")
     return db_outlet
 
-@router.get("/outlets/{outlet_id}", response_model=schemas.DisplayOutlet)
-async def read_outlet(
-    outlet_id: int, 
+@router.delete("/outlets/{outlet_id}", status_code=200)
+async def delete_outlet(
+    outlet_id: int,
     db: Session = Depends(get_db)
 ):
+    logger.info(f"Attempting to delete outlet with ID {outlet_id}")
     db_outlet = db.query(models.Outlet).filter(models.Outlet.id == outlet_id).first()
-    if db_outlet is None:
-        raise HTTPException(status_code=404, detail="Outlet not found")
-    return db_outlet
+
+    if not db_outlet:
+        logger.warning(f"Outlet with ID {outlet_id} not found for deletion")
+        raise HTTPException(
+            status_code=404,
+            detail=f"Outlet with ID {outlet_id} not found"
+        )
+
+    db.delete(db_outlet)
+    db.commit()
+    logger.info(f"Successfully deleted outlet with ID {outlet_id}")
+    return JSONResponse(
+        content={"message": f"Outlet with ID {outlet_id} successfully deleted"},
+        status_code=200
+    )
 
 
 #______________________________________ User routes ______________________________________
@@ -286,7 +339,6 @@ async def create_users(
         raise HTTPException(status_code=400, detail="No users were created. All were duplicates.")
 
     return created_users
-
 
 @router.get("/users/", response_model=List[schemas.DisplayUser])
 async def read_users(
