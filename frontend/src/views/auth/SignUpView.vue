@@ -5,7 +5,7 @@ import { clientsRegister, verifygstin, brandsRegister, resendOtp, newRegistratio
 import Confetti from '@/components/Confetti.vue';
 import { login } from "@/composables/api/authApi";
 import { verifyOtp } from '@/composables/api/authApi';
-import TermsAndConditions from '@/components/Login/TermsAndConditions.vue';
+import TermsAndConditions from '@/components/Auth/TermsAndConditions.vue';
 
 // Form state
 const currentStep = ref(1);

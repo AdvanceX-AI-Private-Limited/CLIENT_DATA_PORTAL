@@ -17,7 +17,7 @@ import LoginView from "./views/auth/LoginView.vue";
 import { useRoute, useRouter } from 'vue-router';
 import { useAuth } from '@/stores/useAuth';
 import { setAuthState } from '@/router';
-import AccountReviewNotice from "./components/Login/AccountReviewNotice.vue";
+import AccountReviewNotice from "./components/Auth/AccountReviewNotice.vue";
 import { userIsActive } from "@/composables/api/authApi";
 
 const isSidebarOpen = ref(false)

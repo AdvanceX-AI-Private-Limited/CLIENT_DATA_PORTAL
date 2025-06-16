@@ -1,7 +1,7 @@
 // src/views/auth/LoginView.vue
 <script setup>
-import MainLogin from "@/components/Login/MainLogin.vue";
-import RightImg from "@/components/Login/RightImg.vue";
+import MainLogin from "@/components/Auth/MainLogin.vue";
+import RightImg from "@/components/Auth/RightImg.vue";
 import { useAuth } from "@/stores/useAuth";
 import { useRouter } from "vue-router";
 

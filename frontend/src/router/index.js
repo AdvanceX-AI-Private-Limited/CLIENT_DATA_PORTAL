@@ -139,7 +139,7 @@ const routes = [
 	{
 		path: '/oauth/callback',
 		name: 'OauthCallback',
-		component: () => import('@/components/Login/OauthCallback.vue')
+		component: () => import('@/components/Auth/OauthCallback.vue')
 	},
 	{
 		path: '/auth/callback/success',
