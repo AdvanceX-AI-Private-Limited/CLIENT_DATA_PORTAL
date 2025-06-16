@@ -3,6 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
+from .auth import get_current_session
 from ..database.database import get_db
 from ..schemas import schemas
 from ..database import models
@@ -14,65 +15,41 @@ logger = create_logger(__name__)
 
 router = APIRouter() 
 
-#______________________________________ Brand routes ______________________________________
-@router.post("/brands/", response_model=List[schemas.DisplayBrand])
-async def create_brand(
-    brands: List[schemas.BrandCreate],
-    db: Session = Depends(get_db) 
-):
-    logger.info("Received request to create brands: %s", brands)
-    created_brands = []
+def verify_request(client_id: int, 
+                   db: Session, 
+                   outlet_id:int=None, 
+                   brand_id:int=None,
+                   user_id:int=None,
+                   service_id:int=None):
+    
+    # Hardcode clients to allow request from admins
 
-    for brand in brands:
-        # Check if client exists
-        existing_client = db.query(models.Client).filter(
-            (models.Client.id == brand.clientid)
-        ).first()
-        if not existing_client:
-            logger.error("Client ID %s not found for brand '%s'", brand.client_id, brand.brandname)
-            raise HTTPException(
-                status_code=400,
-                detail="Unknown client ID passed"
-            )
-
-        # Check if brand already exists
-        db_brand = db.query(models.Client).filter(
-            (models.Brand.brandname == brand.brandname)
-        ).first()
-        if db_brand:
-            logger.warning("Brand with name '%s' already exists", brand.brandname)
-            raise HTTPException(
-                status_code=400,
-                detail="Brand already registered"
-            )
+    if outlet_id is not None:
+        outlet = db.query(models.Outlet).filter(models.Outlet.id == outlet_id).first()
+        if outlet:
+            if outlet.client_id != client_id:
+                raise HTTPException(status_code=403, detail="Forbidden: You don't own this outlet")
+        else:
+            raise HTTPException(status_code=404, detail="Outlet not found")
         
-        db_brand = models.Brand(
-            brandname=brand.brandname,
-            client_id=brand.client_id 
-        )
-        db.add(db_brand)
-        db.commit()
-        db.refresh(db_brand)
-        logger.info(
-            "Successfully created brand '%s' with ID %s under client ID %s",
-            db_brand.brandname, db_brand.id, db_brand.client_id
-        )
-        created_brands.append(db_brand)
+    elif brand_id is not None:
+        brand = db.query(models.Brand).filter(models.Brand.id == brand_id).first()
+        if brand:
+            if brand.client_id != client_id:
+                raise HTTPException(status_code=403, detail="Forbidden: You don't own this brand")
+        else:
+            raise HTTPException(status_code=404, detail="Brand not found")
 
-    if not created_brands:
-        logger.error("No brands were created. All entries were duplicates or had invalid client IDs.")
-        raise HTTPException(
-            status_code=400, 
-            detail="No brands were created. All were duplicates or had invalid client IDs."
-        )
-
-    return created_brands
-
+#______________________________________ Brand routes ______________________________________
 @router.get("/brands/", response_model=List[schemas.DisplayBrand])
 async def get_brands(
     params: schemas.BrandQueryParams = Depends(),
+    current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
+    verify_request(client_id=current_session.client_id, 
+                   brand_id=params.brand_id,
+                   db=db)
     query = db.query(models.Brand)
 
     # Filter by brand_id (single brand)
@@ -94,8 +71,13 @@ async def get_brands(
 async def update_brand(
     brand_id: int,
     brand_update: schemas.UpdateBrand,
+    current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
+    verify_request(client_id=current_session.client_id, 
+                   brand_id=brand_id,
+                   db=db)
+    
     logger.info(f"Attempting to update brand with ID {brand_id}")
     db_brand = db.query(models.Brand).filter(models.Brand.id == brand_id).first()
 
@@ -118,8 +100,12 @@ async def update_brand(
 @router.delete("/brands/{brand_id}", status_code=200)
 async def delete_brand(
     brand_id: int,
+    current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
+    verify_request(client_id=current_session.client_id, 
+                   brand_id=brand_id,
+                   db=db)
     logger.info(f"Attempting to delete brand with ID {brand_id}")
     db_brand = db.query(models.Brand).filter(models.Brand.id == brand_id).first()
 
@@ -141,12 +127,14 @@ async def delete_brand(
         }
     )
 
+
 #______________________________________ Outlet routes ______________________________________
 @router.post("/outlets/", response_model=List[schemas.DisplayOutlet])
 async def create_outlet(
     outlets: List[schemas.OutletCreate], 
+    current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
-):
+):    
     created_outlets = []
 
     for outlet in outlets:
@@ -215,8 +203,12 @@ async def create_outlet(
 @router.get("/outlets/", response_model=List[schemas.DisplayOutlet])
 async def get_outlets(
     params: schemas.OutletQueryParams = Depends(),
+    current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
+    verify_request(client_id=current_session.client_id, 
+                   outlet_id=params.outlet_id,
+                   db=db)
     query = db.query(models.Outlet)
 
     # Filter by outlet_id (single outlet)
@@ -248,8 +240,12 @@ async def get_outlets(
 async def update_outlet(
     outlet_id: int,
     outlet_update: schemas.UpdateOutlet,
+    current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
+    verify_request(client_id=current_session.client_id, 
+                   outlet_id=outlet_id,
+                   db=db)
     logger.info(f"Attempting to update outlet with ID {outlet_id}")
     db_outlet = db.query(models.Outlet).filter(models.Outlet.id == outlet_id).first()
 
@@ -258,6 +254,17 @@ async def update_outlet(
         raise HTTPException(
             status_code=404,
             detail=f"Outlet with ID {outlet_id} not found"
+        )
+    
+    existing = db.query(models.Outlet).filter(
+        models.Outlet.aggregator == outlet_update.aggregator,
+        models.Outlet.resid == outlet_update.resid,
+        models.Outlet.id != outlet_id  # exclude current record
+    ).first()
+    if existing:
+        raise HTTPException(
+            status_code=400,
+            detail="Another outlet with the same aggregator and resid already exists."
         )
 
     updated_fields = outlet_update.model_dump(exclude_unset=True)
@@ -272,8 +279,12 @@ async def update_outlet(
 @router.delete("/outlets/{outlet_id}", status_code=200)
 async def delete_outlet(
     outlet_id: int,
+    # current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
+    # verify_request(client_id=current_session.client_id, 
+    #                outlet_id=outlet_id,
+    #                db=db)
     logger.info(f"Attempting to delete outlet with ID {outlet_id}")
     db_outlet = db.query(models.Outlet).filter(models.Outlet.id == outlet_id).first()
 

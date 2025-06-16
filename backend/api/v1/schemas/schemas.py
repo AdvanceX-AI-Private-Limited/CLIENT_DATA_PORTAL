@@ -273,7 +273,6 @@ class UpdateOutlet(DisplayBase):
     aggregator: Optional[str]
     resid: Optional[str]
     subzone: Optional[str]
-    resshortcode: Optional[str]
     city: Optional[str]
     outletnumber: Optional[str]
     is_active: Optional[bool]
