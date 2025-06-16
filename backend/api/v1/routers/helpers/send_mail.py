@@ -31,16 +31,16 @@ def render_template(template_name, context):
         raise
 
 def generate_otp(email: str, expiry_seconds: int = 300) -> str:
-    """Generate OTP for given email with expiry"""
+    """Generate a strict 6-digit OTP (no leading/trailing zero problems)"""
     try:
-        logger.info(f"Generating OTP for email: {email} with expiry: {expiry_seconds}s")
         otp = ''.join(random.choices(string.digits, k=6))
+        while otp[0] == '0' or otp[-1] == '0':  # Avoid leading and trailing zero
+            otp = ''.join(random.choices(string.digits, k=6))
         otp_store[email] = {"otp": otp, "timestamp": time.time(), "expiry": expiry_seconds}
-        logger.info(f"OTP generated successfully for email: {email}")
-        logger.debug(f"OTP store now contains {len(otp_store)} entries")
-        return str(otp)
+        logger.info(f"OTP generated for {email} with expiry {expiry_seconds}s")
+        return otp
     except Exception as e:
-        logger.error(f"Failed to generate OTP for email {email}: {str(e)}")
+        logger.error(f"OTP generation failed for {email}: {e}")
         raise
 
 def verify_otp(email: str, submitted_otp: str) -> bool:
@@ -117,6 +117,10 @@ def send_mail(data: models.MailRequest):
 
     # OTP Email
     if options.otp:
+        if not context.otp or len(context.otp) != 6 or not context.otp.isdigit():
+            logger.error(f"Invalid OTP format: {context.otp}")
+            raise ValueError("Generated OTP is not a valid 6-digit number.")
+
         logger.info("Processing OTP email request")
         try:
             otp_code = context.otp
