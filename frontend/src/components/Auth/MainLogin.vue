@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import OtpInput from '@/components/Login/OtpInput.vue'
-import AuthForm from '@/components/Login/AuthForm.vue'
+import OtpInput from '@/components/Auth/OtpInput.vue'
+import AuthForm from '@/components/Auth/AuthForm.vue'
 import { useRouter } from "vue-router";
 import config from '@/config';
 

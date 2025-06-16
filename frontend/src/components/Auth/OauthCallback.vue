@@ -1,4 +1,4 @@
-// src/components/Login/OauthCallback.vue
+// src/components/Auth/OauthCallback.vue
 <script setup>
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';

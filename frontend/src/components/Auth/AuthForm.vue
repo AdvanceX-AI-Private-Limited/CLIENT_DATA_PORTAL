@@ -130,7 +130,8 @@ const handleGoogleLogin = () => {
         :disabled="loginLoading"
       />
     </div>
-    <div id="authInputPass" class="relative">
+    <div i
+    d="authInputPass" class="relative">
       <input
         v-model="password"
         :type="showPassword ? 'text' : 'password'"

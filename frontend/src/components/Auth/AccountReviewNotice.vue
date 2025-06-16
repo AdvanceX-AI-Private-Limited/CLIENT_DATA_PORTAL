@@ -1,4 +1,4 @@
-// src/components/Login/AccountReviewNotice.vue
+// src/components/Auth/AccountReviewNotice.vue
 <script setup>
 import { logout as apiLogout } from '@/composables/api/authApi';
 
