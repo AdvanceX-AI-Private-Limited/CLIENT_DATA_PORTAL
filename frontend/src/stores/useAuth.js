@@ -34,9 +34,13 @@ function isTokenValid() {
 // Set token and expiry from API response
 function setAuthFromApiResponse(response) {
     // Accept if session_token and expires_at are present, regardless of is_signed_in
+    console.log("setAuthFromApiResponse response: ", response.user.client_id, response.user.email, response.user.name);
     if (response.session_token && response.expires_at) {
         sessionStorage.setItem('session_token', response.session_token);
         sessionStorage.setItem('expires_at', response.expires_at);
+        sessionStorage.setItem('email', response.user.email || '');
+        sessionStorage.setItem('client_id', response.user.client_id);
+        sessionStorage.setItem('username', response.user.name || '');
         setCookie('session_token', response.session_token, response.expires_at);
         setCookie('expires_at', response.expires_at, response.expires_at);
         user.value = response.user || null;
@@ -50,6 +54,12 @@ function setAuthFromApiResponse(response) {
 function clearAuth() {
     sessionStorage.removeItem('session_token');
     sessionStorage.removeItem('expires_at');
+    sessionStorage.removeItem('email');
+    sessionStorage.removeItem('client_id');
+    sessionStorage.removeItem('username');
+    sessionStorage.removeItem('client_id');
+    deleteCookie('email');
+    deleteCookie('client_id');
     deleteCookie('session_token');
     deleteCookie('expires_at');
     user.value = null;

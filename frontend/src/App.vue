@@ -1,3 +1,4 @@
+// src/App.vue
 <script setup>
 import { ref, computed, onMounted, watchEffect, watch } from "vue";
 import Sidebar from '@/components/Sidebar.vue';
@@ -15,48 +16,33 @@ import { storeToRefs } from "pinia";
 import { useSidebarStore } from "@/stores/useSidebar"; 
 import { useRoute, useRouter } from 'vue-router';
 import { useAuth } from '@/stores/useAuth';
-import { currentUserData } from '@/stores/currentUser';
 import { setAuthState } from '@/router';
 import AccountReviewNotice from "./components/Auth/AccountReviewNotice.vue";
 import { userIsActive } from "@/composables/api/authApi";
-import { protectedProfile } from '@/composables/api/authApi'
+import MessageDialog from '@/components/MessageDialog.vue';
+import { useMessageDialogStore } from '@/stores/messageDialog';
 
 const isSidebarOpen = ref(false)
 const route = useRoute();
 const router = useRouter();
 const { isSignedIn, loaded, isActive, setIsActive } = useAuth();
-const checkingActiveStatus = ref(true); // <-- Add this
-const { email, client_id } = currentUserData();
+const checkingActiveStatus = ref(true); 
 
-// For debugging
-watchEffect(() => {
-  if (loaded.value) {
-    // console.log("App watchEffect isSignedIn: ", isSignedIn.value);
-    // console.log('Clerk authentication loaded, isSignedIn:', isSignedIn.value);
-    // console.log('Current route:', route.path);
-  }
-});
-
-// Track previous auth state to avoid unnecessary redirects
 let previousAuthState = null;
 
-// Initialize the auth state once when component is mounted
 onMounted(() => {
   let stopWatcher = null;
   stopWatcher = watchEffect(() => {
     if (loaded.value) {
       previousAuthState = isSignedIn.value;
       setAuthState(isSignedIn.value);
-      // Stop this watcher once it's executed
       if (stopWatcher) stopWatcher();
     }
   });
 });
 
-// Watch for changes in authentication state and update the router's global state
 watchEffect(() => {
   if (loaded.value) {
-    // console.log("App watchEffect isSignedIn: ", isSignedIn.value);
     setAuthState(isSignedIn.value);
     if (isSignedIn.value) {
       localStorage.setItem('auth-token', 'true');
@@ -77,7 +63,6 @@ watchEffect(() => {
   }
 });
 
-// Check and set user active status on mounted
 onMounted(async () => {
   if (isSignedIn.value) {
     try {
@@ -90,28 +75,6 @@ onMounted(async () => {
     }
   }
   checkingActiveStatus.value = false;
-});
-
-const currentUserProfile = ref(null)
-const currentUserError = ref('')
-const currentUserLoading = ref(true)
-
-onMounted(async () => {
-  try {
-    const response = await protectedProfile()
-    if (response.status === 200) {
-      currentUserProfile.value = response.data.profile;
-      email.value = response.data.profile.email;
-      client_id.value = response.data.profile.client_id;
-      console.log("currentUserProfile", currentUserProfile.value);
-    } else {
-      currentUserError.value = 'Failed to fetch currentUserProfile.';
-    }
-  } catch (e) {
-    currentUserError.value = e.response?.data?.message || e.message || 'Failed to fetch currentUserProfile.'
-  } finally {
-    currentUserLoading.value = false
-  }
 });
 
 const sidebarStore = useSidebarStore();
@@ -162,16 +125,16 @@ watch(isActive, val => {
 const hideSidebarRoutes = ['/login', '/sign-up'];
 
 const shouldShowSidebar = computed(() => !hideSidebarRoutes.includes(route.path) && isSignedIn.value);
+
+const dialog = useMessageDialogStore();
+
 </script>
 
 <template>
-  <!-- Show nothing until active status is checked -->
   <div v-if="checkingActiveStatus"></div>
-  <!-- Show review notice if user is signed in but not active -->
   <div v-else-if="!isActive && isSignedIn">
     <AccountReviewNotice/>
   </div>
-  <!-- Show main app if user is active or not signed in -->
   <div v-else :class="{ 'min-h-screen flex transition-all duration-300': isLocked, 'min-h-screen': !isLocked }">
     <Sidebar v-if="shouldShowSidebar" :navigation="navigation" />
     <main :class="[
@@ -185,6 +148,14 @@ const shouldShowSidebar = computed(() => !hideSidebarRoutes.includes(route.path)
         <router-view />
       </main>
   </div>
+
+  <MessageDialog
+    :visible="dialog.visible"
+    :title="dialog.title"
+    :message="dialog.message"
+    :icon="dialog.icon"
+    @close="dialog.close"
+  />
 </template>
 
 <style>

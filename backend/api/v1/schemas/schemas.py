@@ -275,7 +275,6 @@ class UpdateOutlet(DisplayBase):
     subzone: Optional[str]
     city: Optional[str]
     outletnumber: Optional[str]
-    is_active: Optional[bool]
     client_id: Optional[int]
     brand_id: Optional[int]
 

@@ -14,7 +14,7 @@ const get = axios.create({
 
 // Function to POST with fallback prefixes if endpoint fails
 async function post(endpoint, payload, config = {}) {
-  console.log("Calling POST endpoint:", endpoint)
+  // console.log("Calling POST endpoint:", endpoint)
   const prefixes = [
     '', // No prefix
     '/api',
@@ -56,8 +56,8 @@ import * as dashboardApi from '@/composables/api/dashboardApi'
 import * as testApi from '@/composables/api/testApi'
 
 export function useApiEndpoints() {
-	return {
-		apiEndpoints: {
+    return {
+        apiEndpoints: {
       authFunction: authApi,
 
 			// Admin APIs

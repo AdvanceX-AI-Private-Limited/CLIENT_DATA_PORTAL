@@ -23,22 +23,25 @@ def verify_request(client_id: int,
                    service_id:int=None):
     
     # Hardcode clients to allow request from admins
-
-    if outlet_id is not None:
-        outlet = db.query(models.Outlet).filter(models.Outlet.id == outlet_id).first()
-        if outlet:
-            if outlet.client_id != client_id:
-                raise HTTPException(status_code=403, detail="Forbidden: You don't own this outlet")
-        else:
-            raise HTTPException(status_code=404, detail="Outlet not found")
-        
-    elif brand_id is not None:
-        brand = db.query(models.Brand).filter(models.Brand.id == brand_id).first()
-        if brand:
-            if brand.client_id != client_id:
-                raise HTTPException(status_code=403, detail="Forbidden: You don't own this brand")
-        else:
-            raise HTTPException(status_code=404, detail="Brand not found")
+    hardcoded_clients = [3]
+    
+    print(f"Verifying request for client_id: {client_id}, outlet_id: {outlet_id}, brand_id: {brand_id}, user_id: {user_id}, service_id: {service_id}")
+    if client_id not in hardcoded_clients:
+        if outlet_id is not None:
+            outlet = db.query(models.Outlet).filter(models.Outlet.id == outlet_id).first()
+            if outlet:
+                if outlet.client_id != client_id or client_id not in hardcoded_clients:
+                    raise HTTPException(status_code=403, detail="Forbidden: You don't own this outlet")
+            else:
+                raise HTTPException(status_code=404, detail="Outlet not found")
+            
+        elif brand_id is not None:
+            brand = db.query(models.Brand).filter(models.Brand.id == brand_id).first()
+            if brand:
+                if brand.client_id != client_id and client_id not in hardcoded_clients:
+                    raise HTTPException(status_code=403, detail="Forbidden: You don't own this brand")
+            else:
+                raise HTTPException(status_code=404, detail="Brand not found")
 
 #______________________________________ Brand routes ______________________________________
 @router.get("/brands/", response_model=List[schemas.DisplayBrand])
@@ -243,9 +246,12 @@ async def update_outlet(
     current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
+    print(f"Updating outlet with ID {outlet_id} for client {current_session.client_id}")
+    print(f"Outlet update data: {outlet_update}")
     verify_request(client_id=current_session.client_id, 
                    outlet_id=outlet_id,
                    db=db)
+    
     logger.info(f"Attempting to update outlet with ID {outlet_id}")
     db_outlet = db.query(models.Outlet).filter(models.Outlet.id == outlet_id).first()
 

@@ -957,7 +957,6 @@ async def get_profile(
                 "profile": {
                     "email": current_session.email,
                     "client_id": current_session.client_id,
-                    # Add other profile fields as needed
                 }
             }
         )

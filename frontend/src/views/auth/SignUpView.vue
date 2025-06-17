@@ -100,57 +100,6 @@ onBeforeUnmount(() => {
   window.removeEventListener('scroll', positionDropdown);
 });
 
-// Mock GST verification function
-// const verifyGST = () => {
-//   if (!formData.gstNumber) {
-//     return;
-//   }
-  
-//   isVerifying.value = true;
-//   gstError.value = false;
-  
-//   // Simulate API call with timeout
-//   setTimeout(() => {
-//     // Simple mock - GST numbers starting with '27' will return true, others false
-//     // You can replace this with your actual API call later
-//     const result = formData.gstNumber.startsWith('27');
-//     gstVerified.value = result;
-//     gstError.value = !result;
-//     isVerifying.value = false;
-    
-//     // Set GST data only if verification is successful
-  //   gstData.value = result ? {
-  //     reference_id: 1364072,
-  //     GSTIN: "27ABBCA2714N1ZN",
-  //     legal_name_of_business: "ADVANCEX AI PRIVATE LIMITED",
-  //     center_jurisdiction: "RANGE-I",
-  //     state_jurisdiction: "CHAKALA_701",
-  //     date_of_registration: "2024-10-24",
-  //     constitution_of_business: "Private Limited",
-  //     taxpayer_type: "Regular",
-  //     gst_in_status: "Active",
-  //     last_update_date: "2024-11-11",
-  //     nature_of_business_activities: ["Supplier of Services"],
-  //     principal_place_address: "7TH FLOOR, INNOV8 SOLITAIRE CORPORATE PARK, S-11, UNIT NO.1171,1172, Mumbai, ANDHERI EAST, Maharashtra, 400093",
-  //     principal_place_split_address: {
-  //       building_name: "INNOV8 SOLITAIRE CORPORATE PARK",
-  //       street: "ANDHERI EAST",
-  //       location: "Mumbai",
-  //       building_number: "S-11, UNIT NO.1171,1172",
-  //       district: "Mumbai Suburban",
-  //       state: "Maharashtra",
-  //       city: "",
-  //       flat_number: "7TH FLOOR",
-  //       latitude: "19.117449",
-  //       longitude: "72.8651080000001",
-  //       pincode: "400093"
-  //     },
-  //     valid: true,
-  //     message: "GSTIN Exists"
-  //   } : null;
-  // }, 1500);
-// };
-
 const verifyGST = async () => {
   // console.log(formData);
   gstError.value = null;
