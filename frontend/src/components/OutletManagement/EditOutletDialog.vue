@@ -173,16 +173,31 @@ function showError(message, title = "Error") {
             <label :for="key" class="block text-sm font-medium text-slate-700 mb-1">
               {{ mapHeaders[key] }}
             </label>
-            <input
-              v-model="form[key]"
-              :id="key"
-              :name="key"
-              type="text"
-              class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition"
-              :placeholder="`Enter ${mapHeaders[key]}`"
-              :disabled="loading"
-              autocomplete="off"
-            />
+            <template v-if="key === 'aggregator'">
+              <select
+                v-model="form[key]"
+                :id="key"
+                :name="key"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition"
+                :disabled="loading"
+              >
+                <option value="" disabled>Select Aggregator</option>
+                <option value="Zomato">Zomato</option>
+                <option value="Swiggy">Swiggy</option>
+              </select>
+            </template>
+            <template v-else>
+              <input
+                v-model="form[key]"
+                :id="key"
+                :name="key"
+                type="text"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition"
+                :placeholder="`Enter ${mapHeaders[key]}`"
+                :disabled="loading"
+                autocomplete="off"
+              />
+            </template>
           </div>
         </div>
 

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="visible" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50 overflow-hidden">
+  <div v-if="visible" class="fixed inset-0 bg-black/50 flex justify-center items-center z-9999 overflow-hidden">
     <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
       <div class="flex items-start mb-4">
         <!-- Success icon -->
