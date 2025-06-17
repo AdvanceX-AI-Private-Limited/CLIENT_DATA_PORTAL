@@ -6,6 +6,7 @@ import MessageDialog from "@/components/MessageDialog.vue";
 import EditOutletDialog from "@/components/OutletManagement/EditOutletDialog.vue";
 import AddUsersPopup from "@/components/Mapping/AddUsersPopup.vue";
 import { fetchOutlets as fetchOutletsApi, deleteOutlet, addOutlet } from "@/composables/api/brandManagementApi";
+import { PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
 
 console.log("Current user email:", sessionStorage.getItem("email"));
 console.log("Current user client_id:", sessionStorage.getItem("client_id"));
@@ -154,8 +155,20 @@ const columns = [
 
 // Example row action buttons
 const dataActionButtons = [
-  { name: "Edit", action: "edit", color: "blue" },
-  { name: "Delete", action: "delete", color: "red" },
+  {
+    name: "Edit",
+    action: "edit",
+    icon: PencilIcon, // Add the PencilIcon
+    class: "text-blue-600 hover:text-blue-800",
+    tooltip: "Edit Outlet",
+  },
+  {
+    name: "Delete",
+    action: "delete",
+    icon: TrashIcon, // Add the TrashIcon
+    class: "text-red-600 hover:text-red-800",
+    tooltip: "Delete Outlet",
+  },
 ];
 
 const mapHeaders = {
