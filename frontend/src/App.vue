@@ -13,18 +13,20 @@ import {
 } from '@heroicons/vue/24/outline';
 import { storeToRefs } from "pinia";
 import { useSidebarStore } from "@/stores/useSidebar"; 
-import LoginView from "./views/auth/LoginView.vue";
 import { useRoute, useRouter } from 'vue-router';
 import { useAuth } from '@/stores/useAuth';
+import { currentUserData } from '@/stores/currentUser';
 import { setAuthState } from '@/router';
 import AccountReviewNotice from "./components/Auth/AccountReviewNotice.vue";
 import { userIsActive } from "@/composables/api/authApi";
+import { protectedProfile } from '@/composables/api/authApi'
 
 const isSidebarOpen = ref(false)
 const route = useRoute();
 const router = useRouter();
 const { isSignedIn, loaded, isActive, setIsActive } = useAuth();
 const checkingActiveStatus = ref(true); // <-- Add this
+const { email, client_id } = currentUserData();
 
 // For debugging
 watchEffect(() => {
@@ -88,6 +90,28 @@ onMounted(async () => {
     }
   }
   checkingActiveStatus.value = false;
+});
+
+const currentUserProfile = ref(null)
+const currentUserError = ref('')
+const currentUserLoading = ref(true)
+
+onMounted(async () => {
+  try {
+    const response = await protectedProfile()
+    if (response.status === 200) {
+      currentUserProfile.value = response.data.profile;
+      email.value = response.data.profile.email;
+      client_id.value = response.data.profile.client_id;
+      console.log("currentUserProfile", currentUserProfile.value);
+    } else {
+      currentUserError.value = 'Failed to fetch currentUserProfile.';
+    }
+  } catch (e) {
+    currentUserError.value = e.response?.data?.message || e.message || 'Failed to fetch currentUserProfile.'
+  } finally {
+    currentUserLoading.value = false
+  }
 });
 
 const sidebarStore = useSidebarStore();

@@ -373,24 +373,65 @@ function toggleDropdown(header) {
 }
 
 const openActionMenuRow = ref(null);
+const dropdownPosition = ref({});
 
 function toggleRowActionMenu(idx, event) {
-  event.stopPropagation();
-  openActionMenuRow.value = openActionMenuRow.value === idx ? null : idx;
-}
+  if (openActionMenuRow.value === idx) {
+    openActionMenuRow.value = null;
+    return;
+  }
+  openActionMenuRow.value = idx;
+  nextTick(() => {
+    const rect = event.target.getBoundingClientRect();
 
-// Optional: close all on window click
-function closeRowActionMenus(e) {
-  openActionMenuRow.value = null;
-}
-onMounted(() => window.addEventListener("click", closeRowActionMenus));
-onBeforeUnmount(() => window.removeEventListener("click", closeRowActionMenus));
+    // Find the nearest ancestor table, then get its right edge
+    // (If you keep a ref on the table container, this is even easier)
+    let tableRect = null;
+    // Option 1: If you have a ref (recommended)
+    if (tableContainer.value) {
+      tableRect = tableContainer.value.getBoundingClientRect();
+    } else {
+      // Option 2: Try to climb DOM from button
+      let el = event.target;
+      while (el && el.tagName !== 'TABLE') el = el.parentElement;
+      tableRect = el ? el.getBoundingClientRect() : null;
+    }
 
-const emit = defineEmits(["row-action", "action-click", "row-click"]);
+    const MENU_WIDTH = 160;
+
+    let left = rect.left + window.scrollX;
+    const top = rect.bottom + window.scrollY;
+
+    if (tableRect) {
+      const tableRight = tableRect.right + window.scrollX;
+      // If overflow, shift left so menu stays within table's right
+      if (left + MENU_WIDTH > tableRight) {
+        left = tableRight - MENU_WIDTH - 8; // 8px padding so it's not flush
+        // Prevent going off the table's left
+        if (left < tableRect.left + window.scrollX) left = tableRect.left + window.scrollX + 8;
+      }
+    } else {
+      // Fallback: check for window boundary
+      if (left + MENU_WIDTH > window.innerWidth - 8) left = window.innerWidth - MENU_WIDTH - 8;
+    }
+
+    dropdownPosition.value = {
+      top: `${top}px`,
+      left: `${left}px`,
+      minWidth: "10rem",
+    };
+  });
+}
 
 function handleDataActionClick(action, row) {
+  // Emit the row-action event
+  // You may want to close the menu here as well
+  openActionMenuRow.value = null;
+  // $emit is not available in <script setup>, use defineEmits
   emit("row-action", { action, row });
 }
+
+const emit = defineEmits(["row-action", "action-click", "row-click"]);
 
 function handleActionClick(action) {
   emit("action-click", action);
@@ -551,10 +592,57 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', checkForScrollbars);
 });
+
+const showScrollMsg = ref(true)
+
+onMounted(() => {
+  setTimeout(() => {
+    showScrollMsg.value = false
+  }, 3000)
+});
+
+const rowActionDropdownState = ref({
+  rowIdx: null, // which row
+  position: { top: 0, left: 0 }
+});
+
+function openRowActionDropdown(rowIdx, event) {
+  // event should be the click event of the button that opens the menu
+  const rect = event.target.getBoundingClientRect();
+  const MENU_WIDTH = 160;
+  const MENU_HEIGHT = 40 + data_action_buttons.length * 40;
+
+  let left = rect.left + window.scrollX;
+  let top = rect.bottom + window.scrollY;
+
+  // Make sure the menu does not go off-screen (optional)
+  if (left + MENU_WIDTH > window.innerWidth - 8) left = window.innerWidth - MENU_WIDTH - 8;
+  if (top + MENU_HEIGHT > window.innerHeight) top = window.innerHeight - MENU_HEIGHT - 8;
+
+  rowActionDropdownState.value = {
+    rowIdx,
+    position: { top, left }
+  };
+}
+
+const rowActionsMenuRef = ref();
+
+onMounted(() => {
+  window.addEventListener('click', handleCloseRowEllipsisMenu);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener('click', handleCloseRowEllipsisMenu);
+});
+
+function handleCloseRowEllipsisMenu(e) {
+  if (rowActionsMenuRef.value && rowActionsMenuRef.value.contains(e.target)) return;
+  openActionMenuRow.value = null;
+}
+
 </script>
 
 <template>
-  <div class="w-full flex-col" :class="{ 'border bg-white border-gray-300 rounded-xl p-4': !error && !loading }">
+  <div class="w-full flex-col" :class="{ 'rounded-xl p-2': !error && !loading }">
     <!-- Header and controls section -->
     <div class="mb-4 flex flex-col">
       <div v-if="!loading && !error" class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
@@ -701,6 +789,31 @@ onBeforeUnmount(() => {
       </div>
     </Teleport>
 
+    <!-- Teleport dropdown for data row actions -->
+    <Teleport to="body">
+      <div
+        v-if="rowActionDropdownState.rowIdx !== null"
+        ref="rowActionsMenuRef"
+        :style="{ position: 'absolute', top: rowActionDropdownState.position.top + 'px', left: rowActionDropdownState.position.left + 'px', minWidth: '10rem', zIndex: 9999 }"
+        class="z-[9999] py-1.5 bg-white border border-gray-100 rounded-lg shadow-lg animate-fade-in"
+        @click.stop
+      >
+        <button
+          v-for="(action, actionIdx) in data_action_buttons"
+          :key="actionIdx"
+          @click="
+            handleDataActionClick(action, sortedData[rowActionDropdownState.rowIdx]);
+            rowActionDropdownState.rowIdx = null;
+          "
+          class="flex items-center w-full text-left gap-2 px-4 py-2 text-sm text-gray-700 bg-white border-none hover:bg-blue-50 transition duration-75 font-medium cursor-pointer"
+          :class="action.class"
+        >
+          <component v-if="action.icon" :is="action.icon" class="w-4 h-4" />
+          {{ action.name }}
+        </button>
+      </div>
+    </Teleport>
+
     <!-- Main content area -->
     <div 
       class="overflow-hidden p-1"
@@ -760,12 +873,14 @@ onBeforeUnmount(() => {
       <!-- Table data -->
       <div v-else>
         <!-- Horizontal scroll indicator if needed -->
-        <div v-if="hasHorizontalScroll" class="border-b border-gray-200 bg-blue-50 py-1.5 px-4 text-xs text-blue-700 flex items-center">
+        <transition name="fade">
+        <div v-if="hasHorizontalScroll && showScrollMsg" class="border-b border-gray-200 bg-blue-50 py-1.5 px-4 text-xs text-blue-700 flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
           </svg>
           Scroll horizontally to see more columns
         </div>
+        </transition>
         
         <div 
           class="overflow-x-auto" 
@@ -881,68 +996,52 @@ onBeforeUnmount(() => {
                 <!-- Row action buttons -->
                 <td
                   v-if="data_action_buttons && data_action_buttons.length > 0"
-                  class="px-4 py-3 align-middle whitespace-nowrap relative"
+                  class="px-4 py-3 align-middle whitespace-nowrap"
+                  style="position: relative;"
                   @click.stop
                 >
-                  <!-- If exactly one action, show it directly -->
                   <template v-if="data_action_buttons.length === 1">
                     <button
                       @click="handleDataActionClick(data_action_buttons[0], row)"
-                      :class="[
-                        'px-2.5 py-1 text-xs font-medium rounded hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 transition-all duration-150',
-                        data_action_buttons[0].color ? 
-                          `text-${data_action_buttons[0].color}-700 bg-${data_action_buttons[0].color}-50 hover:bg-${data_action_buttons[0].color}-100 focus:ring-${data_action_buttons[0].color}-500` : 
-                          'text-blue-700 bg-blue-50 hover:bg-blue-100 focus:ring-blue-500',
-                        data_action_buttons[0].class || '',
-                      ]"
+                      class="px-2.5 py-1 text-xs font-medium rounded hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 transition-all duration-150"
                     >
-                      <span class="flex items-center gap-1">
-                        <component :is="data_action_buttons[0].icon" v-if="data_action_buttons[0].icon" class="w-3 h-3" />
-                        {{ data_action_buttons[0].name }}
-                      </span>
+                      {{ data_action_buttons[0].name }}
                     </button>
                   </template>
-
-                  <!-- If more than one, show dropdown menu -->
                   <template v-else>
                     <button
                       @click="toggleRowActionMenu(rowIdx, $event)"
                       class="mx-auto p-1.5 rounded-full text-gray-500 hover:text-blue-500 hover:bg-blue-50 focus:outline-none transition duration-150 flex items-center justify-center"
                       aria-label="Show row actions"
                     >
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        class="w-5 h-5"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
+                      <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5">
                         <circle cx="6" cy="12" r="2" fill="currentColor" />
                         <circle cx="12" cy="12" r="2" fill="currentColor" />
                         <circle cx="18" cy="12" r="2" fill="currentColor" />
                       </svg>
                     </button>
-                    
-                    <!-- Dropdown menu -->
-                    <div
-                      v-if="openActionMenuRow === rowIdx"
-                      class="absolute right-0 z-50 mt-1 py-1.5 bg-white border border-gray-100 rounded-lg shadow-lg animate-fade-in"
-                      style="min-width: 10rem; transition: opacity 0.1s cubic-bezier(0.24, 0.56, 0.63, 0.99)"
-                      @click.stop
-                    >
-                      <button
-                        v-for="(action, actionIdx) in data_action_buttons"
-                        :key="actionIdx"
-                        @click="
-                          handleDataActionClick(action, row);
-                          openActionMenuRow = null;
-                        "
-                        class="flex items-center w-full text-left gap-2 px-4 py-2 text-sm text-gray-700 bg-white border-none hover:bg-blue-50 transition duration-75 font-medium cursor-pointer"
-                        :class="action.class"
+                    <Teleport to="body">
+                      <div
+                        v-if="openActionMenuRow === rowIdx"
+                        class="fixed z-[9999] mt-1 py-1.5 bg-white border border-gray-100 rounded-lg shadow-lg animate-fade-in"
+                        :style="dropdownPosition"
+                        @click.stop
                       >
-                        <component v-if="action.icon" :is="action.icon" class="w-4 h-4" />
-                        {{ action.name }}
-                      </button>
-                    </div>
+                        <button
+                          v-for="(action, actionIdx) in data_action_buttons"
+                          :key="actionIdx"
+                          @click="
+                            handleDataActionClick(action, row);
+                            openActionMenuRow = null;
+                          "
+                          class="flex items-center w-full text-left gap-2 px-4 py-2 text-sm text-gray-700 bg-white border-none hover:bg-blue-50 transition duration-75 font-medium cursor-pointer"
+                          :class="action.class"
+                        >
+                          <component v-if="action.icon" :is="action.icon" class="w-4 h-4" />
+                          {{ action.name }}
+                        </button>
+                      </div>
+                    </Teleport>
                   </template>
                 </td>
               </tr>
@@ -1257,5 +1356,15 @@ onBeforeUnmount(() => {
     border: 1px solid #ddd !important;
     padding: 8px !important;
   }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to, .fade-leave-from {
+  opacity: 1;
 }
 </style>

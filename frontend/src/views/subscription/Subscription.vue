@@ -2,31 +2,31 @@
 import { ref, onMounted } from 'vue'
 import { protectedProfile } from '@/composables/api/authApi'
 
-const profile = ref(null)
-const error = ref('')
-const loading = ref(true)
+const currentUserProfile = ref(null)
+const currentUserError = ref('')
+const currentUserLoading = ref(true)
 
 onMounted(async () => {
   try {
     const response = await protectedProfile()
-    profile.value = response?.data || {}
-    console.log("profile", profile.value)
+    currentUserProfile.value = response?.data || {}
+    console.log("currentUserProfile", currentUserProfile.value)
   } catch (e) {
-    error.value = e.response?.data?.message || e.message || 'Failed to fetch profile.'
+    currentUserError.value = e.response?.data?.message || e.message || 'Failed to fetch currentUserProfile.'
   } finally {
-    loading.value = false
+    currentUserLoading.value = false
   }
-})
+});
 </script>
 <template>
   <h1>Subscriptions</h1>
 
-  <div v-if="loading">Loading...</div>
-  <div v-else-if="error" class="text-red-500">{{ error }}</div>
+  <div v-if="currentUserLoading">currentUserLoading...</div>
+  <div v-else-if="currentUserError" class="text-red-500">{{ currentUserError }}</div>
   <div v-else>
-    <pre>{{ profile }}</pre>
+    <pre>{{ currentUserProfile }}</pre>
   </div>
   <br>
   <br>
-  <pre>{{ JSON.stringify(profile, null, 2) }}</pre>
+  <pre>{{ JSON.stringify(currentUserProfile, null, 2) }}</pre>
 </template>
