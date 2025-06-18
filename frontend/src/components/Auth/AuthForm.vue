@@ -136,7 +136,7 @@ const handleGoogleLogin = () => {
         v-model="password"
         :type="showPassword ? 'text' : 'password'"
         placeholder="Password"
-        class="w-full px-4 py-3 rounded-3xl border-0 outline-3 outline-purple-200  mb-6 h-10.5 font-"
+        class="w-full px-4 py-2 rounded-3xl border-0 focus:outline-none outline-3 outline-purple-200 focus:ring-3 focus:ring-blue-600 h-10.5"
         :disabled="loginLoading"
       />
       <button

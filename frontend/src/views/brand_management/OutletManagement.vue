@@ -369,11 +369,6 @@ const isOddVisibleFields = computed(() => visibleOutletInputFields.value.length 
     ]"
     @close="closePopup"
   >
-    <div class="px-4 py-3 border-b bg-white w-full">
-      <div class="flex items-center text-sm relative">
-        <span class="font-medium text-gray-900">Add Outlets</span>
-      </div>
-    </div>
     <div class="my-3 mx-2 h-full overflow-y-auto no-scrollbar">
       <!-- Dropdown Add Form -->
       <div id="dropdown" class="sticky top-0 z-10 bg-white pb-2">
@@ -408,7 +403,7 @@ const isOddVisibleFields = computed(() => visibleOutletInputFields.value.length 
                       v-model="outletForm.aggregator"
                       class="w-full border border-gray-300 rounded-md p-1.5 px-3 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                     >
-                      <option value="" disabled>Select Aggregator</option>
+                      <option value="" disabled>Aggregator</option>
                       <option value="Zomato">Zomato</option>
                       <option value="Swiggy">Swiggy</option>
                     </select>

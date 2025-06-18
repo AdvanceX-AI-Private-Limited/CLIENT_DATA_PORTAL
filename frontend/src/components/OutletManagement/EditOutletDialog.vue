@@ -181,7 +181,7 @@ function showError(message, title = "Error") {
                 class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition"
                 :disabled="loading"
               >
-                <option value="" disabled>Select Aggregator</option>
+                <option value="" disabled>Aggregator</option>
                 <option value="Zomato">Zomato</option>
                 <option value="Swiggy">Swiggy</option>
               </select>

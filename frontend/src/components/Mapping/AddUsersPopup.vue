@@ -21,7 +21,7 @@ function close() {
     <div class="bg-white rounded-lg shadow-xl w-[90%] max-w-3xl relative h-[85vh] flex flex-col">
       
       <!-- Header -->
-      <div v-if="title || subheading" class="p-4 pb-3 border-b bg-gradient-to-r from-gray-50 to-white">
+      <div v-if="title || subheading" class="p-4 pb-3 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
         <div class="flex justify-between items-center">
           <h2 v-if="title" class="text-lg font-bold text-gray-800">{{ title }}</h2>
           <button @click="close" class="w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-800 transition-colors">
@@ -40,8 +40,8 @@ function close() {
       </div>
 
       <!-- Footer -->
-      <div class="rounded-b-lg p-3.5 border-t flex items-center gap-2 bg-gray-50" :class="[action_buttons && action_buttons.length ? 'justify-between' : 'justify-end']" v-if="closeBtnBar || (action_buttons && action_buttons.length)">
-        <button v-if="closeBtnBar" @click="close" class="text-xs text-gray-700 py-2 px-4 border rounded-lg hover:bg-gray-100 cursor-pointer">Cancel</button>
+      <div class="rounded-b-lg p-3.5 border-t border-gray-200 flex items-center gap-2 bg-gray-50" :class="[action_buttons && action_buttons.length ? 'justify-between' : 'justify-end']" v-if="closeBtnBar || (action_buttons && action_buttons.length)">
+        <button v-if="closeBtnBar" @click="close" class="text-xs text-gray-700 py-2 px-4 border rounded-lg hover:bg-gray-200 cursor-pointer">Cancel</button>
 
         <div class="flex gap-2 ml-auto" v-if="action_buttons && action_buttons.length">
           <button
