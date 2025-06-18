@@ -7,8 +7,8 @@ function deleteCookie(name) {
 }
 
 function clearAuth() {
-    sessionStorage.removeItem('session_token');
-    sessionStorage.removeItem('expires_at');
+    localStorage.removeItem('session_token');
+    localStorage.removeItem('expires_at');
     deleteCookie('session_token');
     deleteCookie('expires_at');
 }

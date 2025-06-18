@@ -50,7 +50,7 @@ const props = defineProps({
 	require: true,
 });
 
-const userEmail = sessionStorage.getItem("email");
+const userEmail = localStorage.getItem("email");
 </script>
 
 <template>

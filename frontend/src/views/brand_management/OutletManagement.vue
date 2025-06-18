@@ -8,8 +8,8 @@ import AddUsersPopup from "@/components/Mapping/AddUsersPopup.vue";
 import { fetchOutlets as fetchOutletsApi, deleteOutlet, addOutlet } from "@/composables/api/brandManagementApi";
 import { PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
 
-console.log("Current user email:", sessionStorage.getItem("email"));
-console.log("Current user client_id:", sessionStorage.getItem("client_id"));
+console.log("Current user email:", localStorage.getItem("email"));
+console.log("Current user client_id:", localStorage.getItem("client_id"));
 
 const outlets = ref([]);
 const loading = ref(false);
@@ -43,7 +43,7 @@ async function fetchOutlets() {
   error.value = null;
   try {
     const params = {
-      client_id:  sessionStorage.getItem("client_id"),
+      client_id:  localStorage.getItem("client_id"),
       status: "all",
       skip: 0,
       limit: 100,
@@ -239,7 +239,7 @@ const outletForm = reactive({
   city: "",
   outletnumber: "",
   is_active: true,
-  clientid: sessionStorage.getItem("client_id"),
+  clientid: localStorage.getItem("client_id"),
   brandid: 3
 });
 

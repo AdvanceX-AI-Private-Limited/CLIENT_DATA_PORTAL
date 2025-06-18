@@ -203,7 +203,7 @@ export function setAuthState(authenticated) {
 
 // 		if (isPageRefresh) {
 // 			const hasStoredAuth = localStorage.getItem('auth-token') || 
-// 				sessionStorage.getItem('auth-token') ||
+// 				localStorage.getItem('auth-token') ||
 // 				isUserAuthenticated;
 
 // 			if (hasStoredAuth) {
@@ -248,7 +248,7 @@ router.beforeEach((to, from, next) => {
 
         if (isPageRefresh) {
             const hasStoredAuth = localStorage.getItem('auth-token') || 
-                sessionStorage.getItem('auth-token') ||
+                localStorage.getItem('auth-token') ||
                 isUserAuthenticated;
 
             if (hasStoredAuth) {
