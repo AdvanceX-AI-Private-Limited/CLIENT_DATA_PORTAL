@@ -237,12 +237,6 @@ class OutletCreate(OutletBase):
         examples=[1],
         description="Owning client ID"
     )
-    brandid: int = Field(
-        ...,
-        gt=0,
-        examples=[1],
-        description="Owning brand ID"
-    )
 
 class DisplayOutlet(DisplayBase):
     id: int
@@ -256,15 +250,13 @@ class DisplayOutlet(DisplayBase):
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
     client_id: int
-    brand_id: int
 
     def __str__(self):
         return f"Outlet {self.outletnumber} ({self.aggregator})"
 
 class OutletQueryParams(BaseModel):
     outlet_id: Optional[int] = None
-    client_id: Optional[int] = None
-    brand_id: Optional[int] = None
+    client_id: int = None
     status: StatusEnum = StatusEnum.all
     skip: int = 0
     limit: int = 100
@@ -275,8 +267,8 @@ class UpdateOutlet(DisplayBase):
     subzone: Optional[str]
     city: Optional[str]
     outletnumber: Optional[str]
+    is_active: Optional[bool]
     client_id: Optional[int]
-    brand_id: Optional[int]
 
 # ______________ USERS ____________________
 class UserBase(BaseModel):

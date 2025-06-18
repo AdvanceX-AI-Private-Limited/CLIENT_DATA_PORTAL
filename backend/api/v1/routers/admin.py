@@ -14,34 +14,30 @@ logger = create_logger(__name__)
 
 
 router = APIRouter() 
+INTERNAL_CLIENT_IDS = {3}
 
 def verify_request(client_id: int, 
                    db: Session, 
-                   outlet_id:int=None, 
-                   brand_id:int=None,
-                   user_id:int=None,
-                   service_id:int=None):
+                   outlet_id: int = None, 
+                   brand_id: int = None,
+                   user_id: int = None,
+                   service_id: int = None):
     
-    # Hardcode clients to allow request from admins
-    hardcoded_clients = [3]
+    if outlet_id is not None:
+        outlet = db.query(models.Outlet).filter(models.Outlet.id == outlet_id).first()
+        if outlet:
+            if outlet.client_id != client_id:
+                raise HTTPException(status_code=403, detail="Forbidden: You don't own this outlet")
+        else:
+            raise HTTPException(status_code=404, detail="Outlet not found")
     
-    print(f"Verifying request for client_id: {client_id}, outlet_id: {outlet_id}, brand_id: {brand_id}, user_id: {user_id}, service_id: {service_id}")
-    if client_id not in hardcoded_clients:
-        if outlet_id is not None:
-            outlet = db.query(models.Outlet).filter(models.Outlet.id == outlet_id).first()
-            if outlet:
-                if outlet.client_id != client_id or client_id not in hardcoded_clients:
-                    raise HTTPException(status_code=403, detail="Forbidden: You don't own this outlet")
-            else:
-                raise HTTPException(status_code=404, detail="Outlet not found")
-            
-        elif brand_id is not None:
-            brand = db.query(models.Brand).filter(models.Brand.id == brand_id).first()
-            if brand:
-                if brand.client_id != client_id and client_id not in hardcoded_clients:
-                    raise HTTPException(status_code=403, detail="Forbidden: You don't own this brand")
-            else:
-                raise HTTPException(status_code=404, detail="Brand not found")
+    elif brand_id is not None:
+        brand = db.query(models.Brand).filter(models.Brand.id == brand_id).first()
+        if brand:
+            if brand.client_id != client_id:
+                raise HTTPException(status_code=403, detail="Forbidden: You don't own this brand")
+        else:
+            raise HTTPException(status_code=404, detail="Brand not found")
 
 #______________________________________ Brand routes ______________________________________
 @router.get("/brands/", response_model=List[schemas.DisplayBrand])
@@ -50,9 +46,6 @@ async def get_brands(
     current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
-    verify_request(client_id=current_session.client_id, 
-                   brand_id=params.brand_id,
-                   db=db)
     query = db.query(models.Brand)
 
     # Filter by brand_id (single brand)
@@ -135,9 +128,10 @@ async def delete_brand(
 @router.post("/outlets/", response_model=List[schemas.DisplayOutlet])
 async def create_outlet(
     outlets: List[schemas.OutletCreate], 
-    current_session = Depends(get_current_session),
+    # current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
-):    
+):  
+    
     created_outlets = []
 
     for outlet in outlets:
@@ -151,7 +145,7 @@ async def create_outlet(
                 detail="Unknown client ID passed"
             )
         
-        # Check if brand already exists
+        # Check if outlet already exists
         existing_outlet = db.query(models.Outlet).filter(
             (models.Outlet.aggregator == outlet.aggregator) &
             (models.Outlet.resid == outlet.resid)
@@ -163,7 +157,7 @@ async def create_outlet(
             )
         
         # Get brand using brand_id
-        db_brand = db.query(models.Brand).filter(models.Brand.id == outlet.brandid).first()
+        db_brand = db.query(models.Brand).filter(models.Brand.client_id == outlet.clientid).first()
         if not db_brand:
             raise HTTPException(
                 status_code=404,
@@ -191,7 +185,7 @@ async def create_outlet(
             outletnumber=outlet.outletnumber,
             is_active=outlet.is_active,
             client_id=outlet.clientid,
-            brand_id=outlet.brandid
+            brand_id=db_brand.id
         )
         db.add(db_outlet)
         db.commit()
@@ -209,27 +203,26 @@ async def get_outlets(
     current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
-    verify_request(client_id=current_session.client_id, 
-                   outlet_id=params.outlet_id,
-                   db=db)
+    is_internal_client = current_session.client_id in INTERNAL_CLIENT_IDS
+    # Only verify request for non-internal clients
+    if not is_internal_client:
+        verify_request(client_id=current_session.client_id, 
+                       outlet_id=params.outlet_id,
+                       db=db)
+        
     query = db.query(models.Outlet)
 
-    # Filter by outlet_id (single outlet)
     if params.outlet_id is not None:
         outlet = query.filter(models.Outlet.id == params.outlet_id).first()
         if outlet is None:
             raise HTTPException(status_code=404, detail="Outlet not found")
         return [outlet]
 
+    if not is_internal_client:
     # Filter by client_id
-    if params.client_id is not None:
-        query = query.filter(models.Outlet.client_id == params.client_id)
+        if params.client_id is not None:
+            query = query.filter(models.Outlet.client_id == params.client_id)
 
-    # Filter by brand_id
-    if params.brand_id is not None:
-        query = query.filter(models.Outlet.brand_id == params.brand_id)
-
-    # Filter by status
     if params.status == models.StatusEnum.active:
         query = query.filter(models.Outlet.is_active == True)
     elif params.status == models.StatusEnum.inactive:
@@ -246,12 +239,24 @@ async def update_outlet(
     current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
-    print(f"Updating outlet with ID {outlet_id} for client {current_session.client_id}")
-    print(f"Outlet update data: {outlet_update}")
-    verify_request(client_id=current_session.client_id, 
-                   outlet_id=outlet_id,
-                   db=db)
-    
+    is_internal_client = current_session.client_id in INTERNAL_CLIENT_IDS
+    is_client_same = (
+        hasattr(current_session, "client_id") and 
+        hasattr(outlet_update, "client_id") and 
+        current_session.client_id == outlet_update.client_id
+    )
+    # Only verify request for non-internal clients
+    if is_client_same:
+        if not is_internal_client:
+            verify_request(client_id=current_session.client_id, 
+                        outlet_id=outlet_id,
+                        db=db)
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Outlet id passed in params and query doesnt match"
+        )
+
     logger.info(f"Attempting to update outlet with ID {outlet_id}")
     db_outlet = db.query(models.Outlet).filter(models.Outlet.id == outlet_id).first()
 
@@ -285,12 +290,16 @@ async def update_outlet(
 @router.delete("/outlets/{outlet_id}", status_code=200)
 async def delete_outlet(
     outlet_id: int,
-    # current_session = Depends(get_current_session),
+    current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
-    # verify_request(client_id=current_session.client_id, 
-    #                outlet_id=outlet_id,
-    #                db=db)
+    is_internal_client = current_session.client_id in INTERNAL_CLIENT_IDS
+    # Only verify request for non-internal clients
+    if not is_internal_client:
+        verify_request(client_id=current_session.client_id, 
+                    outlet_id=outlet_id,
+                    db=db)
+            
     logger.info(f"Attempting to delete outlet with ID {outlet_id}")
     db_outlet = db.query(models.Outlet).filter(models.Outlet.id == outlet_id).first()
 
