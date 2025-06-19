@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted , reactive  } from "vue";
+import { ref, onMounted , reactive, watch } from "vue";
 import Breadcrumb from "@/components/Breadcrumb.vue";
 import DataTable from "@/components/DataTables/DataTable.vue";
 import MessageDialog from "@/components/MessageDialog.vue";
@@ -99,8 +99,6 @@ function handleToolbarAction(action) {
     showAddOutletPopup();
   }
 }
-
-
 
 const editAllowed = {
   id: false,
@@ -316,7 +314,15 @@ const visibleOutletInputFields = computed(() =>
 );
 const isOddVisibleFields = computed(() => visibleOutletInputFields.value.length % 2 === 1);
 
-
+watch(
+  outletsReview,
+  (newList) => {
+    if (newList.length === 0) {
+      isExpanded.value = true;
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
@@ -384,7 +390,7 @@ const isOddVisibleFields = computed(() => visibleOutletInputFields.value.length 
             <line x1="12" y1="5" x2="12" y2="19" stroke-linecap="round" />
             <line x1="5" y1="12" x2="19" y2="12" stroke-linecap="round" />
           </svg>
-          <span>{{ isExpanded ? 'Hide Form' : 'Add' }}</span>
+          <span>{{ isExpanded ? 'Hide Form' : 'Add Outlets' }}</span>
         </button>
         <transition name="slide-expand-tr">
           <div
@@ -422,7 +428,7 @@ const isOddVisibleFields = computed(() => visibleOutletInputFields.value.length 
                       class="px-4 py-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow mb-2 ml-auto block w-auto"
                       style="min-width: 90px;"
                     >
-                      Confirm
+                      Add
                     </button>
                   </template>
                 </template>
@@ -434,7 +440,7 @@ const isOddVisibleFields = computed(() => visibleOutletInputFields.value.length 
                     class="px-4 py-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow mb-2 ml-auto block w-auto"
                     style="min-width: 90px;"
                   >
-                    Confirm
+                    Add
                   </button>
                 </template>
               </div>
