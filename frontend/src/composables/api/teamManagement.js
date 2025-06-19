@@ -1,10 +1,7 @@
 import get, { post } from '@/composables/useApiClient'
 
 export async function fetchUsers(params) {
-  const skip = params.skip || 0
-  const limit = params.limit || 100
-  const client_id = params.client_id || null
-  return await get('/admin/users/?skip=' + skip + '&limit=' + limit + '&client_id=' + client_id)
+  return await get.get('/admin/users/', { params })
 }
 
 export async function createUser(data) {
@@ -14,4 +11,7 @@ export async function createUser(data) {
 export async function updateUser(user_id, params) {
   return await get.put(`/admin/users/${user_id}`, params)
 }
-    
+
+export async function deleteUser(user_id) {
+  return await get.delete(`/admin/users/${user_id}`)
+}
