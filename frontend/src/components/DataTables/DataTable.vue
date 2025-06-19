@@ -424,11 +424,23 @@ function toggleRowActionMenu(idx, event) {
 }
 
 function handleDataActionClick(action, row) {
-  // Emit the row-action event
-  // You may want to close the menu here as well
-  openActionMenuRow.value = null;
-  // $emit is not available in <script setup>, use defineEmits
-  emit("row-action", { action, row });
+  if (action.action === "delete") {
+    // Show confirmation popup for delete
+    showDeleteConfirm.value = true;
+    deleteRowData.value = { action, row };
+  } else {
+    // Emit the row-action event for other actions
+    openActionMenuRow.value = null;
+    emit("row-action", { action, row });
+  }
+}
+
+function confirmDelete(confirmed) {
+  if (confirmed && deleteRowData.value) {
+    emit("row-action", { action: deleteRowData.value.action, row: deleteRowData.value.row });
+  }
+  showDeleteConfirm.value = false;
+  deleteRowData.value = null;
 }
 
 const emit = defineEmits(["row-action", "action-click", "row-click"]);
@@ -638,6 +650,10 @@ function handleCloseRowEllipsisMenu(e) {
   if (rowActionsMenuRef.value && rowActionsMenuRef.value.contains(e.target)) return;
   openActionMenuRow.value = null;
 }
+
+// Confirmation dialog state
+const showDeleteConfirm = ref(false);
+const deleteRowData = ref(null);
 
 </script>
 
@@ -1205,6 +1221,28 @@ function handleCloseRowEllipsisMenu(e) {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Dialog for Delete -->
+    <div v-if="showDeleteConfirm" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/50">
+      <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-xs flex flex-col items-center">
+        <div class="font-semibold text-lg mb-2 text-center">Delete Confirmation</div>
+        <!-- <div class="text-gray-700 text-center mb-4">Are you sure you want to delete this item?</div> -->
+        <div class="flex gap-3 mt-2">
+          <button
+            @click="confirmDelete(false)"
+            class="px-4 py-1.5 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 font-medium"
+          >
+            Cancel
+          </button>
+          <button
+            @click="confirmDelete(true)"
+            class="px-4 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 font-medium"
+          >
+            Yes, Delete
+          </button>
         </div>
       </div>
     </div>
