@@ -239,8 +239,7 @@ const outletForm = reactive({
   city: "",
   outletnumber: "",
   is_active: true,
-  clientid: localStorage.getItem("client_id"),
-  brandid: 3
+  clientid: localStorage.getItem("client_id")
 });
 
 // Add outlet to review list
