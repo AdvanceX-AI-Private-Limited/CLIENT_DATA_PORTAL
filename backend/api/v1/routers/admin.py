@@ -240,53 +240,74 @@ async def update_outlet(
     current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
+    logger.info(f"Received request to update outlet with ID {outlet_id}")
+
     is_internal_client = current_session.client_id in INTERNAL_CLIENT_IDS
+    logger.info(f"Client ID {current_session.client_id} is_internal_client={is_internal_client}")
+
     if not is_internal_client:
         is_client_same = (
             hasattr(current_session, "client_id") and 
             hasattr(outlet_update, "client_id") and 
             current_session.client_id == outlet_update.client_id
         )
-        # Only verify request for non-internal clients
-        if is_client_same:
-            if not is_internal_client:
-                verify_request(client_id=current_session.client_id, 
-                            outlet_id=outlet_id,
-                            db=db)
-    else:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Outlet id passed in params and query doesnt match"
-        )
+        logger.info(f"Client ID match check: {is_client_same}")
 
-    logger.info(f"Attempting to update outlet with ID {outlet_id}")
+        if is_client_same:
+            try:
+                verify_request(
+                    client_id=current_session.client_id, 
+                    outlet_id=outlet_id,
+                    db=db
+                )
+                logger.info(f"Request verification successful for client {current_session.client_id}")
+            except Exception as e:
+                logger.error(f"Request verification failed: {str(e)}")
+                raise HTTPException(
+                    status_code=403,
+                    detail="Unauthorized access to update outlet"
+                )
+
+    logger.info(f"Fetching outlet with ID {outlet_id}")
     db_outlet = db.query(models.Outlet).filter(models.Outlet.id == outlet_id).first()
 
     if not db_outlet:
-        logger.warning(f"Outlet with ID {outlet_id} not found")
+        logger.warning(f"Outlet with ID {outlet_id} not found in database")
         raise HTTPException(
             status_code=404,
             detail=f"Outlet with ID {outlet_id} not found"
         )
-    
+
+    logger.info(f"Checking for duplicates: aggregator={outlet_update.aggregator}, resid={outlet_update.resid}")
     existing = db.query(models.Outlet).filter(
         models.Outlet.aggregator == outlet_update.aggregator,
         models.Outlet.resid == outlet_update.resid,
         models.Outlet.id != outlet_id  # exclude current record
     ).first()
     if existing:
+        logger.warning("Duplicate outlet found with same aggregator and resid")
         raise HTTPException(
             status_code=400,
             detail="Another outlet with the same aggregator and resid already exists."
         )
 
     updated_fields = outlet_update.model_dump(exclude_unset=True)
+    logger.info(f"Updating fields: {updated_fields}")
     for field, value in updated_fields.items():
         setattr(db_outlet, field, value)
 
-    db.commit()
-    db.refresh(db_outlet)
-    logger.info(f"Successfully updated outlet with ID {outlet_id}")
+    try:
+        db.commit()
+        db.refresh(db_outlet)
+        logger.info(f"Successfully updated outlet with ID {outlet_id}")
+    except Exception as e:
+        logger.error(f"Failed to update outlet ID {outlet_id}: {str(e)}")
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail="Internal server error while updating outlet"
+        )
+
     return db_outlet
 
 @router.delete("/outlets/{outlet_id}", status_code=200)
