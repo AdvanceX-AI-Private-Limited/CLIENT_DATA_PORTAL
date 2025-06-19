@@ -128,7 +128,7 @@ async def delete_brand(
 @router.post("/outlets/", response_model=List[schemas.DisplayOutlet])
 async def create_outlet(
     outlets: List[schemas.OutletCreate], 
-    # current_session = Depends(get_current_session),
+    current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):  
     
@@ -212,6 +212,7 @@ async def get_outlets(
         
     query = db.query(models.Outlet)
 
+    # Filter by brand_id (single brand)
     if params.outlet_id is not None:
         outlet = query.filter(models.Outlet.id == params.outlet_id).first()
         if outlet is None:
@@ -240,17 +241,18 @@ async def update_outlet(
     db: Session = Depends(get_db)
 ):
     is_internal_client = current_session.client_id in INTERNAL_CLIENT_IDS
-    is_client_same = (
-        hasattr(current_session, "client_id") and 
-        hasattr(outlet_update, "client_id") and 
-        current_session.client_id == outlet_update.client_id
-    )
-    # Only verify request for non-internal clients
-    if is_client_same:
-        if not is_internal_client:
-            verify_request(client_id=current_session.client_id, 
-                        outlet_id=outlet_id,
-                        db=db)
+    if not is_internal_client:
+        is_client_same = (
+            hasattr(current_session, "client_id") and 
+            hasattr(outlet_update, "client_id") and 
+            current_session.client_id == outlet_update.client_id
+        )
+        # Only verify request for non-internal clients
+        if is_client_same:
+            if not is_internal_client:
+                verify_request(client_id=current_session.client_id, 
+                            outlet_id=outlet_id,
+                            db=db)
     else:
         raise HTTPException(
             status_code=400,
