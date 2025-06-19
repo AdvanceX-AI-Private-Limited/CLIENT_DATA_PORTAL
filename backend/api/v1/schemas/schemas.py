@@ -298,6 +298,12 @@ class UserCreate(UserBase):
         description="Associated client ID"
     )
 
+class UserQueryParams(BaseModel):
+    user_id: Optional[int] = None
+    client_id: Optional[int] = None
+    skip: int = 0
+    limit: int = 100
+
 class DisplayUser(DisplayBase):
     id: int
     username: str
@@ -305,10 +311,16 @@ class DisplayUser(DisplayBase):
     useremail: EmailStr
     is_active: bool
     created_at: datetime
-    client: DisplayClient
+    client_id: int
 
     def __str__(self):
         return f"User {self.username} ({self.useremail})"
+
+class UpdateUser(DisplayBase):
+    username: Optional[str]
+    usernumber: Optional[str]
+    useremail: Optional[str]
+    client_id: Optional[int]
 
 # ______________ SERVICES ____________________
 class ServiceBase(BaseModel):

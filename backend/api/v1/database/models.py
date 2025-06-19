@@ -184,6 +184,7 @@ class User(Base):
     useremail = Column(String(255), unique=True, nullable=False)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.now(IST))
+    updated_at = Column(DateTime, onupdate=datetime.now(IST))
     client_id = Column(Integer, ForeignKey("clients.id"), nullable=False)
 
     __table_args__ = (UniqueConstraint('usernumber', 'useremail', name='uq_number_email'),)
