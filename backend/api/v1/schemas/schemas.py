@@ -342,7 +342,12 @@ class ServiceBase(BaseModel):
 class ServiceCreate(ServiceBase):
     pass
 
-class ServiceUpdate(BaseModel):
+class ServiceQueryParams(BaseModel):
+    service_id: Optional[int] = None
+    skip: int = 0
+    limit: int = 100
+
+class UpdateService(BaseModel):
     id: int
     servicename: str
     servicevariant: str

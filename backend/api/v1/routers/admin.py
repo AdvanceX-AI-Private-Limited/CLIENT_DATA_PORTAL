@@ -614,44 +614,196 @@ async def delete_user(
 #______________________________________ Service routes ______________________________________
 @router.post("/services/", response_model=schemas.DisplayService)
 async def create_service(
-    service: schemas.ServiceCreate, 
+    services: List[schemas.ServiceCreate], 
+    current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
-    # Check if user service exists
-    existing_service = db.query(models.Service).filter(
-        (models.Service.servicename == service.servicename) &
-        (models.Service.servicename == service.servicename)
-    ).first()
-    if existing_service:
+    logger.info(f"Received request to create {len(services)} service(s) by client ID: {current_session.client_id}")
+    
+    is_internal_client = current_session.client_id in INTERNAL_CLIENT_IDS
+    if not is_internal_client:
+        created_services = []
+
+        for service in services:
+            logger.info(f"Processing service: servicename={service.servicename}, servicevariant={service.servicevariant}")
+
+            # Check if client exists
+            existing_client = db.query(models.Client).filter(
+                (models.Client.id == service.clientid)
+            ).first()
+            if not existing_client:
+                logger.warning(f"Unknown client ID: {service.clientid}")
+                raise HTTPException(
+                    status_code=400,
+                    detail="Unknown client ID passed"
+                )
+
+            # Check if service already exists
+            existing_service = db.query(models.Service).filter(
+                (models.Service.servicename == service.servicename) &
+                (models.Service.servicevariant == service.servicevariant)
+            ).first()
+            if existing_service:
+                logger.warning(f"Duplicate service found: servicename={service.servicename}, servicevariant={service.servicevariant}")
+                raise HTTPException(
+                    status_code=400,
+                    detail="Service is already registered"
+                )
+
+            db_service = models.Service(
+                servicename=service.servicename,
+                servicevariant=service.servicevariant,
+            )
+
+            db.add(db_service)
+            try:
+                db.commit()
+                db.refresh(db_service)
+                created_services.append(db_service)
+                logger.info(f"Successfully created service: id={db_service.id}, servicename={db_service.servicename}")
+            except Exception as e:
+                db.rollback()
+                logger.error(f"Error while creating service {service.servicename}: {str(e)}")
+                raise HTTPException(
+                    status_code=500,
+                    detail="Failed to create service due to internal error"
+                )
+
+        if not created_services:
+            logger.warning("No services were created. All were duplicates or failed.")
+            raise HTTPException(status_code=400, detail="No services were created. All were duplicates.")
+
+        logger.info(f"Successfully created {len(created_services)} service(s)")
+        return created_services
+    
+    else:
         raise HTTPException(
-            status_code=400,
-            detail="Service is already registered"
+            status_code=404,
+            detail="Unauthorized to use this API"
         )
-    db_service = models.Service(
-        servicename=service.servicename,
-        servicevariant=service.servicevariant
-    )
-    db.add(db_service)
-    db.commit()
-    db.refresh(db_service)
-    return db_service
+
 
 @router.get("/services/", response_model=List[schemas.DisplayService])
 async def read_services(
-    skip: int = 0, 
-    limit: int = 100,
+    params: schemas.ServiceQueryParams = Depends(),
+    current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
-    roles = db.query(models.Service).offset(skip).limit(limit).all()
-    return roles
+    logger.info(f"Service list request by client ID: {current_session.client_id} with params: {params}")
 
-@router.get("/services/{service_id}", response_model=schemas.DisplayService)
-async def read_service(
-    service_id: int, 
+    is_internal_client = current_session.client_id in INTERNAL_CLIENT_IDS
+    if is_internal_client:
+        try:
+            query = db.query(models.Service)
+            services = query.offset(params.skip).limit(params.limit).all()
+            logger.info(f"Retrieved {len(services)} service(s) with skip={params.skip}, limit={params.limit}")
+
+            return services
+
+        except Exception as e:
+            logger.error(f"Error while retrieving services: {str(e)}")
+            raise HTTPException(status_code=500, detail="Failed to retrieve services")
+    
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail="Unauthorized to use this API"
+        )
+
+
+
+@router.put("/services/{service_id}", response_model=schemas.DisplayService)
+async def update_service(
+    service_id: int,
+    service_update: schemas.UpdateService,
+    current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
-    db_service = db.query(models.Service).filter(models.Service.id == service_id).first()
-    if db_service is None:
-        raise HTTPException(status_code=404, detail="Service not found")
-    return db_service
+    logger.info(f"Received request to update service with ID {service_id}")
+
+    is_internal_client = current_session.client_id in INTERNAL_CLIENT_IDS
+    logger.info(f"Client ID {current_session.client_id} is_internal_client={is_internal_client}")
+
+    if is_internal_client:
+        logger.info(f"Fetching service with ID {service_id}")
+        db_service = db.query(models.Service).filter(models.Service.id == service_id).first()
+
+        if not db_service:
+            logger.warning(f"Service with ID {service_id} not found in database")
+            raise HTTPException(
+                status_code=404,
+                detail=f"Service with ID {service_id} not found"
+            )
+
+        logger.info(f"Checking for duplicates: servicename={service_update.servicename}")
+        existing = db.query(models.Service).filter(
+            models.Service.servicename == service_update.servicename,
+            models.Service.servicevariant == service_update.servicevariant,
+            models.Service.id != service_id  # exclude current record
+        ).first()
+        if existing:
+            logger.warning("Duplicate service found with same servicename and servicevariant")
+            raise HTTPException(
+                status_code=400,
+                detail="Another service with the same servicename and servicevariant already exists."
+            )
+
+        updated_fields = service_update.model_dump(exclude_unset=True)
+        logger.info(f"Updating fields: {updated_fields}")
+        for field, value in updated_fields.items():
+            setattr(db_service, field, value)
+
+        try:
+            db.commit()
+            db.refresh(db_service)
+            logger.info(f"Successfully updated service with ID {service_id}")
+        except Exception as e:
+            logger.error(f"Failed to update service ID {service_id}: {str(e)}")
+            db.rollback()
+            raise HTTPException(
+                status_code=500,
+                detail="Internal server error while updating service"
+            )
+
+        return db_service
+    
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail="Unauthorized to use this API"
+        )
+
+
+@router.delete("/services/{service_id}", status_code=200)
+async def delete_service(
+    service_id: int,
+    current_session = Depends(get_current_session),
+    db: Session = Depends(get_db)
+):
+    is_internal_client = current_session.client_id in INTERNAL_CLIENT_IDS
+    # Only verify request for non-internal clients
+    if is_internal_client:
+        logger.info(f"Attempting to delete service with ID {service_id}")
+        db_service = db.query(models.Service).filter(models.Service.id == service_id).first()
+
+        if not db_service:
+            logger.warning(f"Service with ID {service_id} not found for deletion")
+            raise HTTPException(
+                status_code=404,
+                detail=f"Service with ID {service_id} not found"
+            )
+
+        db.delete(db_service)
+        db.commit()
+        logger.info(f"Successfully deleted service with ID {service_id}")
+        return JSONResponse(
+            content={"message": f"Service with ID {service_id} successfully deleted"},
+            status_code=200
+        )
+    
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail="Unauthorized to use this API"
+        )
 
