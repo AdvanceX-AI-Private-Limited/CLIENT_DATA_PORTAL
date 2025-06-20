@@ -56,10 +56,10 @@ async function fetchUsers() {
   }
 }
 
-async function deleteUserById(userId) {
+async function deleteUserById(userId, username) {
   try {
     await deleteUser(userId);
-    showMessage(`User ID ${userId} deleted successfully.`, "Success", "success");
+    showMessage(`User ${username} deleted successfully.`, "Success", "success");
     fetchUsers();
   } catch (err) {
     showMessage(`Failed to delete user ID ${userId}: ${err.message}`, "Error", "error");
@@ -85,7 +85,7 @@ function handleRowAction({ action, row }) {
     editRow.value = { ...row };
     editDialogVisible.value = true;
   } else if (action.action === "delete") {
-    deleteUserById(row.id);
+    deleteUserById(row.id, row.username);
   }
 }
 
