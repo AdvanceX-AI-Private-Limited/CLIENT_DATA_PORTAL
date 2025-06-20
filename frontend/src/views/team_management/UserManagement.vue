@@ -49,6 +49,7 @@ async function fetchUsers() {
     };
     const response = await fetchUsersApi(params);
     users.value = response?.data || [];
+    console.log("Fetched users:", users.value);
   } catch (err) {
     error.value = err.message || "Failed to fetch";
   } finally {
