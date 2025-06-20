@@ -73,11 +73,11 @@ const visibleColumns = computed(() => {
 
 // Cell formatting with better type handling
 const formatCell = (value) => {
-  if (value === null || value === undefined) return '—';
+  if (value === null || value === undefined) return "—";
 
   // If value is an array, join with comma
   if (Array.isArray(value)) {
-    return value.join(', ');
+    return value.join(", ");
   }
 
   // If value is a string that looks like an array, parse & join
@@ -85,7 +85,7 @@ const formatCell = (value) => {
     try {
       const parsed = JSON.parse(value.replace(/'/g, '"'));
       if (Array.isArray(parsed)) {
-        return parsed.join(', ');
+        return parsed.join(", ");
       }
     } catch (e) {
       // Fallback...
@@ -156,7 +156,7 @@ const rowsPerPage = ref(rowsPerPageOptions[0]);
 // Parse and handle array values
 function parsePossibleArray(val) {
   if (val === null || val === undefined) return [];
-  
+
   if (typeof val === "string") {
     const trimmed = val.trim();
     if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
@@ -214,9 +214,11 @@ const searchFilteredData = computed(() => {
       // Check all columns for the search term
       return tableHeaders.value.some((header) => {
         const cellValues = parsePossibleArray(row[header]);
-        return cellValues.some((val) => 
-          val !== null && val !== undefined && 
-          String(val).toLowerCase().includes(searchTerm)
+        return cellValues.some(
+          (val) =>
+            val !== null &&
+            val !== undefined &&
+            String(val).toLowerCase().includes(searchTerm)
         );
       });
     });
@@ -291,7 +293,7 @@ const getOptionsForColumn = (header) => {
         options.push("(Empty)");
         return;
       }
-      
+
       const rawVal = row[header];
       const arrVal = parsePossibleArray(rawVal);
       options = options.concat(flattenDeep(arrVal));
@@ -393,7 +395,7 @@ function toggleRowActionMenu(idx, event) {
     } else {
       // Option 2: Try to climb DOM from button
       let el = event.target;
-      while (el && el.tagName !== 'TABLE') el = el.parentElement;
+      while (el && el.tagName !== "TABLE") el = el.parentElement;
       tableRect = el ? el.getBoundingClientRect() : null;
     }
 
@@ -408,11 +410,13 @@ function toggleRowActionMenu(idx, event) {
       if (left + MENU_WIDTH > tableRight) {
         left = tableRight - MENU_WIDTH - 8; // 8px padding so it's not flush
         // Prevent going off the table's left
-        if (left < tableRect.left + window.scrollX) left = tableRect.left + window.scrollX + 8;
+        if (left < tableRect.left + window.scrollX)
+          left = tableRect.left + window.scrollX + 8;
       }
     } else {
       // Fallback: check for window boundary
-      if (left + MENU_WIDTH > window.innerWidth - 8) left = window.innerWidth - MENU_WIDTH - 8;
+      if (left + MENU_WIDTH > window.innerWidth - 8)
+        left = window.innerWidth - MENU_WIDTH - 8;
     }
 
     dropdownPosition.value = {
@@ -437,7 +441,10 @@ function handleDataActionClick(action, row) {
 
 function confirmDelete(confirmed) {
   if (confirmed && deleteRowData.value) {
-    emit("row-action", { action: deleteRowData.value.action, row: deleteRowData.value.row });
+    emit("row-action", {
+      action: deleteRowData.value.action,
+      row: deleteRowData.value.row,
+    });
   }
   showDeleteConfirm.value = false;
   deleteRowData.value = null;
@@ -493,7 +500,7 @@ const dropdownState = ref({
 
 function openDropdown(header, event) {
   event.stopPropagation();
-  
+
   const rect = event.target.getBoundingClientRect();
   const DROPDOWN_WIDTH = 192; // matches the w-48 in Tailwind (48*4 px)
   const DROPDOWN_HEIGHT = 250; // approximate max height for dropdown; adjust as needed
@@ -531,7 +538,7 @@ function openDropdown(header, event) {
 }
 
 function closeTeleportDropdown(e) {
-  if (e.target.closest('.dropdown-filter')) return;
+  if (e.target.closest(".dropdown-filter")) return;
   dropdownState.value.openHeader = null;
 }
 
@@ -545,40 +552,42 @@ onBeforeUnmount(() => {
 // Sorting functionality
 const sortConfig = ref({
   key: null,
-  direction: 'asc'
+  direction: "asc",
 });
 
 function sortTable(key) {
   if (sortConfig.value.key === key) {
-    sortConfig.value.direction = sortConfig.value.direction === 'asc' ? 'desc' : 'asc';
+    sortConfig.value.direction = sortConfig.value.direction === "asc" ? "desc" : "asc";
   } else {
     sortConfig.value.key = key;
-    sortConfig.value.direction = 'asc';
+    sortConfig.value.direction = "asc";
   }
 }
 
 // Apply sorting to data
 const sortedData = computed(() => {
   if (!sortConfig.value.key) return filteredData.value;
-  
+
   return [...filteredData.value].sort((a, b) => {
     const aValue = a[sortConfig.value.key];
     const bValue = b[sortConfig.value.key];
-    
+
     // Handle null/undefined values
-    if (aValue === null || aValue === undefined) return sortConfig.value.direction === 'asc' ? -1 : 1;
-    if (bValue === null || bValue === undefined) return sortConfig.value.direction === 'asc' ? 1 : -1;
-    
+    if (aValue === null || aValue === undefined)
+      return sortConfig.value.direction === "asc" ? -1 : 1;
+    if (bValue === null || bValue === undefined)
+      return sortConfig.value.direction === "asc" ? 1 : -1;
+
     // Compare based on type
-    if (typeof aValue === 'number' && typeof bValue === 'number') {
-      return sortConfig.value.direction === 'asc' ? aValue - bValue : bValue - aValue;
+    if (typeof aValue === "number" && typeof bValue === "number") {
+      return sortConfig.value.direction === "asc" ? aValue - bValue : bValue - aValue;
     }
-    
+
     // Default string comparison
     const aStr = String(aValue).toLowerCase();
     const bStr = String(bValue).toLowerCase();
-    
-    return sortConfig.value.direction === 'asc' 
+
+    return sortConfig.value.direction === "asc"
       ? aStr.localeCompare(bStr)
       : bStr.localeCompare(aStr);
   });
@@ -591,7 +600,8 @@ const hasHorizontalScroll = ref(false);
 function checkForScrollbars() {
   nextTick(() => {
     if (tableContainer.value) {
-      hasHorizontalScroll.value = tableContainer.value.scrollWidth > tableContainer.value.clientWidth;
+      hasHorizontalScroll.value =
+        tableContainer.value.scrollWidth > tableContainer.value.clientWidth;
     }
   });
 }
@@ -599,23 +609,23 @@ function checkForScrollbars() {
 watch([width, () => props.table_data], checkForScrollbars);
 onMounted(() => {
   checkForScrollbars();
-  window.addEventListener('resize', checkForScrollbars);
+  window.addEventListener("resize", checkForScrollbars);
 });
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', checkForScrollbars);
+  window.removeEventListener("resize", checkForScrollbars);
 });
 
-const showScrollMsg = ref(true)
+const showScrollMsg = ref(true);
 
 onMounted(() => {
   setTimeout(() => {
-    showScrollMsg.value = false
-  }, 3000)
+    showScrollMsg.value = false;
+  }, 3000);
 });
 
 const rowActionDropdownState = ref({
   rowIdx: null, // which row
-  position: { top: 0, left: 0 }
+  position: { top: 0, left: 0 },
 });
 
 function openRowActionDropdown(rowIdx, event) {
@@ -628,22 +638,23 @@ function openRowActionDropdown(rowIdx, event) {
   let top = rect.bottom + window.scrollY;
 
   // Make sure the menu does not go off-screen (optional)
-  if (left + MENU_WIDTH > window.innerWidth - 8) left = window.innerWidth - MENU_WIDTH - 8;
+  if (left + MENU_WIDTH > window.innerWidth - 8)
+    left = window.innerWidth - MENU_WIDTH - 8;
   if (top + MENU_HEIGHT > window.innerHeight) top = window.innerHeight - MENU_HEIGHT - 8;
 
   rowActionDropdownState.value = {
     rowIdx,
-    position: { top, left }
+    position: { top, left },
   };
 }
 
 const rowActionsMenuRef = ref();
 
 onMounted(() => {
-  window.addEventListener('click', handleCloseRowEllipsisMenu);
+  window.addEventListener("click", handleCloseRowEllipsisMenu);
 });
 onBeforeUnmount(() => {
-  window.removeEventListener('click', handleCloseRowEllipsisMenu);
+  window.removeEventListener("click", handleCloseRowEllipsisMenu);
 });
 
 function handleCloseRowEllipsisMenu(e) {
@@ -654,17 +665,19 @@ function handleCloseRowEllipsisMenu(e) {
 // Confirmation dialog state
 const showDeleteConfirm = ref(false);
 const deleteRowData = ref(null);
-
 </script>
 
 <template>
   <div class="w-full flex-col" :class="{ 'rounded-xl p-2': !error && !loading }">
     <!-- Header and controls section -->
     <div class="mb-4 flex flex-col">
-      <div v-if="!loading && !error" class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
+      <div
+        v-if="!loading && !error"
+        class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2"
+      >
         <h2 v-if="title" class="text-2xl font-bold text-gray-800 pb-2.5">{{ title }}</h2>
         <!-- Action buttons -->
-        <div v-if="action_buttons" class="flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
+        <div v-if="action_buttons && title" class="flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
           <button
             v-if="!loading"
             v-for="(action, index) in action_buttons"
@@ -672,7 +685,9 @@ const deleteRowData = ref(null);
             @click="handleActionClick(action)"
             :class="[
               'px-3 py-1.5 text-sm font-medium text-white rounded-md shadow-sm transition-all duration-150 focus:outline-none',
-              action.color ? `bg-${action.color}-500 hover:bg-${action.color}-600 focus:ring-${action.color}-500` : 'bg-gray-600 hover:bg-gray-700',
+              action.color
+                ? `bg-${action.color}-500 hover:bg-${action.color}-600 focus:ring-${action.color}-500`
+                : 'bg-gray-600 hover:bg-gray-700',
               action.class || '',
             ]"
           >
@@ -680,11 +695,13 @@ const deleteRowData = ref(null);
               <component :is="action.icon" v-if="action.icon" class="w-4 h-4" />
               {{ action.name }}
             </span>
-          </button>          
+          </button>
         </div>
       </div>
 
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3">
+      <div
+        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3"
+      >
         <!-- Global Search -->
         <div v-if="!loading && !error" class="relative w-full sm:w-64 md:w-72">
           <input
@@ -710,40 +727,85 @@ const deleteRowData = ref(null);
         </div>
 
         <!-- Title and action buttons -->
-        <div class="flex flex-col sm:flex-row sm:items-center gap-2">    
-        </div>
-        <!-- CSV Download button -->
-        <button
-          v-if="csv_download && !loading && !error && searchFilteredData.length > 0"
-          class="px-3 py-1.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md shadow-sm hover:shadow-md transition-all duration-150 focus:ring-offset-2 focus:outline-none"
-          @click="downloadCSV"
-        >
-          <span class="flex items-center gap-1.5">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-            </svg>
-            Export&nbsp;CSV
-          </span>
-        </button>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+          <!-- CSV Download button -->
+          <button
+            v-if="csv_download && !loading && !error && searchFilteredData.length > 0"
+            class="px-3 py-1.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md shadow-sm hover:shadow-md transition-all duration-150 focus:ring-offset-2 focus:outline-none"
+            @click="downloadCSV"
+          >
+            <span class="flex items-center gap-1.5">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              Export&nbsp;CSV
+            </span>
+          </button>
 
+          <div
+            v-if="action_buttons && !title"
+            class="flex flex-wrap items-center gap-2 mt-2 sm:mt-0"
+          >
+            <button
+              v-if="!loading"
+              v-for="(action, index) in action_buttons"
+              :key="index"
+              @click="handleActionClick(action)"
+              :class="[
+                'px-3 py-1.5 text-sm font-medium text-white rounded-md shadow-sm transition-all duration-150 focus:outline-none',
+                action.color
+                  ? `bg-${action.color}-500 hover:bg-${action.color}-600 focus:ring-${action.color}-500`
+                  : 'bg-gray-600 hover:bg-gray-700',
+                action.class || '',
+              ]"
+            >
+              <span class="flex items-center gap-1.5">
+                <component :is="action.icon" v-if="action.icon" class="w-4 h-4" />
+                {{ action.name }}
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Applied filters summary -->
-      <div v-if="Object.values(filters).some(f => f.selected.size > 0)" class="flex flex-wrap gap-2 mt-3">
+      <div
+        v-if="Object.values(filters).some((f) => f.selected.size > 0)"
+        class="flex flex-wrap gap-2 mt-3"
+      >
         <div
           v-for="(filter, header) in filters"
           :key="header"
           v-show="filter.selected.size > 0"
           class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-blue-50 text-blue-700"
         >
-          {{ props.table_headers?.[header] || header }}: {{ filter.selected.size }} filters
+          {{ props.table_headers?.[header] || header }}:
+          {{ filter.selected.size }} filters
           <button
             @click="filters[header].selected.clear()"
             class="ml-1 text-blue-500 hover:text-blue-700"
             title="Clear filter"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-3 w-3"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              />
             </svg>
           </button>
         </div>
@@ -770,9 +832,11 @@ const deleteRowData = ref(null);
             class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-        
+
         <!-- Check All box -->
-        <label class="flex items-center space-x-2 text-sm font-medium mb-2 pb-2 border-b border-gray-200">
+        <label
+          class="flex items-center space-x-2 text-sm font-medium mb-2 pb-2 border-b border-gray-200"
+        >
           <input
             type="checkbox"
             :checked="isAllChecked(dropdownState.openHeader)"
@@ -782,10 +846,16 @@ const deleteRowData = ref(null);
           />
           <span>Select All</span>
         </label>
-        
+
         <!-- Option checkboxes -->
-        <div class="max-h-48 overflow-y-auto space-y-1.5 pr-1" style="scrollbar-width: thin">
-          <div v-if="filteredOptionsForColumn(dropdownState.openHeader).length === 0" class="text-sm text-gray-500 italic py-1">
+        <div
+          class="max-h-48 overflow-y-auto space-y-1.5 pr-1"
+          style="scrollbar-width: thin"
+        >
+          <div
+            v-if="filteredOptionsForColumn(dropdownState.openHeader).length === 0"
+            class="text-sm text-gray-500 italic py-1"
+          >
             No options match your filter
           </div>
           <label
@@ -810,7 +880,13 @@ const deleteRowData = ref(null);
       <div
         v-if="rowActionDropdownState.rowIdx !== null"
         ref="rowActionsMenuRef"
-        :style="{ position: 'absolute', top: rowActionDropdownState.position.top + 'px', left: rowActionDropdownState.position.left + 'px', minWidth: '10rem', zIndex: 9999 }"
+        :style="{
+          position: 'absolute',
+          top: rowActionDropdownState.position.top + 'px',
+          left: rowActionDropdownState.position.left + 'px',
+          minWidth: '10rem',
+          zIndex: 9999,
+        }"
         class="z-[9999] py-1.5 bg-white border border-gray-100 rounded-lg shadow-lg animate-fade-in"
         @click.stop
       >
@@ -831,55 +907,117 @@ const deleteRowData = ref(null);
     </Teleport>
 
     <!-- Main content area -->
-    <div 
+    <div
       class="overflow-hidden p-1"
       :class="[
-        { 'min-h-300px flex items-center justify-center': loading || error || table_data.length === 0 },
+        {
+          'min-h-300px flex items-center justify-center':
+            loading || error || table_data.length === 0,
+        },
         { 'bg-white border border-gray-200 rounded-lg shadow-sm': !error && !loading },
       ]"
     >
-    
       <!-- Loading state -->
-      <div v-if="loading" class="flex flex-col items-center justify-center py-8 text-gray-500">
-        <svg class="animate-spin h-8 w-8 text-blue-500 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      <div
+        v-if="loading"
+        class="flex flex-col items-center justify-center py-8 text-gray-500"
+      >
+        <svg
+          class="animate-spin h-8 w-8 text-blue-500 mb-3"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
         </svg>
         <p class="text-sm font-medium">Loading Table...</p>
       </div>
-      
+
       <!-- Error state -->
-      <div v-else-if="error" class="flex flex-col items-center justify-center py-8 text-red-600">
+      <div
+        v-else-if="error"
+        class="flex flex-col items-center justify-center py-8 text-red-600"
+      >
         <svg class="h-12 w-12 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
         </svg>
         <p class="text-sm font-medium">{{ error }}</p>
-        <button 
+        <button
           @click="$emit('retry')"
           class="mt-3 px-4 py-2 bg-red-50 text-red-600 rounded-md text-sm font-medium hover:bg-red-100"
         >
           Retry
         </button>
       </div>
-      
+
       <!-- Empty state -->
-      <div v-else-if="table_data.length === 0" class="flex flex-col items-center justify-center py-10 text-gray-500">
-        <svg class="h-16 w-16 mb-3 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      <div
+        v-else-if="table_data.length === 0"
+        class="flex flex-col items-center justify-center py-10 text-gray-500"
+      >
+        <svg
+          class="h-16 w-16 mb-3 text-gray-300"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+          />
         </svg>
         <p class="text-base font-medium mb-1">{{ empty_state_message }}</p>
         <p class="text-sm text-gray-400">No data is currently available for display</p>
       </div>
-      
+
       <!-- Empty search/filter results -->
-      <div v-else-if="searchFilteredData.length === 0" class="flex flex-col items-center justify-center py-10 text-gray-500">
-        <svg class="h-12 w-12 mb-3 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+      <div
+        v-else-if="searchFilteredData.length === 0"
+        class="flex flex-col items-center justify-center py-10 text-gray-500"
+      >
+        <svg
+          class="h-12 w-12 mb-3 text-gray-300"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+          />
         </svg>
         <p class="text-base font-medium mb-1">No matching results</p>
         <p class="text-sm text-gray-400">Try adjusting your search or filters</p>
-        <button 
-          @click="() => { globalSearch = ''; Object.keys(filters).forEach(h => filters[h].selected.clear()); }"
+        <button
+          @click="
+            () => {
+              globalSearch = '';
+              Object.keys(filters).forEach((h) => filters[h].selected.clear());
+            }
+          "
           class="mt-3 px-4 py-2 bg-blue-50 text-blue-600 rounded-md text-sm font-medium hover:bg-blue-100"
         >
           Clear all filters
@@ -890,18 +1028,29 @@ const deleteRowData = ref(null);
       <div v-else>
         <!-- Horizontal scroll indicator if needed -->
         <transition name="fade">
-        <div v-if="hasHorizontalScroll && showScrollMsg" class="border-b border-gray-200 bg-blue-50 py-1.5 px-4 text-xs text-blue-700 flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-          </svg>
-          Scroll horizontally to see more columns
-        </div>
+          <div
+            v-if="hasHorizontalScroll && showScrollMsg"
+            class="border-b border-gray-200 bg-blue-50 py-1.5 px-4 text-xs text-blue-700 flex items-center"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 mr-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+              />
+            </svg>
+            Scroll horizontally to see more columns
+          </div>
         </transition>
-        
-        <div 
-          class="overflow-x-auto" 
-          ref="tableContainer"
-        >
+
+        <div class="overflow-x-auto" ref="tableContainer">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
@@ -911,12 +1060,12 @@ const deleteRowData = ref(null);
                   :class="[
                     'px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 bg-gray-50 align-top',
                     isSmallScreen && !visibleColumns.includes(header) ? 'hidden' : '',
-                    sortConfig.key === header ? 'text-blue-600' : ''
+                    sortConfig.key === header ? 'text-blue-600' : '',
                   ]"
                 >
                   <div class="flex items-center group">
                     <!-- Sort button -->
-                    <button 
+                    <button
                       @click="sortTable(header)"
                       class="flex items-center font-bold hover:text-blue-600 focus:outline-none"
                     >
@@ -924,36 +1073,38 @@ const deleteRowData = ref(null);
                         {{ props.table_headers[header] }}
                       </span>
                       <span v-else>{{ header }}</span>
-                      
+
                       <!-- Sort indicator -->
                       <span class="ml-1 inline-flex flex-none">
-                        <svg 
+                        <svg
                           :class="[
                             'h-4 w-4 transition-opacity duration-150',
-                            sortConfig.key === header 
-                              ? 'opacity-100' 
-                              : 'opacity-0 group-hover:opacity-50'
+                            sortConfig.key === header
+                              ? 'opacity-100'
+                              : 'opacity-0 group-hover:opacity-50',
                           ]"
-                          xmlns="http://www.w3.org/2000/svg" 
-                          viewBox="0 0 20 20" 
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
                           fill="currentColor"
                         >
-                          <path 
-                            v-if="sortConfig.key === header && sortConfig.direction === 'asc'"
-                            fill-rule="evenodd" 
-                            d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L10 4.414 6.707 7.707a1 1 0 01-1.414 0z" 
+                          <path
+                            v-if="
+                              sortConfig.key === header && sortConfig.direction === 'asc'
+                            "
+                            fill-rule="evenodd"
+                            d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L10 4.414 6.707 7.707a1 1 0 01-1.414 0z"
                             clip-rule="evenodd"
                           />
-                          <path 
+                          <path
                             v-else
-                            fill-rule="evenodd" 
-                            d="M14.707 12.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L10 15.586l3.293-3.293a1 1 0 011.414 0z" 
+                            fill-rule="evenodd"
+                            d="M14.707 12.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L10 15.586l3.293-3.293a1 1 0 011.414 0z"
                             clip-rule="evenodd"
                           />
                         </svg>
                       </span>
                     </button>
-                    
+
                     <!-- Filter button -->
                     <button
                       type="button"
@@ -961,7 +1112,7 @@ const deleteRowData = ref(null);
                       class="ml-2 focus:outline-none p-0.5 rounded hover:bg-gray-200"
                       :id="'dropdown-ref-' + header"
                       aria-haspopup="true"
-                      :class="{'text-blue-500': filters[header]?.selected.size > 0}"
+                      :class="{ 'text-blue-500': filters[header]?.selected.size > 0 }"
                     >
                       <svg
                         width="16"
@@ -975,7 +1126,7 @@ const deleteRowData = ref(null);
                     </button>
                   </div>
                 </th>
-                
+
                 <!-- Actions column -->
                 <th
                   v-if="data_action_buttons && data_action_buttons.length > 0"
@@ -985,14 +1136,14 @@ const deleteRowData = ref(null);
                 </th>
               </tr>
             </thead>
-            
+
             <tbody class="bg-white divide-y divide-gray-200">
               <tr
                 v-for="(row, rowIdx) in sortedData"
                 :key="rowIdx"
                 :class="[
                   'hover:bg-blue-50 transition-colors duration-150',
-                  rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                  rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50',
                 ]"
                 @click="handleRowClick(row)"
                 class="cursor-pointer"
@@ -1003,7 +1154,7 @@ const deleteRowData = ref(null);
                   :class="[
                     'px-4 py-3 text-sm text-gray-700 align-middle',
                     getCellClass(row[header]),
-                    isSmallScreen && !visibleColumns.includes(header) ? 'hidden' : ''
+                    isSmallScreen && !visibleColumns.includes(header) ? 'hidden' : '',
                   ]"
                 >
                   {{ formatCell(row[header]) }}
@@ -1013,7 +1164,7 @@ const deleteRowData = ref(null);
                 <td
                   v-if="data_action_buttons && data_action_buttons.length > 0"
                   class="px-4 py-3 align-middle whitespace-nowrap"
-                  style="position: relative;"
+                  style="position: relative"
                   @click.stop
                 >
                   <template v-if="data_action_buttons.length === 1">
@@ -1053,7 +1204,11 @@ const deleteRowData = ref(null);
                           class="flex items-center w-full text-left gap-2 px-4 py-2 text-sm text-gray-700 bg-white border-none hover:bg-blue-50 transition duration-75 font-medium cursor-pointer"
                           :class="action.class"
                         >
-                          <component v-if="action.icon" :is="action.icon" class="w-4 h-4" />
+                          <component
+                            v-if="action.icon"
+                            :is="action.icon"
+                            class="w-4 h-4"
+                          />
                           {{ action.name }}
                         </button>
                       </div>
@@ -1069,9 +1224,13 @@ const deleteRowData = ref(null);
         <div class="border-t border-gray-200 bg-gray-50 px-3 py-2">
           <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
             <!-- Rows per page selector and record count -->
-            <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 order-2 sm:order-1">
+            <div
+              class="flex flex-wrap items-center gap-4 text-sm text-gray-600 order-2 sm:order-1"
+            >
               <div class="flex items-center gap-2">
-                <label for="rows-per-page" class="whitespace-nowrap">Rows per page:</label>
+                <label for="rows-per-page" class="whitespace-nowrap"
+                  >Rows per page:</label
+                >
                 <select
                   id="rows-per-page"
                   v-model="rowsPerPage"
@@ -1091,9 +1250,23 @@ const deleteRowData = ref(null);
               <div class="text-sm text-gray-600">
                 <span class="hidden sm:inline-block">Showing </span>
                 <span class="font-medium">
-                  {{ searchFilteredData.length === 0 ? 0 : (currentPage - 1) * (rowsPerPage === 'all' ? searchFilteredData.length : rowsPerPage) + 1 }}
+                  {{
+                    searchFilteredData.length === 0
+                      ? 0
+                      : (currentPage - 1) *
+                          (rowsPerPage === "all"
+                            ? searchFilteredData.length
+                            : rowsPerPage) +
+                        1
+                  }}
                   -
-                  {{ Math.min(currentPage * (rowsPerPage === 'all' ? searchFilteredData.length : rowsPerPage), searchFilteredData.length) }}
+                  {{
+                    Math.min(
+                      currentPage *
+                        (rowsPerPage === "all" ? searchFilteredData.length : rowsPerPage),
+                      searchFilteredData.length
+                    )
+                  }}
                 </span>
                 <span> of </span>
                 <span class="font-medium">{{ searchFilteredData.length }}</span>
@@ -1108,29 +1281,51 @@ const deleteRowData = ref(null);
                 <button
                   @click="goToPage(1)"
                   :disabled="currentPage === 1"
-                  :class="{'opacity-50 cursor-not-allowed': currentPage === 1}"
+                  :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
                   class="p-1 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   aria-label="First page"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-                    <path fill-rule="evenodd" d="M9.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414z"
+                      clip-rule="evenodd"
+                    />
+                    <path
+                      fill-rule="evenodd"
+                      d="M9.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                 </button>
-                
+
                 <button
                   @click="previousPage"
                   :disabled="!canGoPrevious"
-                  :class="{'opacity-50 cursor-not-allowed': !canGoPrevious}"
+                  :class="{ 'opacity-50 cursor-not-allowed': !canGoPrevious }"
                   class="p-1 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   aria-label="Previous page"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                 </button>
               </div>
-              
+
               <!-- Page number selector -->
               <div class="flex items-center gap-1.5">
                 <select
@@ -1138,15 +1333,11 @@ const deleteRowData = ref(null);
                   v-model="currentPage"
                   class="pe-5 block appearance-none bg-white border border-gray-300 px-2 py-1 pr-7 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option
-                    v-for="page in totalPages"
-                    :key="page"
-                    :value="page"
-                  >
+                  <option v-for="page in totalPages" :key="page" :value="page">
                     {{ page }} of {{ totalPages }}
                   </option>
                 </select>
-                
+
                 <div v-else class="flex gap-1">
                   <button
                     v-for="page in totalPages"
@@ -1163,35 +1354,57 @@ const deleteRowData = ref(null);
                   </button>
                 </div>
               </div>
-              
+
               <!-- Next page buttons -->
               <div class="hidden sm:flex items-center gap-2">
                 <button
                   @click="nextPage"
                   :disabled="!canGoNext"
-                  :class="{'opacity-50 cursor-not-allowed': !canGoNext}"
+                  :class="{ 'opacity-50 cursor-not-allowed': !canGoNext }"
                   class="p-1 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   aria-label="Next page"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                 </button>
-                
+
                 <button
                   @click="goToPage(totalPages)"
                   :disabled="currentPage === totalPages"
-                  :class="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
+                  :class="{ 'opacity-50 cursor-not-allowed': currentPage === totalPages }"
                   class="p-1 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   aria-label="Last page"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 6.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                    <path fill-rule="evenodd" d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-3.293a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 6.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z"
+                      clip-rule="evenodd"
+                    />
+                    <path
+                      fill-rule="evenodd"
+                      d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-3.293a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                 </button>
               </div>
-              
+
               <!-- Mobile navigation -->
               <div class="flex sm:hidden items-center gap-2">
                 <button
@@ -1199,9 +1412,9 @@ const deleteRowData = ref(null);
                   :disabled="!canGoPrevious"
                   :class="[
                     'px-3 py-1.5 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500',
-                    canGoPrevious 
-                      ? 'border-gray-300 hover:bg-gray-100' 
-                      : 'opacity-50 cursor-not-allowed border-gray-200'
+                    canGoPrevious
+                      ? 'border-gray-300 hover:bg-gray-100'
+                      : 'opacity-50 cursor-not-allowed border-gray-200',
                   ]"
                 >
                   Prev
@@ -1211,9 +1424,9 @@ const deleteRowData = ref(null);
                   :disabled="!canGoNext"
                   :class="[
                     'px-3 py-1.5 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500',
-                    canGoNext 
-                      ? 'border-gray-300 hover:bg-gray-100' 
-                      : 'opacity-50 cursor-not-allowed border-gray-200'
+                    canGoNext
+                      ? 'border-gray-300 hover:bg-gray-100'
+                      : 'opacity-50 cursor-not-allowed border-gray-200',
                   ]"
                 >
                   Next
@@ -1226,8 +1439,13 @@ const deleteRowData = ref(null);
     </div>
 
     <!-- Confirmation Dialog for Delete -->
-    <div v-if="showDeleteConfirm" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/50">
-      <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-xs flex flex-col items-center">
+    <div
+      v-if="showDeleteConfirm"
+      class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/50"
+    >
+      <div
+        class="bg-white rounded-lg shadow-lg p-6 w-full max-w-xs flex flex-col items-center"
+      >
         <div class="font-semibold text-lg mb-2 text-center">Delete Confirmation</div>
         <!-- <div class="text-gray-700 text-center mb-4">Are you sure you want to delete this item?</div> -->
         <div class="flex gap-3 mt-2">
@@ -1263,7 +1481,8 @@ const deleteRowData = ref(null);
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -1324,11 +1543,11 @@ const deleteRowData = ref(null);
   .flex-col-mobile {
     flex-direction: column;
   }
-  
+
   .w-full-mobile {
     width: 100%;
   }
-  
+
   .mt-3-mobile {
     margin-top: 0.75rem;
   }
@@ -1357,7 +1576,7 @@ const deleteRowData = ref(null);
 }
 
 .tooltip:hover::before {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 100%;
   left: 50%;
@@ -1380,29 +1599,33 @@ const deleteRowData = ref(null);
   .no-print {
     display: none !important;
   }
-  
+
   * {
     box-shadow: none !important;
   }
-  
+
   table {
     width: 100% !important;
     border-collapse: collapse !important;
   }
-  
-  th, td {
+
+  th,
+  td {
     border: 1px solid #ddd !important;
     padding: 8px !important;
   }
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.5s;
 }
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
-.fade-enter-to, .fade-leave-from {
+.fade-enter-to,
+.fade-leave-from {
   opacity: 1;
 }
 </style>

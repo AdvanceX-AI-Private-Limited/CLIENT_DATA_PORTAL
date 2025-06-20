@@ -91,7 +91,7 @@ watch(() => route.fullPath, () => {
 </script>
 
 <template>
-  <div class="breadcrumb-root w-full py-3 mb-5">
+  <div class="breadcrumb-root w-full py-3 mb-1">
     <!-- Error -->
     <div v-if="error" class="text-red-600 mb-2 text-sm">
       <span>Breadcrumb error: {{ error }}</span>

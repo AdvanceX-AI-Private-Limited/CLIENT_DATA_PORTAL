@@ -386,8 +386,8 @@ async function handleUpdateApi(payload) {
 <template>
   <Breadcrumb />
 
+    <!-- title="Outlet Management" -->
   <DataTable
-    title="Outlet Management"
     :table_data="outlets"
     :columns="columns"
     :loading="loading"
@@ -395,9 +395,10 @@ async function handleUpdateApi(payload) {
     :table_headers="mapHeaders"
     :action_buttons=" [
       {
-        name: 'Add Outlets',
+        name: 'Add&nbsp;Outlets',
         onClick: showAddOutletPopup,
         action: 'add_outlets',
+        icon: PlusIcon,
       },
     ]"
     :data_action_buttons="dataActionButtons"

@@ -272,8 +272,8 @@ watch(
 <template>
   <Breadcrumb />
 
+    <!-- title="Users Management" -->
   <DataTable
-    title="Users Management"
     :table_data="users"
     :columns="columns"
     :loading="loading"
@@ -281,7 +281,7 @@ watch(
     :table_headers="mapHeaders"
     :action_buttons=" [
       {
-        name: 'Add Users',
+        name: 'Add&nbsp;Users',
         onClick: showcreateUserPopup,
         action: 'add_users',
       },
