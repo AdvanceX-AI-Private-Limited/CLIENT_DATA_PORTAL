@@ -1,6 +1,5 @@
 <script setup>
 import { reactive, watch, ref, computed } from "vue";
-import { updateOutlet } from "@/composables/api/brandManagementApi";
 import { useMessageDialogStore } from '@/stores/messageDialog';
 
 const dialog = useMessageDialogStore();
@@ -16,9 +15,21 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  apiError: {
+    type: null,
+    default: false,
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  apiSuccess: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const emit = defineEmits(["close", "save"]);
+const emit = defineEmits(["close", "save", "submit"]);
 
 const form = reactive({});
 const originalRow = ref(null);
@@ -42,10 +53,6 @@ const editableKeys = computed(() =>
     )
 );
 
-const updateApiError = ref(null);
-const loading = ref(false);
-const updateApiSuccess = ref(false);
-
 function validateForm() {
   // Basic validation: check for empty required fields
   for (const key of editableKeys.value) {
@@ -63,54 +70,6 @@ function isFormChanged() {
   return editableKeys.value.some(key => form[key] !== originalRow.value[key]);
 }
 
-async function handleUpdateApi() {
-  if (!validateForm()) return;
-
-  if (!isFormChanged()) {
-    showError("No changes detected. Please modify at least one field before saving.");
-    return;
-  }
-
-  loading.value = true;
-  updateApiError.value = null;
-  updateApiSuccess.value = false;
-
-  const payload = {};
-  editableKeys.value.forEach(key => {
-    payload[key] = form[key];
-  });
-  payload.client_id = props.row.client_id;
-  payload['brand_id'] = props.row.brand_id;
-
-  try {
-    const params = { outlet_id: props.row.id, payload };
-    console.log("Updating outlet with params:", params);
-    const response = await updateOutlet(params);
-
-    if (response.status === 200) {
-      updateApiSuccess.value = true;
-      console.log("Update successful:", response.data);
-      emit("save", response);
-      emit("close");
-    } else {
-      // Handle non-200 but valid responses
-      showError(response?.data?.message || "Unexpected response from server.");
-    }
-  } catch (err) {
-    // Handle network or API errors
-    let errorMsg = "Failed to update. Please try again.";
-    if (err?.response?.data?.message) {
-      errorMsg = err.response.data.message;
-    } else if (err?.message) {
-      errorMsg = err.message;
-    }
-    updateApiError.value = errorMsg;
-    showError(errorMsg);
-  } finally {
-    loading.value = false;
-  }
-}
-
 function showMessage(message, title = "Message", icon = "info") {
   dialog.show({
     message: message,
@@ -125,6 +84,22 @@ function showError(message, title = "Error") {
     title: title,
     icon: "error"
   });
+}
+
+function submitWithParams() {
+  if (!validateForm()) return;
+
+  if (!isFormChanged()) {
+    showError("No changes detected. Please modify at least one field before saving.");
+    return;
+  }
+
+  const payload = {};
+  editableKeys.value.forEach(key => {
+    payload[key] = form[key];
+  });
+
+  emit("submit", payload);
 }
 
 </script>
@@ -164,7 +139,7 @@ function showError(message, title = "Error") {
       </div>
 
       <!-- Modal Form -->
-      <form @submit.prevent="handleUpdateApi" class="px-6 pt-6 pb-5 space-y-6">
+      <form @submit.prevent="submitWithParams" class="px-6 pt-6 pb-5 space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div
             v-for="key in editableKeys"
@@ -201,8 +176,8 @@ function showError(message, title = "Error") {
           </div>
         </div>
 
-        <div v-if="updateApiError" class="text-red-600 text-sm mt-2">
-          {{ updateApiError }}
+        <div v-if="apiError" class="text-red-600 text-sm mt-2">
+          {{ apiError }}
         </div>
 
         <div class="flex justify-end gap-3 pt-4 border-t border-slate-200">

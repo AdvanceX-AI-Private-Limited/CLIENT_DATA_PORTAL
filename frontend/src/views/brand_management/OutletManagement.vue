@@ -3,10 +3,14 @@ import { ref, onMounted , reactive, watch } from "vue";
 import Breadcrumb from "@/components/Breadcrumb.vue";
 import DataTable from "@/components/DataTables/DataTable.vue";
 import MessageDialog from "@/components/MessageDialog.vue";
-import EditOutletDialog from "@/components/OutletManagement/EditOutletDialog.vue";
+import EditDialog from "@/components/OutletManagement/EditDialog.vue";
 import AddUsersPopup from "@/components/Mapping/AddUsersPopup.vue";
 import { fetchOutlets as fetchOutletsApi, deleteOutlet, addOutlet } from "@/composables/api/brandManagementApi";
 import { PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
+import { useMessageDialogStore } from '@/stores/messageDialog';
+import { updateOutlet } from "@/composables/api/brandManagementApi";
+
+const dialog = useMessageDialogStore();
 
 console.log("Current user email:", localStorage.getItem("email"));
 console.log("Current user client_id:", localStorage.getItem("client_id"));
@@ -131,6 +135,13 @@ function handleEditSave(editedData) {
   editDialogVisible.value = false;
   fetchOutlets();
 }
+
+watch(editDialogVisible, (newValue) => {
+  if (!newValue) {
+    updateApiError.value = null;
+    updateApiSuccess.value = false;
+  }
+});
 
 onMounted(() => {
   fetchOutlets();
@@ -323,6 +334,53 @@ watch(
   },
   { immediate: true }
 );
+
+function showError(message, title = "Error") {
+  dialog.show({
+    message: message,
+    title: title,
+    icon: "error"
+  });
+}
+
+const updateApiError = ref(null);
+const updateApiSuccess = ref(false);
+
+async function handleUpdateApi(payload) {
+  loading.value = true;
+  updateApiError.value = null;
+  updateApiSuccess.value = false;
+
+  console.log("Edit row:", editRow.value);
+  payload['client_id'] = editRow.value.client_id;
+  console.log("Submitting update with params:", payload);
+
+  try {
+    const params = { outlet_id: editRow.value.id, payload };
+    console.log("Updating outlet with params:", params);
+    const response = await updateOutlet(params);
+
+    if (response.status === 200) {
+      updateApiSuccess.value = true;
+      console.log("Update successful:", response.data);
+      handleEditSave(response.data);
+    } else {
+      showError(response?.data?.message || "Unexpected response from server.");
+    }
+  } catch (err) {
+    // Handle network or API errors
+    let errorMsg = "Failed to update. Please try again.";
+    if (err?.response?.data?.message) {
+      errorMsg = err.response.data.message;
+    } else if (err?.message) {
+      errorMsg = err.message;
+    }
+    updateApiError.value = errorMsg;
+    showError(errorMsg);
+  } finally {
+    loading.value = false;
+  }
+}
 </script>
 
 <template>
@@ -356,13 +414,18 @@ watch(
     @close="closeMessageDialog"
   />
 
-  <EditOutletDialog
+  <EditDialog
     :visible="editDialogVisible"
     :row="editRow"
     :edit-allowed="editAllowed"
     :map-headers="mapHeaders"
     @close="editDialogVisible = false"
     @save="handleEditSave"
+    @submit="handleUpdateApi"
+    :loading="loading"
+    :api-error="updateApiError"
+    :api-success="updateApiSuccess"
+    :function-call="handleUpdateApi"
   />
 
   <AddUsersPopup

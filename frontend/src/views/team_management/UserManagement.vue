@@ -3,7 +3,7 @@ import { ref, onMounted, reactive, watch, computed } from "vue";
 import Breadcrumb from "@/components/Breadcrumb.vue";
 import DataTable from "@/components/DataTables/DataTable.vue";
 import MessageDialog from "@/components/MessageDialog.vue";
-import EditOutletDialog from "@/components/OutletManagement/EditOutletDialog.vue";
+import EditDialog from "@/components/OutletManagement/EditDialog.vue";
 import AddUsersPopup from "@/components/Mapping/AddUsersPopup.vue";
 import { fetchUsers as fetchUsersApi, deleteUser, createUser } from "@/composables/api/teamManagement";
 import { PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
@@ -253,7 +253,7 @@ watch(
     @close="closeMessageDialog"
   />
 
-  <EditOutletDialog
+  <EditDialog
     :visible="editDialogVisible"
     :row="editRow"
     :edit-allowed="editAllowed"
