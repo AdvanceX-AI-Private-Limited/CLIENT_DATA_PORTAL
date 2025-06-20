@@ -103,7 +103,9 @@ watch(editDialogVisible, (newValue) => {
 });
 
 // Add this function to handle update API call
-async function handleUpdateApi(payload) {
+async function handleUpdateApi(data) {
+  const payload = { ...data };
+
   loading.value = true;
   updateApiError.value = null;
   updateApiSuccess.value = false;
@@ -111,6 +113,7 @@ async function handleUpdateApi(payload) {
   try {
     // const params = { user_id: editRow.value.id, payload };
     console.log("Edit row: ", editRow.value);
+    payload.usernumber = String(payload.usernumber);
     payload.client_id = Number(localStorage.getItem("client_id"));
     console.log("Update params:", payload);
     const response = await updateUser(editRow.value.id, payload);
@@ -186,7 +189,7 @@ const isExpanded = ref(false);
 const usersReview = ref([]);
 const userForm = reactive({
   username: "",
-  usernumber: "",
+  usernumber: null,
   useremail: "",
   clientid: Number(localStorage.getItem("client_id")),
 });

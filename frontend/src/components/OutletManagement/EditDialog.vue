@@ -119,7 +119,7 @@ function submitWithParams() {
 
       <div
         v-if="loading"
-        class="absolute inset-0 bg-white/70 flex items-center justify-center z-20"
+        class="absolute z-[9999] inset-0 bg-white/70 flex items-center justify-center"
       >
         <svg class="animate-spin mr-3 h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
