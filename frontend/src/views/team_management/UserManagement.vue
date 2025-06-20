@@ -5,7 +5,7 @@ import DataTable from "@/components/DataTables/DataTable.vue";
 import MessageDialog from "@/components/MessageDialog.vue";
 import EditDialog from "@/components/OutletManagement/EditDialog.vue";
 import AddUsersPopup from "@/components/Mapping/AddUsersPopup.vue";
-import { fetchUsers as fetchUsersApi, deleteUser, createUser } from "@/composables/api/teamManagement";
+import { fetchUsers as fetchUsersApi, deleteUser, createUser, updateUser } from "@/composables/api/teamManagement";
 import { PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
 
 const users = ref([]);
@@ -21,6 +21,9 @@ const messageDialogContent = ref({
 
 const editDialogVisible = ref(false);
 const editRow = ref(null);
+
+const updateApiError = ref(null);
+const updateApiSuccess = ref(false);
 
 function showMessage(message, title = "Message", icon = "") {
   messageDialogContent.value = {
@@ -71,7 +74,7 @@ function handleToolbarAction(action) {
 
 const editAllowed = {
   id: false,
-  is_active: true,
+  is_active: false,
   useremail: true,
   username: true,
   usernumber: true,
@@ -87,8 +90,49 @@ function handleRowAction({ action, row }) {
 }
 
 function handleEditSave(editedData) {
+  console.log("Edited data:", editedData);
   editDialogVisible.value = false;
   fetchUsers();
+}
+
+watch(editDialogVisible, (newValue) => {
+  if (!newValue) {
+    updateApiError.value = null;
+    updateApiSuccess.value = false;
+  }
+});
+
+// Add this function to handle update API call
+async function handleUpdateApi(payload) {
+  loading.value = true;
+  updateApiError.value = null;
+  updateApiSuccess.value = false;
+  
+  try {
+    // const params = { user_id: editRow.value.id, payload };
+    console.log("Edit row: ", editRow.value);
+    payload.client_id = Number(localStorage.getItem("client_id"));
+    console.log("Update params:", payload);
+    const response = await updateUser(editRow.value.id, payload);
+
+    if (response.status === 200) {
+      updateApiSuccess.value = true;
+      handleEditSave(response.data);
+    } else {
+      showMessage(response?.data?.message || "Unexpected response from server.", "Error", "error");
+    }
+  } catch (err) {
+    let errorMsg = "Failed to update. Please try again.";
+    if (err?.response?.data?.message) {
+      errorMsg = err.response.data.message;
+    } else if (err?.message) {
+      errorMsg = err.message;
+    }
+    updateApiError.value = errorMsg;
+    showMessage(errorMsg, "Error", "error");
+  } finally {
+    loading.value = false;
+  }
 }
 
 onMounted(() => {
@@ -142,7 +186,7 @@ const isExpanded = ref(false);
 const usersReview = ref([]);
 const userForm = reactive({
   username: "",
-  usernumber: null,
+  usernumber: "",
   useremail: "",
   clientid: Number(localStorage.getItem("client_id")),
 });
@@ -254,12 +298,18 @@ watch(
   />
 
   <EditDialog
+    :title="`Edit User`"
     :visible="editDialogVisible"
     :row="editRow"
     :edit-allowed="editAllowed"
     :map-headers="mapHeaders"
     @close="editDialogVisible = false"
     @save="handleEditSave"
+    @submit="handleUpdateApi"
+    :loading="loading"
+    :api-error="updateApiError"
+    :api-success="updateApiSuccess"
+    :function-call="handleUpdateApi"
   />
 
   <AddUsersPopup

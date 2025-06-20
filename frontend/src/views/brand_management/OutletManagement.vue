@@ -415,6 +415,7 @@ async function handleUpdateApi(payload) {
   />
 
   <EditDialog
+    :title="`Edit Outlet`"
     :visible="editDialogVisible"
     :row="editRow"
     :edit-allowed="editAllowed"

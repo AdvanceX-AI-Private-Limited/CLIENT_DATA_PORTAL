@@ -7,6 +7,10 @@ const dialog = useMessageDialogStore();
 const props = defineProps({
   visible: Boolean,
   row: Object,
+  title: {
+    type: String,
+    default: "Edit",
+  },
   editAllowed: {
     type: Object,
     default: () => ({}),
@@ -126,7 +130,7 @@ function submitWithParams() {
 
       <!-- Modal Header -->
       <div class="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-slate-100 to-slate-200 border-b">
-        <h3 class="text-xl font-semibold text-slate-800 tracking-tight">Edit Outlet</h3>
+        <h3 class="text-xl font-semibold text-slate-800 tracking-tight">{{ title }}</h3>
         <button
           @click="$emit('close')"
           class="p-2 hover:bg-slate-300/60 bg-gray-100 rounded-full transition-colors"
