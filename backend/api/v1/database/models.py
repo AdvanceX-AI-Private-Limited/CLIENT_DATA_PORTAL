@@ -206,7 +206,6 @@ class Service(Base):
     servicename = Column(String(50), nullable=False)
     servicevariant = Column(String(50), nullable=False)
     created_at = Column(DateTime, default=datetime.now(IST))
-    updated_at = Column(DateTime, onupdate=lambda: datetime.now(IST))
 
     # Relationships
     outlet_services = relationship("OutletService", back_populates="service", cascade="all, delete-orphan")

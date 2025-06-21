@@ -162,7 +162,6 @@ const mapHeaders = {
   servicename: "Service",
   servicevariant: "Variant",
   created_at: "Created At",
-  updated_at: "Updated At",
 };
 
 const showPopup = ref(false);
