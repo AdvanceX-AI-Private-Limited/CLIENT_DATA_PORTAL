@@ -361,6 +361,7 @@ class DisplayService(DisplayBase):
     servicename: str
     servicevariant: str
     created_at: datetime
+    updated_at: None
 
     def __str__(self):
         return f"{self.servicename.title()} ({self.servicevariant})"
