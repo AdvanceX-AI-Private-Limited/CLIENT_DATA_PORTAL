@@ -14,7 +14,7 @@ logger = create_logger(__name__)
 
 
 router = APIRouter() 
-INTERNAL_CLIENT_IDS = {3}
+INTERNAL_CLIENT_IDS = {1}
 
 def verify_request(client_id: int, 
                    db: Session, 
@@ -612,7 +612,7 @@ async def delete_user(
 
 
 #______________________________________ Service routes ______________________________________
-@router.post("/services/", response_model=schemas.DisplayService)
+@router.post("/services/", response_model=List[schemas.DisplayService])
 async def create_service(
     services: List[schemas.ServiceCreate], 
     current_session = Depends(get_current_session),
@@ -621,7 +621,7 @@ async def create_service(
     logger.info(f"Received request to create {len(services)} service(s) by client ID: {current_session.client_id}")
     
     is_internal_client = current_session.client_id in INTERNAL_CLIENT_IDS
-    if not is_internal_client:
+    if is_internal_client:
         created_services = []
 
         for service in services:

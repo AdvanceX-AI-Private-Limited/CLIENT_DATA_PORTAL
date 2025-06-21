@@ -340,7 +340,11 @@ class ServiceBase(BaseModel):
     )
 
 class ServiceCreate(ServiceBase):
-    pass
+    clientid: int = Field(
+        ..., 
+        description="The ID of the client this service belongs to.", 
+        examples=[1]
+    )
 
 class ServiceQueryParams(BaseModel):
     service_id: Optional[int] = None

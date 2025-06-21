@@ -727,7 +727,7 @@ const deleteRowData = ref(null);
         </div>
 
         <!-- Title and action buttons -->
-        <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+        <div v-if="!error" class="flex flex-col sm:flex-row sm:items-center gap-2">
           <!-- CSV Download button -->
           <button
             v-if="csv_download && !loading && !error && searchFilteredData.length > 0"
