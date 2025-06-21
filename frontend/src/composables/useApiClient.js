@@ -65,15 +65,6 @@ export function useApiEndpoints() {
 			createAdminUser: adminApi.createAdminUser,
 			updateAdminUser: adminApi.updateAdminUser,
 			deleteAdminUser: adminApi.deleteAdminUser,
-
-			// Dashboard APIs
-			fetchOutlets: dashboardApi.fetchOutlets,
-			createOutlet: dashboardApi.createOutlet,
-			updateOutlet: dashboardApi.updateOutlet,
-			deleteOutlet: dashboardApi.deleteOutlet,
-
-			// Test APIs
-			testApiFunction: testApi.testApiFunction,
 		}
 	}
 }
