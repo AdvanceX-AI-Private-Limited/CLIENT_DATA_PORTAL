@@ -197,6 +197,7 @@ async function verifyOtpApi() {
     const payload = {
       token: loginApiData.value.temp_token,
       otp: otpInput.value,
+      is_active: false
     };
     const response = await verifyOtp(payload);
 
