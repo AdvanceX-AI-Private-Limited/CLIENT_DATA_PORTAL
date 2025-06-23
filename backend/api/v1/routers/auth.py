@@ -37,6 +37,7 @@ CASHFREE_CLIENT_ID = os.getenv("CASHFREE_CLIENT_ID")
 CASHFREE_CLIENT_SECRET = os.getenv("CASHFREE_CLIENT_SECRET")
 CASHFREE_VERIFICATION_URL = os.getenv("CASHFREE_VERIFICATION_URL")
 
+INTERNAL_CLIENT_IDS = {1}
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 IST = timezone(timedelta(hours=5, minutes=30))
 SECRET_KEY = "your-secret-key"
@@ -1437,14 +1438,15 @@ async def register_brand(
             )
         
         # Check for existing brand under same client
-        existing_by_client = db.query(models.Brand).filter(
-            models.Brand.client_id == brand.client_id
-            ).first()
-        if existing_by_client:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="This client already has a brand registered."
-            )
+        if brand.client_id not in INTERNAL_CLIENT_IDS:
+            existing_by_client = db.query(models.Brand).filter(
+                models.Brand.client_id == brand.client_id
+                ).first()
+            if existing_by_client:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="This client already has a brand registered."
+                )
         
         try:
             db_brand = models.Brand(
