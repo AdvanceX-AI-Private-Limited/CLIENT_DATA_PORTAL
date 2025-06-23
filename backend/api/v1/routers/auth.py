@@ -1398,10 +1398,30 @@ async def verify_gstin(payload: GSTINRequest):
             )
 
         if response.status_code == 200:
-            return GSTINResponse(
-                success=True,
-                data=response_data,
-                message="GSTIN verified successfully"
+
+            # Create session data with OTP
+            temp_session_id = str(uuid.uuid4())
+            random_email_id = f"{temp_session_id}@gmail.com"
+            session_data = SessionData(email=random_email_id, client_id=temp_session_id)
+            session_store.store_session(temp_session_id, session_data)
+            logger.info(f"Temporary session created for email: {random_email_id}, session_id: {temp_session_id}")
+
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    "gst_data": GSTINResponse(
+                        success=True,
+                        data=response_data,
+                        message="GSTIN verified successfully"
+                    ).model_dump(exclude_none=True),
+                    "message": "OTP sent to your email.",
+                    "temp_token": temp_session_id,
+                    "expires_in": 300,
+                    "next_step": "verify_otp",
+                    "is_signed_in": False,
+                    "otp_already_sent": False,
+                    "is_active": False
+                }
             )
         else:
             raise HTTPException(
@@ -1421,6 +1441,7 @@ async def verify_gstin(payload: GSTINRequest):
 
 @router.post("/brands/register/", response_model=schemas.DisplayBrand, status_code=status.HTTP_201_CREATED)
 async def register_brand(
+
     brand: schemas.BrandCreate, 
     db: Session = Depends(get_db)
 ):
