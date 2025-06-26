@@ -245,6 +245,7 @@ class OTPVerificationRequest(BaseModel):
     is_active: bool
 
 class ResendOTPRequest(BaseModel):
+    email: str
     token: str
 
 class GSTINRequest(BaseModel):
@@ -661,23 +662,44 @@ async def resend_otp(resend_data: ResendOTPRequest):
     logger.info(f"Resend OTP request received for token: {resend_data.token}")
 
     try:
-        session_data = session_store.get(resend_data.token)
+        # Clean up any expired temporary sessions first
+        session_store.cleanup_expired_sessions()
+
+        session_data = session_store.get_session(resend_data.token)
         if not session_data:
             logger.warning(f"Invalid or expired temp token for resend: {resend_data.token}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid or expired temporary token"
             )
+        
+        # Check if session is already expired (additional safety check)
+        if session_data.is_otp_expired():
+            logger.warning(f"Expired session for resend request, email: {resend_data.email}")
+            session_store.delete_session(resend_data.token)
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Session has expired. Please login again."
+            )
 
-        # Generate new OTP
-        session_data.otp = session_data.generate_otp()
+        # Generate new OTP and update timestamp
+        new_otp = session_data.generate_otp()
+        session_data.otp = new_otp
         session_data.otp_timestamp = time.time()
-        logger.info(f"New OTP generated for email: {session_data.email}")
+        
+        # Update the session in storage with new OTP and timestamp
+        session_store.update_session(
+            resend_data.token, 
+            otp=new_otp, 
+            otp_timestamp=session_data.otp_timestamp
+        )
 
-        # Send new OTP
+        logger.info(f"New OTP generated and stored for email: {resend_data.email}")
+
+        # Send new OTP via email
         try:
             mail_payload = {
-                "recipient_email": session_data.email,
+                "recipient_email": resend_data.email,
                 "mail_options": {
                     "otp": True,
                 },
@@ -686,9 +708,9 @@ async def resend_otp(resend_data: ResendOTPRequest):
                 }
             }
             send_mail(data=models.MailRequest(**mail_payload))
-            logger.info(f"OTP resent successfully to {session_data.email}")
+            logger.info(f"OTP resent successfully to {resend_data.email}")
         except Exception as mail_error:
-            logger.error(f"Failed to resend OTP email to {session_data.email}: {mail_error}")
+            logger.error(f"Failed to resend OTP email to {resend_data.email}: {mail_error}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Failed to send OTP email"

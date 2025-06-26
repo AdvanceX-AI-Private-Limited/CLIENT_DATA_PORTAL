@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from backend.api.v1.routers.admin import verify_request
+from .admin import verify_request
 from .auth import get_current_session
 from ..database.database import get_db
 from ..schemas import schemas
