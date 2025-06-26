@@ -393,6 +393,13 @@ class DisplayOutletService(DisplayBase):
     client: DisplayClient
     created_at: datetime
 
+class QueryOutletService(BaseModel):
+    client_id: Optional[int] = None
+    outlet_id: Optional[int] = None
+    service_id: Optional[int] = None
+    skip: int = 0
+    limit: int = 100
+
 # ______________ USER <> SERVICE MAPPINGS ____________________
 class UserServiceBase(BaseModel):
     user_id: int = Field(
