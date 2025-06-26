@@ -690,6 +690,7 @@ async def resend_otp(resend_data: ResendOTPRequest):
         # Update the session in storage with new OTP and timestamp
         session_store.update_session(
             resend_data.token, 
+            email=resend_data.email,
             otp=new_otp, 
             otp_timestamp=session_data.otp_timestamp
         )
@@ -732,6 +733,70 @@ async def resend_otp(resend_data: ResendOTPRequest):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error while resending OTP"
+        )
+
+@router.post('/only-verify-otp')
+async def reverify_otp_router(
+    otp_data: OTPVerificationRequest, 
+    ):
+    """
+    OTP verification endpoint
+    Returns: JSON with session_token on success
+    """
+    logger.info(f"OTP verification attempt with token: {otp_data.token}")
+
+    try:
+        session_data = session_store.get_session(otp_data.token)
+
+        if not session_data:
+            logger.warning(f"Invalid or expired temp token: {otp_data.token}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid or expired temporary token"
+            )
+
+        # Check if OTP is expired
+        if session_data.is_otp_expired():
+            logger.warning(f"Expired OTP for token: {otp_data.token}, email: {session_data.email}")
+            # Clean up expired session from SQLite
+            session_store.delete_session(otp_data.token)
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="OTP has expired. Please login again."
+            )
+
+        # Verify OTP
+        if not session_data.verify_otp(otp_data.otp):
+            logger.warning(f"Invalid OTP for email: {session_data.email}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid OTP"
+            )
+
+        # Mark OTP as verified in SQLite
+        session_store.update_session(otp_data.token, otp_verified=1)
+        logger.info(f"OTP verified for email: {session_data.email}")
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "message": "OTP verified successfully",
+                "user": {
+                    "email": session_data.email,
+                    "client_id": session_data.client_id
+                },
+                "is_active": otp_data.is_active
+            }
+        )
+
+    except HTTPException as http_exc:
+        logger.warning(f"HTTPException during OTP verification for token {otp_data.token}: {http_exc.detail}")
+        raise
+    except Exception as e:
+        logger.exception(f"Unexpected error during OTP verification for token {otp_data.token}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error during OTP verification"
         )
 
 @router.post("/new-registration")
