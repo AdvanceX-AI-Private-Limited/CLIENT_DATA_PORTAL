@@ -9,6 +9,10 @@ export async function logout() {
   return await post('/auth/logout')
 }
 
+export async function sendOtp(payload) {
+  return await post('/auth/resend-otp', payload)
+}
+
 export async function verifyOtp(payload) {
   return await post('/auth/verify-otp', payload)
 }

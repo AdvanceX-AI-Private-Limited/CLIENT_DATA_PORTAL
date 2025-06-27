@@ -4,8 +4,9 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
 import { clientsRegister, verifygstin, brandsRegister, resendOtp, newRegistration } from '@/composables/api/authApi';
 import Confetti from '@/components/Confetti.vue';
 import { login } from "@/composables/api/authApi";
-import { verifyOtp } from '@/composables/api/authApi';
+import { sendOtp, verifyOtp } from '@/composables/api/authApi';
 import TermsAndConditions from '@/components/Auth/TermsAndConditions.vue';
+import { send } from 'vite';
 
 // Form state
 const currentStep = ref(1);
@@ -21,7 +22,7 @@ const statesDropdownContainer = ref(null);
 const statesDropdown = ref(null);
 const showFormUi = ref(true);// ...
 const showClientBrandError = ref(false);
-
+const tempToken = ref('');
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 const loading = ref(false);
@@ -121,19 +122,23 @@ const verifyGST = async () => {
     }
     // console.log("payload: ", payload);
     const response = await verifygstin(payload);
+    if (response.status === 200) {
+      tempToken.value = response.data.temp_token;
+    }
     // handle the response as needed
-    // console.log('GST verification result:', JSON.stringify(response.data));
-    gstData.value = response.data.data;
-    if (response.data.data.message != "GSTIN Doesn't Exist") {
-      gstVerified.value = response.data.success;
-      gstError.value = !response.data.success;
+    gstData.value = response.data.gst_data.data;
+    console.log('GST verification result:', JSON.stringify(gstData.value));
+    console.log("temp token: ", tempToken.value);
+    if (response.data.gst_data.data.message != "GSTIN Doesn't Exist") {
+      gstVerified.value = response.data.gst_data.success;
+      gstError.value = !response.data.gst_data.success;
     }else{
       gstVerified.value = false;
       gstError.value = true;
     }
 
   } catch (error) {
-    gstError.value = error.response?.data?.message || error.message || "GST verification failed";
+    gstError.value = error.response?.gst_data?.data?.message || error.message || "GST verification failed";
     console.error("Error verifying GST:", error);
   } finally {
     isVerifying.value = false;
@@ -237,8 +242,14 @@ async function handleNext() {
     gstVerification();
     if (currentStep.value < 5) currentStep.value++;
   } else if (currentStep.value === 2) {
+    console.log("current step: ", currentStep.value);
     loading.value = true;
-    const result = await brandDetails();
+    const payload = {
+      token: tempToken.value,
+      otp: otpInput.value
+    };
+    console.log("payload for OTP: ", payload);
+    const result = await sendOtp(payload);
     loading.value = false;
     
     if (result === true) {
@@ -421,8 +432,8 @@ const allowNextBtn = computed(() => {
       formData.password === formData.confirmPassword &&
       formData.password.length >= 8 &&
       formData.companyEmail !== '' &&
-      formData.contactNumber !== '' &&
-      !clientBrandError.value
+      formData.contactNumber !== '' //&&
+      // !clientBrandError.value
     ) {
       return false;
     } else {
