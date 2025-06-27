@@ -400,6 +400,9 @@ class QueryOutletService(BaseModel):
     skip: int = 0
     limit: int = 100
 
+class UpdateOutletServiceMapping(OutletServiceCreate):
+    id: int
+
 # ______________ USER <> SERVICE MAPPINGS ____________________
 class UserServiceBase(BaseModel):
     user_id: int = Field(
@@ -421,12 +424,22 @@ class UserServiceCreate(UserServiceBase):
     )
 
 class DisplayUserService(DisplayBase):
-
     id: int
     user: DisplayUser
     service: DisplayService
     client: DisplayClient
     created_at: datetime
+
+class QueryUserService(BaseModel):
+    client_id: Optional[int] = None
+    user_id: Optional[int] = None
+    service_id: Optional[int] = None
+    skip: int = 0
+    limit: int = 100
+
+class UpdateUserServiceMapping(UserServiceCreate):
+    id: int
+
 
 # ______________ USER <> OUTLET MAPPINGS ____________________
 class UserOutletBase(BaseModel):
@@ -454,3 +467,13 @@ class DisplayUserOutlet(DisplayBase):
     outlet: DisplayOutlet
     client: DisplayClient
     created_at: datetime
+
+class QueryUserOutlet(BaseModel):
+    client_id: Optional[int] = None
+    user_id: Optional[int] = None
+    outlet_id: Optional[int] = None
+    skip: int = 0
+    limit: int = 100
+
+class UpdateUserOutletMapping(UserOutletCreate):
+    id: int

@@ -21,7 +21,11 @@ def verify_request(client_id: int,
                    outlet_id: int = None, 
                    brand_id: int = None,
                    user_id: int = None,
-                   service_id: int = None):
+                   service_id: int = None,
+                   outlet_service_mapping_id: int = None,
+                   user_service_mapping_id: int = None,
+                   outlet_user_mapping_id: int = None
+                   ):
     
     if outlet_id is not None:
         outlet = db.query(models.Outlet).filter(models.Outlet.id == outlet_id).first()
@@ -46,6 +50,31 @@ def verify_request(client_id: int,
                 raise HTTPException(status_code=403, detail="Forbidden: You don't own this brand")
         else:
             raise HTTPException(status_code=404, detail="User not found")
+        
+    elif outlet_service_mapping_id is not None:
+        outlet_service_mapping = db.query(models.OutletService).filter(models.OutletService.id == outlet_service_mapping_id).first()
+        if outlet_service_mapping:
+            if outlet_service_mapping.client_id != client_id:
+                raise HTTPException(status_code=403, detail="Forbidden: You don't own this mapping")
+        else:
+            raise HTTPException(status_code=505, detail="Mapping not found")
+        
+    elif user_service_mapping_id is not None:
+        user_service_mapping = db.query(models.UserService).filter(models.UserService.id == user_service_mapping_id).first()
+        if user_service_mapping:
+            if user_service_mapping.client_id != client_id:
+                raise HTTPException(status_code=403, detail="Forbidden: You don't own this mapping")
+        else:
+            raise HTTPException(status_code=505, detail="Mapping not found")
+        
+    elif outlet_user_mapping_id is not None:
+        outlet_user_mapping = db.query(models.UserOutlet).filter(models.UserOutlet.id == outlet_user_mapping_id).first()
+        if outlet_user_mapping:
+            if outlet_user_mapping.client_id != client_id:
+                raise HTTPException(status_code=403, detail="Forbidden: You don't own this mapping")
+        else:
+            raise HTTPException(status_code=505, detail="Mapping not found")
+                
 
 #______________________________________ Brand routes ______________________________________
 @router.get("/brands/", response_model=List[schemas.DisplayBrand])
