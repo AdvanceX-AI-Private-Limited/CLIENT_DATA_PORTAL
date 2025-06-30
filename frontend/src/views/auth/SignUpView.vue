@@ -6,7 +6,6 @@ import Confetti from '@/components/Confetti.vue';
 import { login } from "@/composables/api/authApi";
 import { sendOtp, verifyOtp } from '@/composables/api/authApi';
 import TermsAndConditions from '@/components/Auth/TermsAndConditions.vue';
-import { send } from 'vite';
 
 // Form state
 const currentStep = ref(1);
