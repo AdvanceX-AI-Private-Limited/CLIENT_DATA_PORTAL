@@ -35,7 +35,7 @@ const handleGoogleLogin = () => {
         <div class="flex justify-center mb-4">
           <!-- Logo -->
           <div class="rounded-full w-10 h-10 flex items-center justify-center">
-            <img src="/public/favicon.ico" alt="Logo">
+            <img src="/favicon.ico" alt="Logo">
           </div>
         </div>
         <h2 class="text-3xl font-bold text-gray-900">Welcome Back</h2>
