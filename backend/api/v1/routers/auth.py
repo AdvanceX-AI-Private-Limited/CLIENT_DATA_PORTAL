@@ -802,7 +802,6 @@ async def reverify_otp_router(
 @router.post("/new-registration")
 async def new_registration(
     registration_data: schemas.NewRegistration,
-    current_session = Depends(get_current_session), 
     db: Session = Depends(get_db)):
     
     logger.info(f"Login attempt for registration")

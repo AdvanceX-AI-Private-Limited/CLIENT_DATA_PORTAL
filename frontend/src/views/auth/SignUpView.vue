@@ -4,7 +4,7 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
 import { clientsRegister, verifygstin, brandsRegister, resendOtp, newRegistration } from '@/composables/api/authApi';
 import Confetti from '@/components/Confetti.vue';
 import { login } from "@/composables/api/authApi";
-import { sendOtp, verifyOtp } from '@/composables/api/authApi';
+import { sendOtp, onlyVerifyOtp } from '@/composables/api/authApi';
 import TermsAndConditions from '@/components/Auth/TermsAndConditions.vue';
 
 // Form state
@@ -188,8 +188,8 @@ const handleLogin = async () => {
 const otpVerificationError = ref("");
 const otpResponseData = ref('');
 
-async function verifyOtpApi() {
-  if (!otpInput.value || !loginApiData.value?.temp_token) {
+async function onlyVerifyOtpApi() {
+  if (!otpInput.value || !tempToken.value) {
     otpVerificationError.value = "Missing OTP or temp token.";
     return false;
   }
@@ -199,11 +199,11 @@ async function verifyOtpApi() {
 
   try {
     const payload = {
-      token: loginApiData.value.temp_token,
+      token: tempToken.value,
       otp: otpInput.value,
       is_active: false
     };
-    const response = await verifyOtp(payload);
+    const response = await onlyVerifyOtp(payload);
 
     // if (response.data.session_token) {
     //   setAuthFromApiResponse(response.data);
@@ -245,17 +245,17 @@ async function handleNext() {
     loading.value = true;
     const payload = {
       token: tempToken.value,
-      otp: otpInput.value
+      email: formData.companyEmail,
     };
-    console.log("payload for OTP: ", payload);
-    const result = await sendOtp(payload);
+    console.log("payload for resend OTP: ", payload);
+    const result = await resendOtp(payload);
     loading.value = false;
-    
-    if (result === true) {
+
+    if (result.status === 200) {
       if (currentStep.value < 5) currentStep.value++;
     }
   } else if (currentStep.value === 3) {
-    const passed = await verifyOtpApi();
+    const passed = await onlyVerifyOtpApi();
     if (passed && currentStep.value < 5) currentStep.value++;
     // if failed, error message is already set, stay on step
   }
@@ -512,9 +512,12 @@ const submitError = ref("");
 
 async function handleSubmit() {
   loading.value = true;
-  submitError.value = '';       // clear previous errors
+  submitError.value = ''; 
 
   try {
+    await brandDetails();
+
+    console.log("brandDetails completed, now submitting registration...");
     const nowIsoString = new Date().toISOString();
     const registrationPayload = {
       client_id: Number(formData.clientId),
@@ -530,7 +533,7 @@ async function handleSubmit() {
     // console.log("Registration Payload: ", registrationPayload);
     // console.log("form data: ", formData);
     // Call Registration API
-    const regResponse = await newRegistration(registrationPayload, otpResponseData.value.session_token);
+    const regResponse = await newRegistration(registrationPayload);
     // console.log("submit: ", regResponse.data);
     
     if (regResponse.status !== 200) {

@@ -17,6 +17,10 @@ export async function verifyOtp(payload) {
   return await post('/auth/verify-otp', payload)
 }
 
+export async function onlyVerifyOtp(payload) {
+  return await post('/auth/only-verify-otp', payload)
+}
+
 export async function googleLogin() {
   return await get('/auth/google/login')
 }
@@ -45,14 +49,8 @@ export async function resendOtp(payload) {
   return await post('/auth/resend-otp', payload)
 }
 
-export async function newRegistration(payload, session_token) {
-  console.log("newRegistration payload: ", payload);
-  console.log("newRegistration session_token: ", session_token);
-  return await post('/auth/new-registration', payload, {
-    headers: {
-      Authorization: `Bearer ${session_token}`
-    }
-  })
+export async function newRegistration(payload) {
+  return await post('/auth/new-registration', payload)
 }
 
 export async function sendEmail() {
