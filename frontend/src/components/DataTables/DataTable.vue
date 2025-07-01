@@ -184,6 +184,9 @@ function flattenDeep(arr) {
 // Apply column filters with error handling
 const filteredByColumnData = computed(() => {
   try {
+    if (props.table_data === null || props.table_data.length === 0) {
+      return [];
+    }
     return props.table_data.filter((row) => {
       return tableHeaders.value.every((header) => {
         const selected = filters.value?.[header]?.selected;
@@ -699,11 +702,16 @@ const deleteRowData = ref(null);
         </div>
       </div>
 
+
       <div
-        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3"
+        class="flex flex-col sm:flex-row sm:items-center gap-3 mb-3 w-full"
+        :class="{'flex-wrap': action_buttons && action_buttons.length > 2}"
       >
         <!-- Global Search -->
-        <div v-if="!loading && !error" class="relative w-full sm:w-64 md:w-72">
+        <div v-if="!loading && !error" :class="[
+          'relative',
+          action_buttons && action_buttons.length > 2 ? 'w-full sm:w-56 md:w-64 mb-2 sm:mb-0' : 'w-full sm:w-64 md:w-72'
+        ]">
           <input
             type="text"
             v-model="globalSearch"
@@ -727,7 +735,7 @@ const deleteRowData = ref(null);
         </div>
 
         <!-- Title and action buttons -->
-        <div v-if="!error" class="flex flex-col sm:flex-row sm:items-center gap-2">
+        <div v-if="!error" class="flex items-center gap-2 ml-auto">
           <!-- CSV Download button -->
           <button
             v-if="csv_download && !loading && !error && searchFilteredData.length > 0"
@@ -752,8 +760,8 @@ const deleteRowData = ref(null);
           </button>
 
           <div
-            v-if="action_buttons && !title"
-            class="flex flex-wrap items-center gap-2 mt-2 sm:mt-0"
+            v-if="action_buttons && action_buttons.length > 0"
+            class="flex items-center gap-2 mt-2 sm:mt-0"
           >
             <button
               v-if="!loading"

@@ -184,6 +184,13 @@ function prevTab() {
 // ---- Submit -----
 function submit() {
   emit('submit', mappingPairs.value);
+  localSelections.value = {};
+  props.tabs.forEach(tab => {
+    localSelections.value[tab.key] = [];
+  });
+
+  emit('update:selections', JSON.parse(JSON.stringify(localSelections.value)));
+  console.log("localSelections after submit:", localSelections.value);
   close();
 }
 

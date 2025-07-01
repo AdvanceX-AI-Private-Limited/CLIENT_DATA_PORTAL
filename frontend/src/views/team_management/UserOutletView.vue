@@ -1,7 +1,9 @@
 // src/views/mappings/UserOutletView.vue
 <script setup>
 import { ref, onMounted, reactive } from "vue";
-import { getOutlets, getUsers, mappedUsersOutlets, mapUserToOutlet } from "@/composables/api/testApi";
+import { mappedUsersOutlets, mapUserToOutlet, getMappedUsers, unmapUserFromOutlet } from "@/composables/api/userToOutletMappings";
+import { fetchUsers as fetchUsersApi } from "@/composables/api/teamManagement";
+import { fetchOutlets } from "@/composables/api/brandManagementApi";
 import DataTable from "@/components/DataTables/DataTable.vue";
 import MappingPopup from "@/components/Mapping/MappingPopup.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
@@ -9,6 +11,7 @@ import MessageDialog from "@/components/MessageDialog.vue";
 import Breadcrumb from "@/components/Breadcrumb.vue";
 import Test from "@/components/Test.vue";
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/vue/24/outline";
+import { use } from "marked";
 
 const showPopup = ref(false);
 
@@ -37,10 +40,36 @@ const fetchUsers = async () => {
   console.log("Fetching users...");
   loadingUsers.value = true;
   errorUsers.value = null;
+
   try {
-    const response = await getUsers();
-    users.value = response.data;
-    console.log("Users:", users.value);
+    const mapped_users_response = await getMappedUsers(localStorage.getItem("client_id"));
+    console.log("Mapped users:", mapped_users_response.data);
+
+    let mapped_users = [];
+    if (mapped_users_response.status === 200 && Array.isArray(mapped_users_response.data) && mapped_users_response.data.length > 0) {
+      console.log("Mapped users response is successful and not empty");
+      mapped_users = mapped_users_response.data;
+    } else {
+      console.log("Mapped users response is empty or not an array, proceeding with empty mapping");
+    }
+
+    const mappingByEmail = {};
+    mapped_users.forEach(mu => {
+      mappingByEmail[mu.email] = mu.mapping_id;
+    });
+
+    const params = {
+      client_id: localStorage.getItem("client_id"),
+      skip: 0,
+      limit: 100,
+    };
+    const response = await fetchUsersApi(params);
+    users.value = response.data.map(user => ({
+      ...user,
+      mapping_id: mappingByEmail[user.useremail] || ""  
+    }));
+
+    console.log("Users with mapping_id:", users.value);
   } catch (err) {
     errorUsers.value = err.message || "Failed to fetch";
   } finally {
@@ -53,7 +82,14 @@ async function fetchMappedOutlets() {
   loadingOutlets.value = true;
   errorOutlets.value = null;
   try {
-    const response = await getOutlets();
+    const params = {
+      client_id:  localStorage.getItem("client_id"),
+      status: "all",
+      skip: 0,
+      limit: 100,
+    };
+    console.log("Fetching outlets with params:", params);
+    const response = await fetchOutlets(params);
     outlets.value = response.data;
     console.log("Mapped outlets:", outlets.value);
   } catch (err) {
@@ -76,7 +112,7 @@ const mappingTabs = [
       if (!users.value.length) await fetchUsers();
       return users.value;
     },
-    displayMapping: { heading: "user_name", sub: "user_number" },
+    displayMapping: { heading: "username", sub: "usernumber" },
   },
   {
     label: "Select Outlets",
@@ -86,43 +122,36 @@ const mappingTabs = [
       if (!outlets.value.length) await fetchMappedOutlets();
       return outlets.value;
     },
-    displayMapping: { heading: "res_shortcode", sub: "res_id" },
+    displayMapping: { heading: "resshortcode", sub: "resid" },
   },
 ];
 
 function transformDataForBackend(data) {
-  console.log("data", data);
-  const redIdSet = new Set();
-  const userMap = new Map();
+  const map_params = [];
 
   data.forEach(([user, outlet]) => {
-    const userNumber = user.user_number;
-    const userName = user.user_name;
-    const resId = parseInt(outlet.res_id);
+    const userId = user.id;
+    const outletId = outlet.id;
+    const client_id = user.client_id || localStorage.getItem("client_id");
+    console.log("Mapping user:", userId, "to outlet:", outletId, "for client_id:", client_id);
+    if (!userId || !outletId || isNaN(client_id)) return;
 
-    if (!userNumber || !userName || isNaN(resId)) return;
-
-    redIdSet.add(resId);
-
-    // Use Map to avoid duplicate users
-    if (!userMap.has(userNumber)) {
-      userMap.set(userNumber, { name: userName, number: userNumber });
-    }
+    map_params.push({
+      user_id: Number(userId),
+      outlet_id: Number(outletId),
+      client_id: Number(client_id),
+    });
   });
 
-  return {
-    red_id: Array.from(redIdSet),
-    users: Array.from(userMap.values()),
-    action: "map",
-  };
+  return map_params
 }
 
 // Function to show message dialog
-function showMessage(message, title = "Message") {
+function showMessage(message, title = "Message", iconType = "info") {
   messageDialogContent.value = {
     title,
     message,
-    icon,
+    icon: iconType,
   };
   messageDialogVisible.value = true;
 }
@@ -137,7 +166,7 @@ async function fetchMappedUsers() {
   loadingMappedUsers.value = true;
   errorMappedUsers.value = null;
   try {
-    const response = await mappedUsersOutlets();
+    const response = await mappedUsersOutlets(localStorage.getItem("client_id"));
     mappedUsers.value = response.data;
     // console.log("Mapped users:", mappedUsers.value);
   } catch (err) {
@@ -153,21 +182,21 @@ async function onMappingGenerated(mappings) {
   try {
     // Compose payload according to your API's requirements
     let payload = await transformDataForBackend(mappings);
-    payload = {
-      data: payload,
-    };
-    console.log("Payload being sent:", JSON.stringify(payload));
+
+    console.log("Payload being sent:", payload);
     const response = await mapUserToOutlet(payload);
+    await fetchMappedUsers();
+    await fetchMappedUsers();
+    await fetchUsers();
     showMessage(
       response.data?.message || "Mapping completed successfully",
       "Success",
       "success"
     );
-    await fetchMappedUsers();
   } catch (error) {
     console.error("Error mapping users to outlets:", error);
     showMessage(
-      error.response?.data?.message || error.message || "Failed to process mapping.",
+      error.response?.data?.message?.response || error.response.data.detail || "Failed to process mapping.",
       "Error",
       "error"
     );
@@ -182,6 +211,104 @@ function showMappingPopup() {
   showPopup.value = true;
 }
 
+
+// Unmapping popup state
+const showUnmapPopup = ref(false);
+const unmapSelections = reactive({
+  users: [],
+  outlets: [],
+});
+
+function showUnmappingPopup() {
+  console.log("Opening unmapping popup");
+  showUnmapPopup.value = true;
+}
+
+function closeUnmapPopup() {
+  showUnmapPopup.value = false;
+}
+
+// Tabs for unmapping: first select outlet, then show mapped users for that outlet
+const unmappingTabs = [
+  {
+    label: "Select Outlet",
+    description: "Select an outlet to unmap users from",
+    key: "outlets",
+    fetchData: async () => {
+      // Show all outlets
+      return outlets.value;
+    },
+    displayMapping: { heading: "resshortcode", sub: "resid" },
+  },
+  {
+    label: "Select Mapped Users",
+    description: "Select users mapped to the selected outlet",
+    key: "users",
+    fetchData: async (_selections) => {
+      // Defensive: try to get selections from unmapSelections if not passed
+      let selections = _selections;
+      if (!selections) {
+        // fallback to global reactive unmapSelections
+        selections = unmapSelections;
+        console.log('[UnmapPopup] users fetchData selections was undefined, using unmapSelections:', selections);
+      } else {
+        console.log('[UnmapPopup] users fetchData selections:', selections);
+      }
+      if (!selections || !selections.outlets || selections.outlets.length === 0) {
+        console.log('[UnmapPopup] No outlet selected, returning empty array');
+        return [];
+      }
+      const selectedOutlet = selections.outlets[0];
+      console.log('[UnmapPopup] Selected outlet:', selectedOutlet);
+      console.log('[UnmapPopup] mappedUsers.value:', mappedUsers.value);
+      console.log('[UnmapPopup] users.value:', users.value);
+      // Find all mappings for this outlet
+      const mappingsForOutlet = (mappedUsers.value || []).filter(mu => mu.outlet_id === selectedOutlet.id);
+      console.log('[UnmapPopup] mappingsForOutlet:', mappingsForOutlet);
+      // For each mapping, find the user and attach mapping_id
+      const result = mappingsForOutlet.map(mu => {
+        const user = users.value.find(u => u.id === mu.user_id);
+        if (user) {
+          const userWithMapping = { ...user, mapping_id: mu.mapping_id };
+          console.log('[UnmapPopup] Found mapped user:', userWithMapping);
+          return userWithMapping;
+        }
+        console.log('[UnmapPopup] No user found for mapping:', mu);
+        return null;
+      }).filter(Boolean);
+      console.log('[UnmapPopup] Final users to show:', result);
+      return result;
+    },
+    displayMapping: { heading: "username", sub: "usernumber" },
+  },
+];
+
+// Unmapping logic
+async function onUnmappingGenerated(unmapData) {
+  mappingLoading.value = true;
+  try {
+    const unmapPromises = unmapData.map(([user, outlet]) => {
+      if (user.mapping_id) {
+        return unmapUserFromOutlet(user.mapping_id);
+      }
+      return Promise.resolve();
+    });
+    await Promise.all(unmapPromises);
+    await fetchMappedUsers();
+    await fetchUsers();
+    showMessage("Unmapping completed successfully", "Success", "success");
+  } catch (error) {
+    showMessage(
+      error.response?.data?.message?.response || error.response?.data?.detail || "Failed to process unmapping.",
+      "Error",
+      "error"
+    );
+  } finally {
+    mappingLoading.value = false;
+    showUnmapPopup.value = false;
+  }
+}
+
 function closePopup() {
   console.log("Closing popup");
   showPopup.value = false;
@@ -193,21 +320,21 @@ const selections = reactive({
 });
 
 onMounted(() => {
-  fetchUsers();
   fetchMappedOutlets();
   fetchMappedUsers();
+  fetchUsers();
 });
 </script>
 
 <template>
   <Breadcrumb />
   
+    <!-- title="Outlet Mapper" -->
   <DataTable
-    title="Outlet Mapper"
-    :table_data="mappedUsers"
+    :table_data="mappedUsers || []"
     :loading="loadingMappedUsers"
     :error="errorMappedUsers"
-    :action_buttons="[{ name: 'Map&nbsp;Users', onClick: showMappingPopup, action: 'user_map', icon: PlusIcon}]"
+    :action_buttons="[{ name: 'Map&nbsp;Users', onClick: showMappingPopup, action: 'user_map', icon: PlusIcon}, { name: 'Unmap&nbsp;Users', onClick: showUnmappingPopup, action: 'unmap', icon: TrashIcon }]"
     @action-click="handleToolbarAction"
     :csv_download="true"
   />
@@ -220,6 +347,16 @@ onMounted(() => {
     @submit="onMappingGenerated"
   />
 
+  <!-- Unmapping Popup -->
+  <MappingPopup
+    v-if="showUnmapPopup"
+    :tabs="unmappingTabs"
+    v-model:selections="unmapSelections"
+    @close="closeUnmapPopup"
+    @submit="onUnmappingGenerated"
+    :step-mode="true"
+  />
+
   <!-- Show loading spinner when mapping is in progress -->
   <LoadingSpinner v-if="mappingLoading" />
 
@@ -228,7 +365,7 @@ onMounted(() => {
     :visible="messageDialogVisible"
     :title="messageDialogContent.title"
     :message="messageDialogContent.message"
-    :icon="messageDialogContent.icon"
     @close="closeMessageDialog"
   />
 </template>
+    // :icon="messageDialogContent.icon"
