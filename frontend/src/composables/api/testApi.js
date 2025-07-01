@@ -11,7 +11,7 @@ export async function sendTestPayload(payload) {
 }
 
 export async function getUsers() {
-  return get('/dashboard/users-data')
+  return get('/access/user-outlet-mappings/')
 }
 
 export async function getOutlets() {
@@ -24,7 +24,7 @@ export async function getServices() {
 
 // Mapped Data API
 export async function mappedUsersOutlets() {
-  return get('/dashboard/mapped-users-data')
+  return get('/access/user-outlet-mappings/')
 }
 
 export async function mappedUsersServices() {

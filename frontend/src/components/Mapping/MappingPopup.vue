@@ -6,7 +6,8 @@ import { ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
 const props = defineProps({
   tabs: Array,
   title: { type: String, default: 'Bulk Assign Mappings' },
-  selections: { type: Object, required: true }
+  selections: { type: Object, required: true },
+  stepMode: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['close', 'update:selections', 'submit'])
@@ -39,7 +40,8 @@ watch(activeTab, async (newTab) => {
   sortDirection.value = 'asc'
   const t = props.tabs.find(tab => tab.key === newTab)
   if (t?.fetchData) {
-    const data = await t.fetchData()
+    // In stepMode, pass localSelections to fetchData
+    const data = props.stepMode ? await t.fetchData(localSelections.value) : await t.fetchData()
     // Add unique identifiers if not present
     data.forEach((item, index) => {
       if (!item.hasOwnProperty('id')) {

@@ -467,9 +467,17 @@ class DisplayUserOutlet(DisplayBase):
     outlet: DisplayOutlet
     client: DisplayClient
     created_at: datetime
+    
+class DisplayUserOutletGrouped(DisplayBase):
+    aggregator: str
+    brand: Optional[str]
+    res_id: int
+    shortcode: str
+    users: List[str]
 
 class QueryUserOutlet(BaseModel):
     client_id: Optional[int] = None
+    grouped: bool = False
     user_id: Optional[int] = None
     outlet_id: Optional[int] = None
     skip: int = 0

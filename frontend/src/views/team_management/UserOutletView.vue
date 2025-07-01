@@ -248,7 +248,6 @@ const unmappingTabs = [
       // Defensive: try to get selections from unmapSelections if not passed
       let selections = _selections;
       if (!selections) {
-        // fallback to global reactive unmapSelections
         selections = unmapSelections;
         console.log('[UnmapPopup] users fetchData selections was undefined, using unmapSelections:', selections);
       } else {
@@ -259,24 +258,60 @@ const unmappingTabs = [
         return [];
       }
       const selectedOutlet = selections.outlets[0];
-      console.log('[UnmapPopup] Selected outlet:', selectedOutlet);
-      console.log('[UnmapPopup] mappedUsers.value:', mappedUsers.value);
-      console.log('[UnmapPopup] users.value:', users.value);
-      // Find all mappings for this outlet
-      const mappingsForOutlet = (mappedUsers.value || []).filter(mu => mu.outlet_id === selectedOutlet.id);
-      console.log('[UnmapPopup] mappingsForOutlet:', mappingsForOutlet);
-      // For each mapping, find the user and attach mapping_id
-      const result = mappingsForOutlet.map(mu => {
-        const user = users.value.find(u => u.id === mu.user_id);
-        if (user) {
-          const userWithMapping = { ...user, mapping_id: mu.mapping_id };
-          console.log('[UnmapPopup] Found mapped user:', userWithMapping);
-          return userWithMapping;
+      // Try all possible keys for matching
+      const outletKeys = ['id', 'resid', 'outlet_id'];
+      const mappedUserKeys = ['outlet_id', 'resid', 'id', 'outlet', 'outletId', 'res_id'];
+      // Build all possible string values for selectedOutlet
+      const outletIdsToMatch = outletKeys.map(k => selectedOutlet[k]).filter(Boolean).map(String);
+      // Try to match any mappedUser key to any selectedOutlet id
+      const mappingsForOutlet = (mappedUsers.value || []).filter(mu => {
+        let matched = false;
+        for (const muKey of mappedUserKeys) {
+          if (mu[muKey] && outletIdsToMatch.includes(String(mu[muKey]))) {
+            matched = true;
+            break;
+          }
         }
-        console.log('[UnmapPopup] No user found for mapping:', mu);
-        return null;
-      }).filter(Boolean);
-      console.log('[UnmapPopup] Final users to show:', result);
+        // Check for nested outlet object (e.g., mu.outlet.id)
+        if (!matched && mu.outlet && typeof mu.outlet === 'object') {
+          for (const k of outletKeys) {
+            if (mu.outlet[k] && outletIdsToMatch.includes(String(mu.outlet[k]))) {
+              matched = true;
+              break;
+            }
+          }
+        }
+        return matched;
+      });
+      let result = [];
+      mappingsForOutlet.forEach(mu => {
+        if (Array.isArray(mu.users)) {
+          mu.users.forEach(userObj => {
+            let username, mapping_id, mapping_ids;
+            if (typeof userObj === 'string') {
+              username = userObj;
+              mapping_id = mu.mapping_id;
+            } else {
+              username = userObj.username;
+              mapping_id = userObj.mapping_id;
+              mapping_ids = userObj.mapping_ids;
+            }
+            const user = users.value.find(u => u.username === username);
+            if (user) {
+              if (!mapping_id && mu.mapping_id) mapping_id = mu.mapping_id;
+              if (!mapping_ids && mu.mapping_ids) mapping_ids = mu.mapping_ids;
+              if (!mapping_id && user.mapping_id) mapping_id = user.mapping_id;
+              if (!mapping_ids && user.mapping_ids) mapping_ids = user.mapping_ids;
+              if (!mapping_id && !mapping_ids) {
+                mapping_id = null;
+                mapping_ids = null;
+              }
+              const userWithMapping = { ...user, mapping_id, mapping_ids };
+              result.push(userWithMapping);
+            }
+          });
+        }
+      });
       return result;
     },
     displayMapping: { heading: "username", sub: "usernumber" },
@@ -287,11 +322,16 @@ const unmappingTabs = [
 async function onUnmappingGenerated(unmapData) {
   mappingLoading.value = true;
   try {
-    const unmapPromises = unmapData.map(([user, outlet]) => {
-      if (user.mapping_id) {
-        return unmapUserFromOutlet(user.mapping_id);
+    const unmapPromises = [];
+    unmapData.forEach(([outlet, user]) => {
+      if (!user) return;
+      if (Array.isArray(user.mapping_ids)) {
+        user.mapping_ids.forEach(mid => {
+          if (mid) unmapPromises.push(unmapUserFromOutlet(mid));
+        });
+      } else if (user.mapping_id) {
+        unmapPromises.push(unmapUserFromOutlet(user.mapping_id));
       }
-      return Promise.resolve();
     });
     await Promise.all(unmapPromises);
     await fetchMappedUsers();
@@ -368,4 +408,3 @@ onMounted(() => {
     @close="closeMessageDialog"
   />
 </template>
-    // :icon="messageDialogContent.icon"
