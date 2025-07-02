@@ -265,7 +265,6 @@ const selections = reactive({
 });
 
 const mappedHeaders = {
-  mapping_id: "Mapping ID",
   username: "User Name",
   usernumber: "Number",
   useremail: "Email",
