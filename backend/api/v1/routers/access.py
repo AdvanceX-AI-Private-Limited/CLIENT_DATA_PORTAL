@@ -350,9 +350,10 @@ async def create_user_service_mapping(
     logger.info(f"Successfully created {len(created_mappings)} mappings")
     return created_mappings
 
-@router.get("/user-service-mappings/", response_model=List[schemas.DisplayUserService])
+
+@router.get("/user-service-mappings/")
 async def read_user_service_mappings(
-    params: schemas.QueryUserService, 
+    params: schemas.QueryUserService = Depends(), 
     current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
@@ -381,15 +382,12 @@ async def read_user_service_mappings(
         query = db.query(models.UserService)
 
         if not is_internal_client:
-
             if params.client_id is not None:
                 logger.info(f"Filtering mappings by client ID {params.client_id}")
                 query = query.filter(models.UserService.client_id == params.client_id)
-
             if params.user_id is not None:
                 logger.info(f"Filtering mappings by user ID {params.user_id}")
                 query = query.filter(models.UserService.user_id == params.user_id)
-
             if params.service_id is not None:
                 logger.info(f"Filtering mappings by service ID {params.service_id}")
                 query = query.filter(models.UserService.service_id == params.service_id)
@@ -397,7 +395,35 @@ async def read_user_service_mappings(
         allmappings = query.offset(params.skip).limit(params.limit).all()
         logger.info(f"Retrieved {len(allmappings)} mappings with skip={params.skip}, limit={params.limit}")
 
-        return allmappings
+        if allmappings and getattr(params, "grouped", False):
+            result = []
+            logger.info("Grouping mappings by user and service: ", allmappings)
+            for m in allmappings:
+                mapping_id = m.id
+                user = m.user
+                service = m.service
+                service_id = m.service_id
+                created_at = m.created_at
+                user_id = m.user_id
+                client_id = m.client_id
+                
+                if not user or not service:
+                    continue
+                result.append({
+                    "mapping_id": mapping_id,
+                    "username": getattr(user, "username", None),
+                    "usernumber": str(getattr(user, "usernumber", "")),
+                    "useremail": getattr(user, "useremail", None),
+                    "service": getattr(service, "servicename", getattr(service, "id", None)),
+                    "service_variant": getattr(service, "servicevariant", None),
+                    "service_id": service_id,
+                    "created_at": created_at,
+                    "user_id": user_id,
+                    "client_id": client_id
+                })
+            return result
+        else:
+            return allmappings
 
     except Exception as e:
         logger.error(f"Error while retrieving mappings: {str(e)}")
@@ -610,28 +636,28 @@ async def create_user_outlet_mapping(
 @router.get("/user-outlet-mappings/")
 async def read_user_outlet_mappings(
     params: schemas.QueryUserOutlet = Depends(),
-    # current_session = Depends(get_current_session),
+    current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
     logger.info(f"Received request to get mappings with params : {params}")
 
-    # is_internal_client = current_session.client_id in INTERNAL_CLIENT_IDS
-    is_internal_client = True
-    # logger.info(f"Client ID {current_session.client_id} is_internal_client={is_internal_client}")
+    is_internal_client = current_session.client_id in INTERNAL_CLIENT_IDS
+    # is_internal_client = True
+    logger.info(f"Client ID {current_session.client_id} is_internal_client={is_internal_client}")
 
     # Only verify request for non-internal clients
-    # if not is_internal_client:
-    #     if params.user_id:
-    #         try:
-    #             verify_request(client_id=current_session.client_id, 
-    #                         user_id=params.user_id,
-    #                         db=db)
-    #         except Exception as e:
-    #             logger.error(f"Request verification failed: {str(e)}")
-    #             raise HTTPException(
-    #                 status_code=status.HTTP_403_FORBIDDEN,
-    #                 detail="Unauthorized access to get user"
-    #             )
+    if not is_internal_client:
+        if params.user_id:
+            try:
+                verify_request(client_id=current_session.client_id, 
+                            user_id=params.user_id,
+                            db=db)
+            except Exception as e:
+                logger.error(f"Request verification failed: {str(e)}")
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Unauthorized access to get user"
+                )
 
     query = db.query(models.UserOutlet)
 

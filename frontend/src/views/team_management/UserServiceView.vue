@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, reactive } from "vue";
-import { getServices, getUsers, mappedUsersServices, mapUserToService } from "@/composables/api/testApi";
+import { getMappedUsers } from "@/composables/api/userToOutletMappings";
+import { getMappedServices, mapUserToService, unmapUserFromService, getAllServices } from "@/composables/api/userToServiceMappings";
+import { fetchUsers as fetchUsersApi } from "@/composables/api/teamManagement";
 import DataTable from "@/components/DataTables/DataTable.vue";
 import MappingPopup from "@/components/Mapping/MappingPopup.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
@@ -9,6 +11,85 @@ import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/vue/24/outline";
 import Breadcrumb from "@/components/Breadcrumb.vue";
 
 const showPopup = ref(false);
+const showUnmapPopup = ref(false);
+const unmapSelections = reactive({
+  users: [],
+  services: [],
+});
+function showUnmappingPopup() {
+  console.log("Opening unmapping popup");
+  showUnmapPopup.value = true;
+}
+
+function closeUnmapPopup() {
+  showUnmapPopup.value = false;
+}
+// Tabs for unmapping: first select user, then show mapped services for that user
+const unmappingTabs = [
+  {
+    label: "Select User",
+    description: "Select a user to unmap services from",
+    key: "users",
+    fetchData: async () => {
+      return users.value;
+    },
+    displayMapping: { heading: "username", sub: "usernumber" },
+  },
+  {
+    label: "Select Mapped Services",
+    description: "Select services mapped to the selected user",
+    key: "services",
+    fetchData: async (_selections) => {
+      let selections = _selections || unmapSelections;
+      if (!selections || !selections.users || selections.users.length === 0) {
+        return [];
+      }
+      const selectedUser = selections.users[0];
+      const userId = selectedUser.id;
+      // Find all mapped services for this user
+      return (mappedUsers.value || []).filter(mu => {
+        // Defensive: support both user_id and user.id
+        return (
+          mu.user_id == userId ||
+          (mu.user && mu.user.id == userId)
+        );
+      });
+    },
+    displayMapping: { heading: "service", sub: "service_variant" },
+  },
+];
+// Unmapping logic
+async function onUnmappingGenerated(unmapData) {
+  mappingLoading.value = true;
+  try {
+    // Collect all unique mapping_ids to unmap
+    const mappingIds = new Set();
+    unmapData.forEach(([user, service]) => {
+      // The second item is the mapped service object (from the second tab)
+      if (!service) return;
+      if (Array.isArray(service.mapping_ids)) {
+        service.mapping_ids.forEach(mid => {
+          if (mid) mappingIds.add(mid);
+        });
+      } else if (service.mapping_id) {
+        mappingIds.add(service.mapping_id);
+      }
+    });
+    const unmapPromises = Array.from(mappingIds).map(mid => unmapUserFromService(mid));
+    await Promise.all(unmapPromises);
+    await fetchMappedUsers();
+    showMessage("Unmapping completed successfully", "Success", "success");
+  } catch (error) {
+    showMessage(
+      error?.response?.data?.message?.response || error?.response?.data?.detail || "Failed to process unmapping.",
+      "Error",
+      "error"
+    );
+  } finally {
+    mappingLoading.value = false;
+    showUnmapPopup.value = false;
+  }
+}
 
 const services = ref([]);
 const users = ref([]);
@@ -31,27 +112,31 @@ const messageDialogContent = ref({
   icon: "",
 });
 
-const fetchUsers = async () => {
-  console.log("Fetching users...");
+async function fetchUsers() {
   loadingUsers.value = true;
   errorUsers.value = null;
   try {
-    const response = await getUsers();
-    users.value = response.data;
-    console.log("Users:", users.value);
+    const params = {
+      client_id: localStorage.getItem("client_id"),
+      skip: 0,
+      limit: 100,
+    };
+    const response = await fetchUsersApi(params);
+    users.value = response?.data || [];
+    console.log("Fetched users:", users.value);
   } catch (err) {
     errorUsers.value = err.message || "Failed to fetch";
   } finally {
     loadingUsers.value = false;
   }
-};
+}
 
-async function fetchMappedServices() {
-  console.log("Fetching mapped services...");
+async function fetchAllServices() {
+  console.log("Fetching all services...");
   loadingServices.value = true;
   errorServices.value = null;
   try {
-    const response = await getServices();
+    const response = await getAllServices();
     services.value = response.data;
     console.log("Mapped services:", services.value);
   } catch (err) {
@@ -65,6 +150,7 @@ function handleToolbarAction(action) {
   if (typeof action.onClick === "function") action.onClick();
 }
 
+// Tabs for mapping: first select user, then select services to map
 const mappingTabs = [
   {
     label: "Select Users",
@@ -74,45 +160,41 @@ const mappingTabs = [
       if (!users.value.length) await fetchUsers();
       return users.value;
     },
-    displayMapping: { heading: "user_name", sub: "user_number" },
+    displayMapping: { heading: "username", sub: "usernumber" },
   },
   {
     label: "Select Services",
     description: "Select services to map to the users",
     key: "services",
     fetchData: async () => {
-      if (!services.value.length) await fetchMappedServices();
+      if (!services.value.length) await fetchAllServices();
       return services.value;
     },
-    displayMapping: { heading: "service_name", sub: "service_variant" },
-  },
+    displayMapping: { heading: "servicename", sub: "servicevariant" },
+  }
 ];
 
 function transformDataForBackend(data) {
-  console.log("data", data);
-  const serviceIdSet = new Set();
-  const userMap = new Map();
-
+  // data: array of [user, service] pairs
+  const map_params = [];
+  // Collect unique user-service pairs
+  const seen = new Set();
   data.forEach(([user, service]) => {
-    const userNumber = user.user_number;
-    const userName = user.user_name;
-    const serviceId = parseInt(service.service_id);
-
-    if (!userNumber || !userName || isNaN(serviceId)) return;
-
-    serviceIdSet.add(serviceId);
-
-    // Use Map to avoid duplicate users
-    if (!userMap.has(userNumber)) {
-      userMap.set(userNumber, { name: userName, number: userNumber });
-    }
+    if (!user || !service) return;
+    const userId = user.id;
+    const serviceId = service.id;
+    const clientId = user.client_id;
+    if (!userId || isNaN(serviceId) || isNaN(clientId)) return;
+    const key = `${userId}-${serviceId}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    map_params.push({
+      user_id: userId,
+      service_id: serviceId,
+      client_id: clientId,
+    });
   });
-
-  return {
-    service_id: Array.from(serviceIdSet),
-    users: Array.from(userMap.values()),
-    action: "map",
-  };
+  return map_params;
 }
 
 // Function to show message dialog
@@ -125,7 +207,6 @@ function showMessage(message, title = "Message", icon = "") {
   messageDialogVisible.value = true;
 }
 
-// Function to close message dialog
 function closeMessageDialog() {
   messageDialogVisible.value = false;
 }
@@ -135,7 +216,7 @@ async function fetchMappedUsers() {
   loadingMappedUsers.value = true;
   errorMappedUsers.value = null;
   try {
-    const response = await mappedUsersServices();
+    const response = await getMappedServices();
     mappedUsers.value = response.data;
   } catch (err) {
     errorMappedUsers.value = err.message || "Failed to fetch";
@@ -145,26 +226,20 @@ async function fetchMappedUsers() {
 }
 
 async function onMappingGenerated(mappings) {
-  console.log("MAPPING RESULT", mappings);
   mappingLoading.value = true;
   try {
     // Compose payload according to your API's requirements
     let payload = await transformDataForBackend(mappings);
-    payload = {
-      data: payload,
-    };
-    console.log("Payload being sent:", JSON.stringify(payload));
     const response = await mapUserToService(payload);
     showMessage(
-      response.data?.message || "Mapping completed successfully",
+      response?.data?.message || "Mapping completed successfully",
       "Success",
       "success"
     );
     await fetchMappedUsers();
   } catch (error) {
-    console.error("Error mapping users to services:", error);
     showMessage(
-      error.response?.data?.message || error.message || "Failed to process mapping.",
+      error?.response?.data?.message?.response || error?.response?.data?.detail || error?.message || "Failed to process mapping.",
       "Error",
       "error"
     );
@@ -189,23 +264,37 @@ const selections = reactive({
   services: [],
 });
 
+const mappedHeaders = {
+  mapping_id: "Mapping ID",
+  username: "User Name",
+  usernumber: "Number",
+  useremail: "Email",
+  service: "Service",
+  service_variant: "Service Variant",
+  service_id: "Service ID",
+  created_at: "Created At",
+};
+
 onMounted(() => {
   fetchUsers();
-  fetchMappedServices();
+  fetchAllServices();
   fetchMappedUsers();
 });
 </script>
 
 <template>
   <Breadcrumb />
+
   <DataTable
-    title="User To Service"
+    :table_headers="mappedHeaders"
     :table_data="mappedUsers"
     :loading="loadingMappedUsers"
     :error="errorMappedUsers"
-    :action_buttons="[{ name: 'Map&nbsp;Users', onClick: showMappingPopup, action: 'user_map', icon: PlusIcon}]"
+    :action_buttons="[
+      { name: 'Map&nbsp;Users', onClick: showMappingPopup, action: 'user_map', icon: PlusIcon },
+      { name: 'Unmap&nbsp;Users', onClick: showUnmappingPopup, action: 'unmap', icon: TrashIcon }
+    ]"
     @action-click="handleToolbarAction"
-    :csv_download="true"
   />
 
   <MappingPopup
@@ -214,6 +303,17 @@ onMounted(() => {
     v-model:selections="selections"
     @close="closePopup"
     @submit="onMappingGenerated"
+  />
+
+  <!-- Unmapping Popup -->
+  <MappingPopup
+    :title="'Bulk Unassign Mappings'"
+    v-if="showUnmapPopup"
+    :tabs="unmappingTabs"
+    v-model:selections="unmapSelections"
+    @close="closeUnmapPopup"
+    @submit="onUnmappingGenerated"
+    :step-mode="true"
   />
 
   <!-- Show loading spinner when mapping is in progress -->

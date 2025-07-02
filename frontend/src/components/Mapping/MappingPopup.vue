@@ -569,7 +569,7 @@ function loadMoreItems() {
       </div>
 
       <!-- Footer Actions -->
-      <div class="p-3 border-t flex justify-between gap-2 bg-gray-50">
+      <div class="p-3 border-t flex rounded-b-lg justify-between gap-2 bg-gray-50">
         <button @click="close" class="text-xs text-gray-700 py-2 px-4 border rounded-lg hover:bg-gray-100 cursor-pointer">Cancel</button>
         
         <div class="flex gap-2">

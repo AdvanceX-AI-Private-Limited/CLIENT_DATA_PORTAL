@@ -434,6 +434,7 @@ class QueryUserService(BaseModel):
     client_id: Optional[int] = None
     user_id: Optional[int] = None
     service_id: Optional[int] = None
+    grouped: bool = True
     skip: int = 0
     limit: int = 100
 
