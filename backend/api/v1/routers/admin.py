@@ -14,7 +14,7 @@ logger = create_logger(__name__)
 
 
 router = APIRouter() 
-INTERNAL_CLIENT_IDS = {1}
+INTERNAL_CLIENT_IDS = {1,2,3,4,5,6}
 
 def verify_request(client_id: int, 
                    db: Session, 

@@ -14,7 +14,7 @@ from logger import create_logger
 logger = create_logger(__name__)
 
 router = APIRouter() 
-INTERNAL_CLIENT_IDS = {1,4}
+INTERNAL_CLIENT_IDS = {1,2,3,4,5,6}
 
 #______________________________________ Outlet <> Service routes ______________________________________
 @router.post("/outlet-service-mappings/", response_model=List[schemas.DisplayOutletService])
