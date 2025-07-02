@@ -85,7 +85,7 @@ const routes = [
 			},
 			{
 				path: 'outlet-service-mappings',
-				name: 'Outlet Service Mappings',
+				name: 'Outlet to Service Mappings',
 				component: OutletServiceView,
 			},
 				],

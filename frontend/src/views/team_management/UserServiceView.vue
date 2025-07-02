@@ -31,7 +31,15 @@ const unmappingTabs = [
     description: "Select a user to unmap services from",
     key: "users",
     fetchData: async () => {
-      return users.value;
+      // Only show users that have at least one mapped service
+      const mappedUserIds = new Set(
+        (mappedUsers.value || []).map(mu =>
+          mu.user_id ?? (mu.user && mu.user.id) ?? mu.id
+        )
+      );
+      return users.value.filter(user =>
+        mappedUserIds.has(user.id)
+      );
     },
     displayMapping: { heading: "username", sub: "usernumber" },
   },
@@ -62,23 +70,44 @@ const unmappingTabs = [
 async function onUnmappingGenerated(unmapData) {
   mappingLoading.value = true;
   try {
-    // Collect all unique mapping_ids to unmap
+    // For each selected [user, service] pair, find the mapping_id in mappedUsers
     const mappingIds = new Set();
     unmapData.forEach(([user, service]) => {
-      // The second item is the mapped service object (from the second tab)
-      if (!service) return;
-      if (Array.isArray(service.mapping_ids)) {
-        service.mapping_ids.forEach(mid => {
-          if (mid) mappingIds.add(mid);
-        });
+      if (!user || !service) return;
+      // Find the mapping in mappedUsers that matches both user and service
+      const match = (mappedUsers.value || []).find(mu => {
+        // Defensive: support both user_id and user.id, and service/service_id
+        const userMatch = mu.user_id == user.id || (mu.user && mu.user.id == user.id);
+        const serviceMatch = mu.service_id == service.id || mu.service == service.service || mu.service === service.servicename;
+        return userMatch && serviceMatch;
+      });
+      if (match && match.mapping_id) {
+        mappingIds.add(match.mapping_id);
       } else if (service.mapping_id) {
         mappingIds.add(service.mapping_id);
       }
     });
-    const unmapPromises = Array.from(mappingIds).map(mid => unmapUserFromService(mid));
-    await Promise.all(unmapPromises);
+    if (mappingIds.size === 0) {
+      showMessage("No mappings selected for unmapping.", "Info", "info");
+      return;
+    }
+    // Try all unmap requests, but ignore errors if mapping is already deleted or not found
+    console.log("Unmapping IDs:", Array.from(mappingIds));
+    const results = await Promise.allSettled(Array.from(mappingIds).map(mid => unmapUserFromService(mid)));
+    // If at least one was successful, treat as success
+    const anySuccess = results.some(r => r.status === "fulfilled");
     await fetchMappedUsers();
-    showMessage("Unmapping completed successfully", "Success", "success");
+    if (anySuccess) {
+      showMessage("Unmapping completed successfully", "Success", "success");
+    } else {
+      // Show the first error message
+      const firstError = results.find(r => r.status === "rejected");
+      showMessage(
+        firstError?.reason?.response?.data?.message?.response || firstError?.reason?.response?.data?.detail || firstError?.reason?.message || "Failed to process unmapping.",
+        "Error",
+        "error"
+      );
+    }
   } catch (error) {
     showMessage(
       error?.response?.data?.message?.response || error?.response?.data?.detail || "Failed to process unmapping.",
@@ -230,13 +259,40 @@ async function onMappingGenerated(mappings) {
   try {
     // Compose payload according to your API's requirements
     let payload = await transformDataForBackend(mappings);
-    const response = await mapUserToService(payload);
-    showMessage(
-      response?.data?.message || "Mapping completed successfully",
-      "Success",
-      "success"
-    );
+    console.log("Mapping payload:", payload);
+    if (!payload.length) {
+      showMessage("No mappings selected.", "Info", "info");
+      return;
+    }
+    // If multiple, try all, handle errors gracefully
+    let response, errorMsg;
+    if (payload.length === 1) {
+      // Single mapping
+      try {
+        response = await mapUserToService(payload);
+      } catch (err) {
+        errorMsg = err?.response?.data?.message?.response || err?.response?.data?.detail || err?.message;
+      }
+    } else {
+      // Multiple mappings: try all, ignore duplicates/errors if already mapped
+      const results = await Promise.allSettled(payload.map(p => mapUserToService([p])));
+      response = results.find(r => r.status === "fulfilled");
+      errorMsg = results.find(r => r.status === "rejected")?.reason?.response?.data?.message?.response || results.find(r => r.status === "rejected")?.reason?.response?.data?.detail || results.find(r => r.status === "rejected")?.reason?.message;
+    }
     await fetchMappedUsers();
+    if (response) {
+      showMessage(
+        response?.value?.data?.message || response?.data?.message || "Mapping completed successfully",
+        "Success",
+        "success"
+      );
+    } else {
+      showMessage(
+        errorMsg || "Failed to process mapping.",
+        "Error",
+        "error"
+      );
+    }
   } catch (error) {
     showMessage(
       error?.response?.data?.message?.response || error?.response?.data?.detail || error?.message || "Failed to process mapping.",
@@ -265,6 +321,7 @@ const selections = reactive({
 });
 
 const mappedHeaders = {
+  mapping_id: "Mapping ID",
   username: "User Name",
   usernumber: "Number",
   useremail: "Email",

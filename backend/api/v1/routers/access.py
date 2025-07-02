@@ -93,9 +93,9 @@ async def create_outlet_service_mapping(
     logger.info(f"Successfully created {len(created_mappings)} mappings")
     return created_mappings
 
-@router.get("/outlet-service-mappings/", response_model=List[schemas.DisplayOutletService])
+@router.get("/outlet-service-mappings/")
 async def read_outlet_service_mappings(
-    params: schemas.QueryOutletService, 
+    params: schemas.QueryOutletService = Depends(), 
     current_session = Depends(get_current_session),
     db: Session = Depends(get_db)
 ):
@@ -124,15 +124,12 @@ async def read_outlet_service_mappings(
         query = db.query(models.OutletService)
 
         if not is_internal_client:
-
             if params.client_id is not None:
                 logger.info(f"Filtering mappings by client ID {params.client_id}")
                 query = query.filter(models.OutletService.client_id == params.client_id)
-
             if params.outlet_id is not None:
                 logger.info(f"Filtering mappings by outlet ID {params.outlet_id}")
                 query = query.filter(models.OutletService.outlet_id == params.outlet_id)
-
             if params.service_id is not None:
                 logger.info(f"Filtering mappings by service ID {params.service_id}")
                 query = query.filter(models.OutletService.service_id == params.service_id)
@@ -140,7 +137,24 @@ async def read_outlet_service_mappings(
         allmappings = query.offset(params.skip).limit(params.limit).all()
         logger.info(f"Retrieved {len(allmappings)} mappings with skip={params.skip}, limit={params.limit}")
 
-        return allmappings
+        # If grouped, return custom schema (list of dicts)
+        if allmappings and getattr(params, "grouped", False):
+            result = []
+            for m in allmappings:
+                result.append({
+                    "mapping_id": m.id,
+                    "aggregator": getattr(m.outlet, "aggregator", None),
+                    "resid": getattr(m.outlet, "resid", None),
+                    "subzone": getattr(m.outlet, "subzone", None),
+                    "resshortcode": getattr(m.outlet, "resshortcode", None),
+                    "city": getattr(m.outlet, "city", None),
+                    "is_active": getattr(m.outlet, "is_active", None),
+                    "servicename": getattr(m.service, "servicename", None),
+                    "servicevariant": getattr(m.service, "servicevariant", None)
+                })
+            return result
+        # Default: return as per DisplayOutletService schema
+        return [schemas.DisplayOutletService.model_validate(m) for m in allmappings]
 
     except Exception as e:
         logger.error(f"Error while retrieving mappings: {str(e)}")

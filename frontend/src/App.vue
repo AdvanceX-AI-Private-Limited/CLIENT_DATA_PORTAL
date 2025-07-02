@@ -109,7 +109,7 @@ const navigation = [
 		subLinks: [
 			{ name: 'Users', path: '/team-management/users-management' },
 			{ name: 'User to Outlet', path: '/team-management/user-to-outlet-mappings' },
-			{ name: 'Outlet Service', path: '/team-management/outlet-service-mappings' },
+			{ name: 'Outlet to Service', path: '/team-management/outlet-service-mappings' },
 			{ name: 'Uset to Service', path: '/team-management/user-to-service-mappings' }
 		]
 	},
