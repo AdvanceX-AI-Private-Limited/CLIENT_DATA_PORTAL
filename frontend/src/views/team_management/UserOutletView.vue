@@ -359,6 +359,15 @@ const selections = reactive({
   outlets: [],
 });
 
+const mapHeaders = {
+  res_id: "Res ID",
+  brand: "Brand",
+  aggregator: "Aggregator",
+  // subzone: "Subzone",
+  shortcode: "Shortcode",
+  users: "Users",
+};
+
 onMounted(() => {
   fetchMappedOutlets();
   fetchMappedUsers();
@@ -373,6 +382,7 @@ onMounted(() => {
   <DataTable
     :table_data="mappedUsers || []"
     :loading="loadingMappedUsers"
+    :table_headers="mapHeaders"
     :error="errorMappedUsers"
     :action_buttons="[{ name: 'Map&nbsp;Users', onClick: showMappingPopup, action: 'user_map', icon: PlusIcon}, { name: 'Unmap&nbsp;Users', onClick: showUnmappingPopup, action: 'unmap', icon: TrashIcon }]"
     @action-click="handleToolbarAction"
