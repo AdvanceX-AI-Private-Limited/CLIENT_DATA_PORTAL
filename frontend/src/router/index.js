@@ -19,6 +19,7 @@ import UserOutletView from '@/views/team_management/UserOutletView.vue';
 import UserServiceView from '@/views/team_management/UserServiceView.vue';
 import OutletServiceView from '@/views/team_management/OutletServiceView.vue';
 import ClientRegistration from '@/views/registration/ClientRegistration.vue';
+import { internals } from '@/stores/useAuth';
 
 const publicRoutes = ['/login', '/sign-up'];
 
@@ -99,11 +100,15 @@ const routes = [
 				name: 'Outlet Management',
 				component: OutletManagement,
 			},
-			{
-				path: 'services-management',
-				name: 'Services Management',
-				component: ServicesManagement,
-			},
+			...(
+				internals.includes(Number(localStorage.getItem('client_id')))
+					? [{
+						path: 'services-management',
+						name: 'Services Management',
+						component: ServicesManagement,
+					}]
+					: []
+			),
 				],
 		},
 		{

@@ -21,12 +21,13 @@ import AccountReviewNotice from "./components/Auth/AccountReviewNotice.vue";
 import { userIsActive } from "@/composables/api/authApi";
 import MessageDialog from '@/components/MessageDialog.vue';
 import { useMessageDialogStore } from '@/stores/messageDialog';
+import { internals } from '@/stores/useAuth';
 
 const isSidebarOpen = ref(false)
 const route = useRoute();
 const router = useRouter();
 const { isSignedIn, loaded, isActive, setIsActive } = useAuth();
-const checkingActiveStatus = ref(true); 
+const checkingActiveStatus = ref(true);
 
 let previousAuthState = null;
 
@@ -76,7 +77,7 @@ onMounted(async () => {
   }
   checkingActiveStatus.value = false;
 });
-
+const current_client = Number(localStorage.getItem('client_id'));
 const sidebarStore = useSidebarStore();
 const { isLocked } = storeToRefs(sidebarStore);
 
@@ -98,7 +99,7 @@ const navigation = [
 		path: '/brand-management', 
 		icon: CubeIcon,
 		subLinks: [
-			{ name: 'Services', path: '/brand-management/services-management' }, 
+      ...(internals.includes(current_client) ? [{ name: 'Services', path: '/brand-management/services-management' }] : []),
 			{ name: 'Outlet', path: '/brand-management/outlet-management' } 
 		]
 	},
@@ -134,7 +135,7 @@ const dialog = useMessageDialogStore();
   <div v-if="checkingActiveStatus"></div>
   <div v-else-if="!isActive && isSignedIn">
     <AccountReviewNotice/>
-  </div>
+  </div> 
   <div v-else :class="{ 'min-h-screen flex transition-all duration-300': isLocked, 'min-h-screen': !isLocked }">
     <Sidebar v-if="shouldShowSidebar" :navigation="navigation" />
     <main :class="[

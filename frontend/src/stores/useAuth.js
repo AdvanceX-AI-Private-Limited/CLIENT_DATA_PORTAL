@@ -21,6 +21,8 @@ function deleteCookie(name) {
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }
 
+export const internals = [1, 2, 3, 4, 5];
+
 // Helper to check if token is valid
 function isTokenValid() {
     const token = localStorage.getItem('session_token');
@@ -108,6 +110,7 @@ export function useAuth() {
         setAuthFromApiResponse,
         clearAuth,
         logout,
-        setIsActive: (val) => { isActive.value = val; } // <-- Add this line
+        setIsActive: (val) => { isActive.value = val; },
+        internals
     }
 }
