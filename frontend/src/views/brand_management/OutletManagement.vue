@@ -251,14 +251,18 @@ const outletForm = reactive({
   clientid: localStorage.getItem("client_id")
 });
 
-// Add outlet to review list
+const allow_nullable_fields = [
+  "outletnumber",
+];
+
 const addOutletToReview = () => {
-  // Only check visible fields
+  // Only check visible fields, but skip nullable fields
   for (const field of visibleOutletInputFields.value) {
     if (
-      outletForm[field.key] === "" ||
-      outletForm[field.key] === null ||
-      outletForm[field.key] === undefined
+      (outletForm[field.key] === "" ||
+        outletForm[field.key] === null ||
+        outletForm[field.key] === undefined)
+      && !allow_nullable_fields.includes(field.key)
     ) {
       showMessage("Please fill all the fields.", "Error", "error");
       return;
