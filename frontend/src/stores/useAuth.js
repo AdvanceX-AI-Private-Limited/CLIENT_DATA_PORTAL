@@ -21,7 +21,7 @@ function deleteCookie(name) {
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }
 
-export const internals = [1, 2, 3, 4, 5];
+export const internals = [1, 2, 3, 4, 5, 6];
 
 // Helper to check if token is valid
 function isTokenValid() {
