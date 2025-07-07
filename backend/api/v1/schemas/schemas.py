@@ -216,7 +216,7 @@ class OutletBase(BaseModel):
         examples=["Mumbai / Delhi"],
         description="City name (letters only)"
     )
-    outletnumber: str = Field(
+    outletnumber: Optional[str] = Field(
         ...,
         pattern=r'^\d+$',
         min_length=3,
