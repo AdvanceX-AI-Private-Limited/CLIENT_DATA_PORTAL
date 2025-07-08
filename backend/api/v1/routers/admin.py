@@ -77,6 +77,24 @@ def verify_request(client_id: int,
                 
 
 #______________________________________ Brand routes ______________________________________
+
+# GET API to return brand abbreviations and IDs
+@router.get("/brands/names-and-ids", response_model=List[dict])
+async def get_brand_names_and_id(
+    current_session = Depends(get_current_session),
+    db: Session = Depends(get_db)
+):
+    brands = db.query(models.Brand).all()
+    result = []
+    for db_brand in brands:
+        brand_name_words = (db_brand.brandname.strip()).split()
+        if len(brand_name_words) > 1:
+            abbreviation = ''.join([word[0].upper() for word in brand_name_words if word])
+        else:
+            abbreviation = db_brand.brandname
+        result.append({"brand_name": abbreviation, "id": db_brand.id})
+    return result
+
 @router.get("/brands/", response_model=List[schemas.DisplayBrand])
 async def get_brands(
     params: schemas.BrandQueryParams = Depends(),

@@ -5,10 +5,11 @@ import DataTable from "@/components/DataTables/DataTable.vue";
 import MessageDialog from "@/components/MessageDialog.vue";
 import EditDialog from "@/components/OutletManagement/EditDialog.vue";
 import AddUsersPopup from "@/components/Mapping/AddUsersPopup.vue";
-import { fetchOutlets as fetchOutletsApi, deleteOutlet, addOutlet } from "@/composables/api/brandManagementApi";
+import { fetchOutlets as fetchOutletsApi, deleteOutlet, addOutlet, fetchBrandNamesAndIds } from "@/composables/api/brandManagementApi";
 import { PencilIcon, TrashIcon, PlusIcon } from "@heroicons/vue/24/outline";
 import { useMessageDialogStore } from '@/stores/messageDialog';
 import { updateOutlet } from "@/composables/api/brandManagementApi";
+import { internals } from '@/stores/useAuth';
 
 const dialog = useMessageDialogStore();
 
@@ -145,6 +146,9 @@ watch(editDialogVisible, (newValue) => {
 
 onMounted(() => {
   fetchOutlets();
+  if (isInternalClient.value) {
+    fetchBrands();
+  }
 });
 
 const columns = [
@@ -248,8 +252,29 @@ const outletForm = reactive({
   city: "",
   outletnumber: "",
   is_active: true,
-  clientid: localStorage.getItem("client_id")
+  clientid: localStorage.getItem("client_id"),
+  brandid: ""
 });
+
+// Internal client check
+const isInternalClient = computed(() => {
+  const clientId = Number(localStorage.getItem("client_id"));
+  console.log("Checking if client is internal:", clientId);
+  return internals.includes(clientId);
+});
+
+// Brand dropdown state
+const brands = ref([]);
+
+// Fetch brands for internal clients
+async function fetchBrands() {
+  try {
+    const response = await fetchBrandNamesAndIds();
+    brands.value = response?.data || [];
+  } catch (err) {
+    brands.value = [];
+  }
+}
 
 const allow_nullable_fields = [
   "outletnumber",
@@ -268,11 +293,17 @@ const addOutletToReview = () => {
       return;
     }
   }
+  // For internal client, ensure brandid is set
+  if (isInternalClient.value && !outletForm.brandid) {
+    showMessage("Please select a brand.", "Error", "error");
+    return;
+  }
   outletsReview.value.unshift({ ...outletForm });
   // Reset only visible fields
   visibleOutletInputFields.value.forEach(field => {
     outletForm[field.key] = "";
   });
+  if (isInternalClient.value) outletForm.brandid = "";
   isExpanded.value = false;
 };
 
@@ -288,7 +319,16 @@ const submitOutlets = async () => {
     return;
   }
   try {
-    await addOutlet(outletsReview.value);
+    // For internal client, ensure brandid is included in each outlet
+    let payload = outletsReview.value.map(outlet => {
+      if (isInternalClient.value) {
+        return { ...outlet, brandid: outlet.brandid };
+      } else {
+        const { brandid, ...rest } = outlet;
+        return rest;
+      }
+    });
+    await addOutlet(payload);
     showMessage("Outlets added successfully!", "Success", "success");
     outletsReview.value = [];
     fetchOutlets();
@@ -478,14 +518,27 @@ const allow_nullable_fields_in_edit_popup = [
               <div class="grid grid-cols-1 md:grid-cols-2 gap-2 items-end">
                 <template v-for="(field, idx) in visibleOutletInputFields" :key="field.key">
                   <template v-if="field.key === 'aggregator'">
-                    <select
-                      v-model="outletForm.aggregator"
-                      class="w-full border border-gray-300 rounded-md p-1.5 px-3 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                    >
-                      <option value="" disabled>Aggregator</option>
-                      <option value="Zomato">Zomato</option>
-                      <option value="Swiggy">Swiggy</option>
-                    </select>
+                    <div class="flex flex-col md:flex-row gap-2 w-full">
+                      <select
+                        v-model="outletForm.aggregator"
+                        class="w-full border border-gray-300 rounded-md p-1.5 px-3 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                      >
+                        <option value="" disabled>Aggregator</option>
+                        <option value="Zomato">Zomato</option>
+                        <option value="Swiggy">Swiggy</option>
+                      </select>
+                      <template v-if="isInternalClient">
+                        <select
+                          v-model="outletForm.brandid"
+                          class="w-full border border-gray-300 rounded-md p-1.5 px-3 mb-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white"
+                        >
+                          <option value="" disabled>Brand</option>
+                          <option v-for="brand in brands" :key="brand.id" :value="brand.id">
+                            {{ brand.brand_name }}
+                          </option>
+                        </select>
+                      </template>
+                    </div>
                   </template>
                   <template v-else>
                     <input
@@ -505,17 +558,6 @@ const allow_nullable_fields_in_edit_popup = [
                       Add
                     </button>
                   </template>
-                </template>
-                <!-- If even number of fields, show Confirm button in a new row, right side -->
-                <template v-if="!isOddVisibleFields">
-                  <div></div>
-                  <button
-                    @click="addOutletToReview"
-                    class="px-4 py-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow mb-2 ml-auto block w-auto"
-                    style="min-width: 90px;"
-                  >
-                    Add
-                  </button>
                 </template>
               </div>
             </div>

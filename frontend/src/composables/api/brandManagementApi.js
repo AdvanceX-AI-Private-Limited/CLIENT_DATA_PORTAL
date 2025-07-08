@@ -34,3 +34,7 @@ export async function deleteService(service_id) {
 export async function addService(payload) {
   return await post('/admin/services/', payload);
 }
+
+export async function fetchBrandNamesAndIds() {
+  return await get.get('/admin/brands/names-and-ids');
+}
