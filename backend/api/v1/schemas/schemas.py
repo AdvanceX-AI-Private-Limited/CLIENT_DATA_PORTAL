@@ -210,16 +210,12 @@ class OutletBase(BaseModel):
     )
     city: str = Field(
         ...,
-        min_length=2,
         max_length=50,
-        pattern=r"^[A-Za-z\s]+$",
         examples=["Mumbai / Delhi"],
         description="City name (letters only)"
     )
     outletnumber: Optional[str] = Field(
         ...,
-        pattern=r'^\d+$',
-        min_length=3,
         max_length=30,
         examples=["123456"],
         description="Internal numeric outlet ID (digits only)"
@@ -237,6 +233,9 @@ class OutletCreate(OutletBase):
         examples=[1],
         description="Owning client ID"
     )
+    brandid: Optional[int] = Field(
+        default=None,
+    )
 
 class DisplayOutlet(DisplayBase):
     id: int
@@ -245,7 +244,7 @@ class DisplayOutlet(DisplayBase):
     subzone: str
     resshortcode: str
     city: str
-    outletnumber: str
+    outletnumber: Optional[str]
     is_active: bool
     created_at: Optional[datetime]
     updated_at: Optional[datetime]

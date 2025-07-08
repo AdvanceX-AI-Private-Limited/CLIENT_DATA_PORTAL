@@ -6,7 +6,7 @@ import MessageDialog from "@/components/MessageDialog.vue";
 import EditDialog from "@/components/OutletManagement/EditDialog.vue";
 import AddUsersPopup from "@/components/Mapping/AddUsersPopup.vue";
 import { fetchOutlets as fetchOutletsApi, deleteOutlet, addOutlet } from "@/composables/api/brandManagementApi";
-import { PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
+import { PencilIcon, TrashIcon, PlusIcon } from "@heroicons/vue/24/outline";
 import { useMessageDialogStore } from '@/stores/messageDialog';
 import { updateOutlet } from "@/composables/api/brandManagementApi";
 
@@ -50,7 +50,7 @@ async function fetchOutlets() {
       client_id:  localStorage.getItem("client_id"),
       status: "all",
       skip: 0,
-      limit: 100,
+      limit: 99999,
     };
     console.log("Fetching outlets with params:", params);
 
@@ -385,6 +385,10 @@ async function handleUpdateApi(payload) {
     loading.value = false;
   }
 }
+
+const allow_nullable_fields_in_edit_popup = [
+  "outletnumber",
+];
 </script>
 
 <template>
@@ -429,6 +433,7 @@ async function handleUpdateApi(payload) {
     @save="handleEditSave"
     @submit="handleUpdateApi"
     :loading="loading"
+    :allow-nullable-fields="allow_nullable_fields_in_edit_popup"
     :api-error="updateApiError"
     :api-success="updateApiSuccess"
     :function-call="handleUpdateApi"

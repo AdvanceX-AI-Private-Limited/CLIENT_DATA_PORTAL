@@ -31,6 +31,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  allowNullableFields: {
+    type: Array,
+    default: () => [],
+  },
 });
 
 const emit = defineEmits(["close", "save", "submit"]);
@@ -57,10 +61,14 @@ const editableKeys = computed(() =>
     )
 );
 
+console.log("Editable keys:", props.allowNullableFields);
 function validateForm() {
   // Basic validation: check for empty required fields
   for (const key of editableKeys.value) {
-    if (form[key] === undefined || form[key] === null || form[key].toString().trim() === "") {
+    if (
+      (form[key] === undefined || form[key] === null || form[key].toString().trim() === "")
+      && !props.allowNullableFields.includes(key)
+    ) {
       showError(`"${props.mapHeaders[key]}" cannot be empty.`);
       return false;
     }

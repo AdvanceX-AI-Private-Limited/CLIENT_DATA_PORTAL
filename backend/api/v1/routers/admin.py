@@ -199,12 +199,15 @@ async def create_outlet(
             )
         
         # Get brand using brand_id
-        db_brand = db.query(models.Brand).filter(models.Brand.client_id == outlet.clientid).first()
-        if not db_brand:
-            logger.error(f"Brand not found for client ID: {outlet.clientid}")
-            raise HTTPException(
-                status_code=404,
-                detail="Brand not found"
+        if outlet.brandid is not None:
+            db_brand = db.query(models.Brand).filter(models.Brand.id == outlet.brandid).first()
+        else:
+            db_brand = db.query(models.Brand).filter(models.Brand.client_id == outlet.clientid).first()
+            if not db_brand:
+                logger.error(f"Brand not found for client ID: {outlet.clientid}")
+                raise HTTPException(
+                    status_code=404,
+                    detail="Brand not found"
             )
             
         # Generate brand abbreviation
