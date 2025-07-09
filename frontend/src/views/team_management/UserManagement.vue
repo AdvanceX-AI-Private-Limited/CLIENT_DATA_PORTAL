@@ -6,7 +6,7 @@ import MessageDialog from "@/components/MessageDialog.vue";
 import EditDialog from "@/components/OutletManagement/EditDialog.vue";
 import AddUsersPopup from "@/components/Mapping/AddUsersPopup.vue";
 import { fetchUsers as fetchUsersApi, deleteUser, createUser, updateUser } from "@/composables/api/teamManagement";
-import { PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
+import { PencilIcon, TrashIcon, PlusIcon } from "@heroicons/vue/24/outline";
 
 const users = ref([]);
 const loading = ref(false);
@@ -285,6 +285,7 @@ watch(
         name: 'Add&nbsp;Users',
         onClick: showcreateUserPopup,
         action: 'add_users',
+        icon: PlusIcon,
       },
     ]"
     :data_action_buttons="dataActionButtons"

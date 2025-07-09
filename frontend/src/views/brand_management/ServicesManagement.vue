@@ -6,7 +6,7 @@ import MessageDialog from "@/components/MessageDialog.vue";
 import EditDialog from "@/components/OutletManagement/EditDialog.vue";
 import AddUsersPopup from "@/components/Mapping/AddUsersPopup.vue";
 import { fetchServices as fetchServicesApi, deleteService, addService, updateService } from "@/composables/api/brandManagementApi";
-import { PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
+import { PencilIcon, TrashIcon, PlusIcon } from "@heroicons/vue/24/outline";
 
 const services = ref([]);
 const loading = ref(false);
@@ -275,6 +275,7 @@ watch(
         name: 'Add&nbsp;services',
         onClick: showaddServicePopup,
         action: 'add_users',
+        icon: PlusIcon,
       },
     ]"
     :data_action_buttons="dataActionButtons"
