@@ -508,7 +508,8 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
         session_store.store_session(temp_session_id, session_data)
 
         logger.info(f"Temporary session created for email: {login_data.email}, session_id: {temp_session_id}")
-
+        # logger.info(f"OTP sent to {login_data.email}: {session_data.otp}")
+        
         # Send OTP via email
         try:
             mail_payload = {
